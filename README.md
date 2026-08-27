@@ -1,21 +1,12 @@
 # 🎓 Smart SMS - School Management System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Production Ready](https://img.shields.io/badge/Production-Ready-brightgreen.svg)](AUDIT_EXECUTIVE_SUMMARY.md)
-[![Security Hardened](https://img.shields.io/badge/Security-Hardened_95%2F100-success.svg)](PRODUCTION_HARDENING_REPORT.md)
-[![Audit Score](https://img.shields.io/badge/Audit_Score-98%2F100-success.svg)](TECHNICAL_AUDIT_REPORT.md)
-[![Node.js](https://img.shields.io/badge/Node.js-16.x-green.svg)](https://nodejs.org/)
+[![Tests](https://img.shields.io/badge/Tests-459_passing-brightgreen.svg)](#-testing)
+[![Node.js](https://img.shields.io/badge/Node.js-18.x-green.svg)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-brightgreen.svg)](https://www.mongodb.com/)
 [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
 
-**Smart SMS** is a complete, production-ready School Management System with role-based access control for Admin, Teacher, Student, and Parent portals. Built with **React**, **Node.js**, **Express**, and **MongoDB**.
-
-> 🎉 **Status:** ✅ **PRODUCTION HARDENED** (95/100 Security Score)  
-> 🔒 **Security:** Multi-layered protection with audit logging  
-> 💾 **Backup:** Comprehensive disaster recovery procedures  
-> 📊 **Audit:** 98/100 system audit, 0 critical issues  
-> 
-> [View Security Report](PRODUCTION_HARDENING_REPORT.md) | [View System Audit](AUDIT_EXECUTIVE_SUMMARY.md)
+**Smart SMS** is a complete School Management System with role-based access control for Admin, Teacher, Student, and Parent portals. Built with **React**, **Node.js**, **Express**, and **MongoDB**.
 
 ---
 
@@ -27,29 +18,32 @@
 - Complete user management (Students, Teachers, Parents)
 - Teacher-to-class and teacher-to-subject assignments
 - View all attendance and grades
+- Academic year and term management
+- Enrollment, promotion, and transfer workflows
 - Create announcements
 - System analytics and reports
 
 #### 👨‍🏫 Teacher Portal
 - View assigned students only
 - Mark and manage attendance
-- Add and edit grades
+- Add and edit grades (quiz, assignment, classwork)
 - Create and manage assignments
 - Grade student submissions
 
 #### 👨‍🎓 Student Portal
 - View own profile and academic records
-- Check attendance history
+- Check attendance history with statistics
 - View grades and results
 - Submit assignments
 - View class timetable
+- View enrollment history
 
 #### 👨‍👩‍👧‍👦 Parent Portal
 - Monitor linked children
 - Switch between multiple children
 - View attendance records
 - Check grades and progress
-- View assignments and fees
+- View enrollment history per child
 
 ### 🌟 Key Capabilities
 
@@ -57,9 +51,12 @@
 - ✅ **Real-Time Sync** - Changes reflect immediately across all portals
 - ✅ **Secure Authentication** - JWT-based with role validation
 - ✅ **Relationship-Based Access** - Teachers see only assigned students
+- ✅ **Parent-Child Isolation** - Parents see only linked children
 - ✅ **Bilingual Support** - English and Amharic (አማርኛ)
 - ✅ **Responsive Design** - Works on desktop, tablet, and mobile
-- ✅ **Complete Documentation** - Setup guides and API docs included
+- ✅ **Dark Mode** - Persistent theme across all portals
+- ✅ **Notification System** - Real-time notifications with 30s polling
+- ✅ **Comprehensive Tests** - 459 passing tests across 12 test files
 
 ---
 
@@ -67,7 +64,7 @@
 
 ### Prerequisites
 
-- **Node.js** (v16 or higher)
+- **Node.js** (v18 or higher)
 - **MongoDB** (v4.4 or higher) - Local or MongoDB Atlas
 - **Git**
 
@@ -113,7 +110,7 @@ This creates:
 - 2 Teacher accounts (with class assignments)
 - 5 Student accounts
 - 2 Parent accounts (linked to students)
-- Classes and subjects
+- Classes, subjects, and academic year data
 
 ### Start the Application
 
@@ -140,28 +137,14 @@ npm run dev
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5000
 
----
+### Default Login Credentials
 
-## 📚 Documentation
-
-### 🚀 Quick Start
-- **[START HERE](START_HERE.md)** - 5-minute quick start guide
-
-### 🔒 Production Security & Hardening (NEW!)
-- **[Production Hardening Report](PRODUCTION_HARDENING_REPORT.md)** - Security assessment (95/100) & deployment checklist
-- **[Production Security Guide](PRODUCTION_SECURITY_GUIDE.md)** - Environment config, JWT security, incident response
-- **[Production Testing Guide](PRODUCTION_TESTING_GUIDE.md)** - 45 comprehensive test scenarios
-- **[Database Backup & Recovery](DATABASE_BACKUP_RECOVERY.md)** - Backup strategies & disaster recovery
-
-### ✅ Audit & Quality
-- **[Audit Executive Summary](AUDIT_EXECUTIVE_SUMMARY.md)** - System audit results (98/100 - Production Ready)
-- **[Technical Audit Report](TECHNICAL_AUDIT_REPORT.md)** - Comprehensive 17-section technical audit
-
-### 📖 Setup & Integration
-- **[Installation Guide](INSTALLATION_GUIDE.md)** - Detailed setup with 51 test scenarios
-- **[Production Ready Summary](PRODUCTION_READY_SUMMARY.md)** - All features and security explained
-- **[Production Ready Final Report](PRODUCTION_READY_FINAL_REPORT.md)** - Complete system report
-- **[Integration Report](SMART_SMS_INTEGRATION_COMPLETE.md)** - Complete system documentation
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@smartsms.et` | `Admin@123` |
+| Teacher | `teacher1@smartsms.et` | `Teacher@123` |
+| Student | `student1@smartsms.et` | `Student@123` |
+| Parent | `parent1@smartsms.et` | `Parent@123` |
 
 ---
 
@@ -200,8 +183,9 @@ npm run dev
 - **Framer Motion** - Animations
 - **React Router** - Navigation
 - **Axios** - HTTP client
-- **React i18next** - Internationalization
+- **React i18next** - Internationalization (English + Amharic)
 - **Recharts** - Data visualization
+- **Zustand** - State management
 
 ### Backend
 - **Node.js** - Runtime
@@ -210,6 +194,12 @@ npm run dev
 - **Mongoose** - ODM
 - **JWT** - Authentication
 - **Bcrypt** - Password hashing
+- **Nodemailer** - Email notifications
+
+### Testing
+- **Node.js test runner** - Built-in test framework
+- **Supertest** - HTTP assertion library
+- **MongoDB Memory Server** - In-memory test database
 
 ---
 
@@ -228,29 +218,56 @@ smart-sms-school-management/
 │   │   ├── Grade.js          # Grades/Results
 │   │   ├── Attendance.js     # Attendance records
 │   │   ├── Assignment.js     # Assignments
-│   │   └── Announcement.js   # Announcements
+│   │   ├── Announcement.js   # Announcements
+│   │   ├── AcademicYear.js   # Academic years
+│   │   ├── Term.js           # Terms within academic years
+│   │   ├── Enrollment.js     # Student enrollment records
+│   │   ├── Notification.js   # User notifications
+│   │   └── AuditLog.js       # Audit trail
 │   ├── routes/               # API endpoints
-│   │   ├── auth.js          # Authentication
-│   │   ├── admin.js         # Admin APIs
-│   │   ├── teacher.js       # Teacher APIs
-│   │   ├── student.js       # Student APIs
-│   │   └── parent.js        # Parent APIs
-│   ├── middleware/          # Auth middleware
-│   ├── seed.js              # Database seeding
-│   └── index.js             # Server entry point
+│   │   ├── auth.js           # Authentication
+│   │   ├── admin.js          # Admin APIs
+│   │   ├── teacher.js        # Teacher APIs
+│   │   ├── student.js        # Student APIs
+│   │   ├── parent.js         # Parent APIs
+│   │   ├── enrollment.js     # Enrollment CRUD
+│   │   ├── academicYear.js   # Academic year management
+│   │   ├── term.js           # Term management
+│   │   ├── announcements.js  # Announcements
+│   │   └── notification.js   # Notifications
+│   ├── middleware/            # Auth & rate limiting
+│   ├── services/             # Business logic
+│   ├── utils/                # Helpers
+│   ├── test/                 # Test suite (459 tests)
+│   │   ├── setup.js          # Test utilities & factories
+│   │   ├── auth.test.js
+│   │   ├── adminCrud.test.js
+│   │   ├── teacherGradeAttendance.test.js
+│   │   ├── teacherAssignment.test.js
+│   │   ├── notificationApi.test.js
+│   │   ├── notificationService.test.js
+│   │   ├── academicYear.test.js
+│   │   ├── term.test.js
+│   │   ├── enrollment.test.js
+│   │   ├── studentRoutes.test.js
+│   │   ├── parentRoutes.test.js
+│   │   └── crossRoleIsolation.test.js
+│   ├── seed.js               # Database seeding
+│   └── index.js              # Server entry point
 │
-├── src/                      # Frontend (React + Vite)
+├── src/                       # Frontend (React + Vite)
 │   ├── pages/
-│   │   ├── dashboards/      # Role dashboards
-│   │   ├── AdminPages/      # Admin pages
-│   │   ├── TeacherPages/    # Teacher pages
-│   │   ├── StudentPages/    # Student pages
-│   │   └── ParentPages/     # Parent pages
-│   ├── services/            # API services
-│   ├── components/          # Reusable components
-│   └── utils/               # Utility functions
+│   │   ├── dashboards/       # Role dashboards
+│   │   ├── AdminPages/       # Admin pages
+│   │   ├── TeacherPages/     # Teacher pages
+│   │   ├── StudentPages/     # Student pages
+│   │   └── ParentPages/      # Parent pages
+│   ├── services/             # API services
+│   ├── components/           # Reusable components
+│   ├── store/                # Zustand state stores
+│   ├── i18n/                 # Translations (en, am)
+│   └── utils/                # Utility functions
 │
-├── docs/                     # Documentation
 └── README.md                 # This file
 ```
 
@@ -260,28 +277,15 @@ smart-sms-school-management/
 
 - ✅ **JWT Authentication** - Secure token-based auth
 - ✅ **Password Hashing** - Bcrypt encryption
-- ✅ **Role-Based Access Control** - Backend validation
+- ✅ **Role-Based Access Control** - Backend validation on every route
+- ✅ **Relationship Verification** - Teachers access only assigned students
+- ✅ **Parent-Child Linking** - Parents see only linked children
+- ✅ **Cross-Role Isolation** - Admin cannot access student/parent dashboards and vice versa
 - ✅ **Rate Limiting** - Brute force protection (5 attempts/15min)
 - ✅ **Helmet Security Headers** - XSS, clickjacking protection
 - ✅ **CORS Protection** - Origin validation
 - ✅ **Input Validation** - Comprehensive backend validation
-- ✅ **Audit Logging** - Track all critical actions (NEW!)
-- ✅ **Health Monitoring** - System health checks (NEW!)
-- ✅ **Error Sanitization** - No sensitive data in production errors (NEW!)
-- ✅ **Database Indexes** - Optimized query performance (NEW!)
-- ✅ **Backup Strategy** - Comprehensive disaster recovery (NEW!)
-
-**Security Score:** 95/100 | [View Security Report](PRODUCTION_HARDENING_REPORT.md)
-
----
-
-## 🔒 Security Features
-
-- ✅ **JWT Authentication** - Secure token-based auth
-- ✅ **Password Hashing** - Bcrypt encryption
-- ✅ **Role-Based Access Control** - Backend validation
-- ✅ **Relationship Verification** - Teachers access only assigned students
-- ✅ **Parent-Child Linking** - Parents see only linked children
+- ✅ **Audit Logging** - Track all critical actions
 - ✅ **No Password Exposure** - Never returned in API responses
 
 ---
@@ -289,54 +293,55 @@ smart-sms-school-management/
 ## 🌍 Internationalization
 
 Supports **English** and **Amharic (አማርኛ)** with:
-- Complete UI translation
-- Persistent language selection
+- Complete UI translation for all portals
+- Persistent language selection (stored in localStorage)
 - Cultural considerations for Ethiopian schools
 
 ---
 
 ## 🧪 Testing
 
-### Quick Integration Test
+The project has **459 tests** across **12 test files** with **123 test suites**, all using an in-memory MongoDB for fast, isolated execution.
 
-1. Login as Teacher: `teacher1@smartsms.et`
-2. Navigate to Students page
-3. Verify students appear (should see 3 students)
-4. Go to Grades → Add Grade
-5. Verify student dropdown is populated ✅
+### Run Tests
 
-### Full Test Scenarios
+```bash
+cd server
+npm test
+```
 
-See [Quick Start Guide](QUICK_START_GUIDE_INTEGRATED.md) for complete test scenarios.
+### Test Coverage
 
----
-
-## 🚀 Live Demo
-
-**Frontend (Vercel):** https://school-management-ebon-five.vercel.app  
-**Backend (Render):** https://smart-sms-backend.onrender.com  
-**Keep-Alive Tool:** https://school-management-ebon-five.vercel.app/keep-alive.html
-
-
-### ⚡ Note About Backend (Render Free Tier)
-The backend may take 30-60 seconds to wake up on first request after inactivity. Use the [Keep-Alive Tool](https://school-management-ebon-five.vercel.app/keep-alive.html) to keep it awake for instant responses.
+| Test File | Tests | Coverage |
+|-----------|-------|----------|
+| `adminCrud.test.js` | 58 | User CRUD, student/teacher/parent management |
+| `auth.test.js` | 30 | Login, register, password reset, OTP flow |
+| `notificationApi.test.js` | 25 | Notification CRUD, mark read, delete |
+| `notificationService.test.js` | 27 | Grade, attendance, assignment, enrollment notifications |
+| `teacherGradeAttendance.test.js` | 36 | Grade/attendance CRUD, cross-teacher isolation |
+| `teacherAssignment.test.js` | 25 | Assignment CRUD, class listing, ownership isolation |
+| `academicYear.test.js` | 30 | RBAC, CRUD, activate/deactivate, archive/unarchive |
+| `term.test.js` | 26 | Term CRUD, toggle-active, cascading deactivation |
+| `enrollment.test.js` | 45 | Enroll, promote, transfer, status, history, parent isolation |
+| `studentRoutes.test.js` | 59 | Dashboard, profile, grades, attendance, enrollment |
+| `parentRoutes.test.js` | 27 | Dashboard, children, announcements, enrollment isolation |
+| `crossRoleIsolation.test.js` | 71 | All roles blocked from other roles' endpoints |
+| **Total** | **459** | |
 
 ---
 
 ## 🚀 Deployment
 
-### Backend Deployment (Render/Railway/Heroku)
+### Backend (Render)
 
 1. Push to GitHub
-2. Connect repository to hosting service
+2. Connect repository to Render
 3. Set environment variables:
    - `MONGODB_URI` (MongoDB Atlas connection string)
    - `JWT_SECRET` (strong random key)
    - `PORT` (optional, defaults to 5000)
 
-**Current Production Backend:** https://smart-sms-backend.onrender.com
-
-### Frontend Deployment (Vercel/Netlify)
+### Frontend (Vercel)
 
 1. Connect GitHub repository
 2. Set build command: `npm run build`
@@ -344,52 +349,25 @@ The backend may take 30-60 seconds to wake up on first request after inactivity.
 4. Set environment variable:
    - `VITE_API_URL` (your backend URL)
 
-**Current Production Frontend:** https://school-management-ebon-five.vercel.app
-
-### Keep Backend Awake (Render Free Tier)
-
-Render's free tier spins down after 15 minutes of inactivity. Use the built-in keep-alive tool:
-
-**Keep-Alive Tool:** https://school-management-ebon-five.vercel.app/keep-alive.html
-
-Features:
-- ✅ Auto-pings backend every 10 minutes
-- ✅ Prevents cold starts (30-60s delay)
-- ✅ Shows live status and activity log
-- ✅ Start/Stop controls
-- ✅ Beautiful UI with real-time monitoring
-
-> ⚠️ The keep-alive tool only pings while a browser tab is open. For 24/7 wake-ups
-> without keeping a tab open (recommended), create a free monitor at
-> [cron-job.org](https://cron-job.org) or [UptimeRobot](https://uptimerobot.com)
-> that hits `https://smart-sms-backend.onrender.com/api/health` every 5-10 minutes.
-> A monitoring tool can also notify you when the backend goes down.
-
-**Usage:** Keep the page open in a browser tab (can minimize). Backend stays awake automatically!
-
 ---
 
 ## 📊 Key Features Highlight
 
 ### Teacher-Student Relationship
-- **Problem Solved**: Teachers can now see their assigned students
-- **Grade Dropdown Fixed**: No more empty dropdowns!
-- **Proper Filtering**: Teachers see only students in assigned classes
+- Teachers see only their assigned students
+- Grade dropdown populated with correct students
+- Proper class-based filtering
+
+### Enrollment System
+- Enroll students in classes per academic year
+- Promote students to next grade
+- Transfer students between classes
+- Track enrollment history with status workflow
 
 ### Data Synchronization
 - **Real-Time Updates**: Changes reflect across all portals immediately
 - **Single Source of Truth**: All roles use the same database
 - **No Duplicate Data**: One attendance record, one grade record
-
-### Attendance Flow
-```
-Teacher marks attendance → Database → Admin/Student/Parent see it
-```
-
-### Grade Flow
-```
-Teacher adds grade → Database → Admin/Student/Parent see it
-```
 
 ---
 
@@ -399,9 +377,10 @@ Contributions are welcome! Please:
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/YourFeature`
-3. Commit changes: `git commit -m 'Add YourFeature'`
-4. Push to branch: `git push origin feature/YourFeature`
-5. Open a Pull Request
+3. Run tests: `cd server && npm test`
+4. Commit changes: `git commit -m 'Add YourFeature'`
+5. Push to branch: `git push origin feature/YourFeature`
+6. Open a Pull Request
 
 ---
 
@@ -423,44 +402,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Ethiopian Education System for inspiration
 - All contributors and testers
 - Open source community
-
----
-
-## 📞 Support
-
-For issues, questions, or suggestions:
-1. Check the [documentation](SMART_SMS_INTEGRATION_COMPLETE.md)
-2. Open an [issue](https://github.com/ERMIYASZEWDU/smart-sms-school-management/issues)
-3. Review the [Quick Start Guide](QUICK_START_GUIDE_INTEGRATED.md)
-
----
-
-## ✨ What's Special About This System?
-
-### The Golden Rule (Enforced!)
-```
-ADMIN creates data → DATABASE → Available to authorized users
-TEACHER uses data → For assigned classes ONLY
-STUDENT sees data → Own data ONLY  
-PARENT sees data → Linked children ONLY
-
-EVERYONE USES THE SAME DATABASE ✅
-```
-
-No mock data. No separate databases. One unified system.
-
----
-
-## 🎯 Roadmap
-
-- [ ] Mobile app (React Native)
-- [ ] Fee management enhancements
-- [ ] Real-time notifications (WebSocket)
-- [ ] Report card generation (PDF)
-- [ ] Exam schedule management
-- [ ] Library management module
-- [ ] Transport management
-- [ ] Hostel management
 
 ---
 
