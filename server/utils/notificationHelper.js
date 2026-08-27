@@ -21,7 +21,7 @@ export const createNotification = async ({
 }) => {
   try {
     const notification = new Notification({
-      userId,
+      recipientUserId: userId,
       title,
       message,
       type,
@@ -45,7 +45,7 @@ export const createNotification = async ({
 export const createBulkNotifications = async (userIds, notificationData) => {
   try {
     const notifications = userIds.map(userId => ({
-      userId,
+      recipientUserId: userId,
       ...notificationData,
       createdAt: new Date()
     }))
@@ -76,7 +76,7 @@ export const notifyNewGrade = async (studentId, grade) => {
     // Notify student
     if (student.userId) {
       notifications.push({
-        userId: student.userId._id,
+        recipientUserId: student.userId._id,
         title: 'New Grade Posted',
         message: `You received a grade of ${grade.score}/${grade.maxScore || 100} in ${grade.subject}`,
         type: 'grade',
@@ -93,7 +93,7 @@ export const notifyNewGrade = async (studentId, grade) => {
       for (const parent of student.parentIds) {
         if (parent.userId) {
           notifications.push({
-            userId: parent.userId,
+            recipientUserId: parent.userId,
             title: `New Grade: ${student.name}`,
             message: `${student.name} received a grade of ${grade.score}/${grade.maxScore || 100} in ${grade.subject}`,
             type: 'grade',
@@ -136,7 +136,7 @@ export const notifyAttendance = async (studentId, attendance) => {
     // Notify student
     if (student.userId) {
       notifications.push({
-        userId: student.userId._id,
+        recipientUserId: student.userId._id,
         title: 'Attendance Alert',
         message: `You were marked absent on ${dateStr}`,
         type: 'attendance',
@@ -154,7 +154,7 @@ export const notifyAttendance = async (studentId, attendance) => {
       for (const parent of student.parentIds) {
         if (parent.userId) {
           notifications.push({
-            userId: parent.userId,
+            recipientUserId: parent.userId,
             title: `Attendance Alert: ${student.name}`,
             message: `${student.name} was marked absent on ${dateStr}`,
             type: 'attendance',
@@ -192,7 +192,7 @@ export const notifyNewAssignment = async (assignment, studentIds) => {
     for (const student of students) {
       if (student.userId) {
         notifications.push({
-          userId: student.userId._id,
+          recipientUserId: student.userId._id,
           title: 'New Assignment',
           message: `${assignment.title} - Due: ${dueDate}`,
           type: 'assignment',
@@ -232,7 +232,7 @@ export const notifyAnnouncement = async (announcement) => {
 export const markNotificationAsRead = async (notificationId, userId) => {
   try {
     await Notification.findOneAndUpdate(
-      { _id: notificationId, userId },
+      { _id: notificationId, recipientUserId: userId },
       { isRead: true, readAt: new Date() }
     )
   } catch (error) {
@@ -246,7 +246,7 @@ export const markNotificationAsRead = async (notificationId, userId) => {
 export const markAllNotificationsAsRead = async (userId) => {
   try {
     await Notification.updateMany(
-      { userId, isRead: false },
+      { recipientUserId: userId, isRead: false },
       { isRead: true, readAt: new Date() }
     )
   } catch (error) {
@@ -259,7 +259,7 @@ export const markAllNotificationsAsRead = async (userId) => {
  */
 export const getUnreadCount = async (userId) => {
   try {
-    return await Notification.countDocuments({ userId, isRead: false })
+    return await Notification.countDocuments({ recipientUserId: userId, isRead: false })
   } catch (error) {
     console.error('Error getting unread count:', error)
     return 0

@@ -19,16 +19,18 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import { 
-  getRecentNotifications, 
-  getUnreadCount, 
-  markAsRead, 
+  getRecentNotifications,
+  getUnreadCount,
+  markAsRead,
   markAllAsRead,
   deleteNotification 
 } from '../services/notificationApi'
+import { useAuthStore } from '../store/authStore'
 
 export const NotificationCenter = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
   const [isOpen, setIsOpen] = useState(false)
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
@@ -208,9 +210,9 @@ export const NotificationCenter = () => {
     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
     
     if (seconds < 60) return t('notifications.justNow', 'Just now')
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}${t('notifications.minutesAgo', 'm ago')}`
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}${t('notifications.hoursAgo', 'h ago')}`
-    if (seconds < 604800) return `${Math.floor(seconds / 86400)}${t('notifications.daysAgo', 'd ago')}`
+    if (seconds < 3600) return t('notifications.minutesAgo', '{{count}}m ago', { count: Math.floor(seconds / 60) })
+    if (seconds < 86400) return t('notifications.hoursAgo', '{{count}}h ago', { count: Math.floor(seconds / 3600) })
+    if (seconds < 604800) return t('notifications.daysAgo', '{{count}}d ago', { count: Math.floor(seconds / 86400) })
     return new Date(date).toLocaleDateString()
   }
 
@@ -350,7 +352,8 @@ export const NotificationCenter = () => {
                 <button
                   onClick={() => {
                     setIsOpen(false)
-                    navigate('/notifications')
+                    const role = user?.role || 'student'
+                    navigate(`/${role}/announcements`)
                   }}
                   className="w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
                 >

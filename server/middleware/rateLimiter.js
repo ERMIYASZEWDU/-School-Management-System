@@ -77,7 +77,7 @@ setInterval(() => {
 // Predefined rate limiters for different scenarios
 export const authLimiter = createRateLimiter(
   15 * 60 * 1000, // 15 minutes
-  50, // 50 requests per 15 minutes (increased for development/testing)
+  200, // 200 requests per 15 minutes (increased for development/testing)
   'Too many authentication attempts. Please try again later.'
 )
 

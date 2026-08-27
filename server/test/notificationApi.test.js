@@ -164,15 +164,13 @@ describe('Notification API Routes', () => {
   })
 
   describe('DELETE /api/notifications/:id', () => {
-    it('returns 404 because userId field is not stored (routes query mismatch)', async () => {
+    it('deletes a notification owned by the authenticated user', async () => {
       const n = await createNotif(studentUser._id)
 
-      // Route queries { _id, userId } but userId is stripped from saved docs
-      // so findOneAndDelete returns null → 404
       await request(app)
         .delete(`/api/notifications/${n._id}`)
         .set('Authorization', `Bearer ${studentToken}`)
-        .expect(404)
+        .expect(200)
     })
 
     it('returns 404 for non-existent notification', async () => {

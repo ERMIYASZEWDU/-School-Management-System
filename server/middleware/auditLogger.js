@@ -7,7 +7,7 @@ import mongoose from 'mongoose'
 
 // Audit Log Schema
 const auditLogSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   userEmail: { type: String, required: true },
   userRole: { type: String, required: true },
   action: { type: String, required: true }, // CREATE, UPDATE, DELETE, VIEW, LOGIN, LOGOUT
@@ -107,7 +107,7 @@ export const logAuthEvent = async (req, res, next) => {
     if (req.path === '/login') {
       const success = res.statusCode === 200
       logAudit({
-        userId: data.user?.id || 'unknown',
+        userId: data.user?.id || null,
         userEmail: req.body.email || 'unknown',
         userRole: data.user?.role || 'unknown',
         action: success ? 'LOGIN_SUCCESS' : 'LOGIN_FAILED',

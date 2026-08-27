@@ -413,26 +413,14 @@ describe('Teacher Attendance', () => {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 describe('Teacher → Student Access Verification', () => {
-  // NOTE: The verifyTeacherStudentAccess middleware reads req.params.studentId
-  // but the route defines :id, causing a 400 'Student ID required' response.
-  // This is a known route/middleware mismatch.
-  it('GET /api/teacher/student/:id returns 400 due to param mismatch', async () => {
+  it('GET /api/teacher/student/:id rejects teacher without class assignment', async () => {
     const res = await request(app)
       .get(`/api/teacher/student/${student._id}`)
       .set('Authorization', `Bearer ${teacherToken}`)
 
-    // Middleware reads req.params.studentId (undefined), returns 400
-    assert.equal(res.status, 400)
-    assert.ok(res.body.message.includes('Student ID'))
-  })
-
-  it('verifyTeacherStudentAccess rejects without class assignment', async () => {
-    const res = await request(app)
-      .get(`/api/teacher/student/${student._id}`)
-      .set('Authorization', `Bearer ${teacherToken}`)
-
-    // Even with the param bug, the middleware returns 400 before the access check
-    assert.equal(res.status, 400)
+    // Teacher has no assigned classes → 403 access denied
+    assert.equal(res.status, 403)
+    assert.ok(res.body.message.includes('Access denied'))
   })
 
   it('teacher can list students (no access middleware)', async () => {
@@ -444,5 +432,94 @@ describe('Teacher → Student Access Verification', () => {
       .expect(200)
 
     assert.ok(Array.isArray(res.body))
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CROSS-TEACHER DATA ISOLATION
+// Teacher A must NOT be able to see or modify Teacher B's grades/attendance
+// ═══════════════════════════════════════════════════════════════════════════════
+
+describe('Cross-teacher data isolation', () => {
+  let otherTeacherUser, otherTeacherToken, otherTeacherUserId
+
+  beforeEach(async () => {
+    otherTeacherUser = await createUser({ email: 'isolation-teacher@test.com', password: 'pass', role: 'teacher', name: 'Other Teacher' })
+    otherTeacherUserId = otherTeacherUser._id
+    await Teacher.create({
+      userId: otherTeacherUserId, name: 'Other Teacher',
+      employeeId: `TCH-ISO-${Date.now()}`, phone: '0999999999',
+      email: 'isolation-teacher@test.com',
+    })
+    const secret = process.env.JWT_SECRET
+    otherTeacherToken = jwt.sign({ id: otherTeacherUserId, email: otherTeacherUser.email, role: 'teacher' }, secret, { expiresIn: '1h' })
+
+    // Teacher B creates grades for the same student
+    await Grade.create({ teacherId: otherTeacherUserId, studentId: student._id, subject: 'Physics', score: 92, gradeType: 'quiz' })
+    await Grade.create({ teacherId: otherTeacherUserId, studentId: student._id, subject: 'Chemistry', score: 88, gradeType: 'assignment' })
+
+    // Teacher A creates their own grades
+    await Grade.create({ teacherId: teacherUserId, studentId: student._id, subject: 'Math', score: 85, gradeType: 'quiz' })
+
+    // Teacher B marks attendance
+    await Attendance.create({ studentId: student._id, date: new Date('2026-05-01'), status: 'present', markedBy: otherTeacherUserId })
+  })
+
+  it('GET /api/teacher/grades: Teacher A only sees own grades', async () => {
+    const res = await request(app).get('/api/teacher/grades')
+      .set('Authorization', `Bearer ${teacherToken}`)
+      .expect(200)
+
+    assert.equal(res.body.length, 1)
+    assert.equal(res.body[0].subject, 'Math')
+    // Should not contain Teacher B's grades
+    assert.ok(!res.body.some(g => g.subject === 'Physics'))
+    assert.ok(!res.body.some(g => g.subject === 'Chemistry'))
+  })
+
+  it('GET /api/teacher/grades: Teacher B only sees own grades', async () => {
+    const res = await request(app).get('/api/teacher/grades')
+      .set('Authorization', `Bearer ${otherTeacherToken}`)
+      .expect(200)
+
+    assert.equal(res.body.length, 2)
+    assert.ok(res.body.every(g => g.subject === 'Physics' || g.subject === 'Chemistry'))
+    // Should not contain Teacher A's Math grade
+    assert.ok(!res.body.some(g => g.subject === 'Math'))
+  })
+
+  it('PUT /api/teacher/grade/:id: Teacher A cannot update Teacher B grade', async () => {
+    const otherGrade = await Grade.findOne({ teacherId: otherTeacherUserId, subject: 'Physics' })
+
+    await request(app).put(`/api/teacher/grade/${otherGrade._id}`)
+      .set('Authorization', `Bearer ${teacherToken}`)
+      .send({ score: 100 })
+      .expect(404)
+
+    // Verify score unchanged
+    const unchanged = await Grade.findById(otherGrade._id)
+    assert.equal(unchanged.score, 92)
+  })
+
+  it('PUT /api/teacher/grade/:id: Teacher B cannot update Teacher A grade', async () => {
+    const myGrade = await Grade.findOne({ teacherId: teacherUserId, subject: 'Math' })
+
+    await request(app).put(`/api/teacher/grade/${myGrade._id}`)
+      .set('Authorization', `Bearer ${otherTeacherToken}`)
+      .send({ score: 0 })
+      .expect(404)
+
+    // Verify score unchanged
+    const unchanged = await Grade.findById(myGrade._id)
+    assert.equal(unchanged.score, 85)
+  })
+
+  it('POST /api/teacher/grade: grade is always attributed to authenticated teacher', async () => {
+    const res = await request(app).post('/api/teacher/grade')
+      .set('Authorization', `Bearer ${teacherToken}`)
+      .send({ studentId: student._id.toString(), subject: 'History', score: 75, gradeType: 'classwork' })
+      .expect(201)
+
+    assert.equal(res.body.teacherId.toString(), teacherUserId.toString())
   })
 })

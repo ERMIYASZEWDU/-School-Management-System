@@ -12,7 +12,7 @@ router.get('/', verifyToken, validatePagination, asyncHandler(async (req, res) =
   const { page = 1, limit = 20, isRead } = req.query
   const skip = (page - 1) * limit
 
-  const query = { userId: req.user.id }
+  const query = { recipientUserId: req.user.id }
   
   if (isRead !== undefined) {
     query.isRead = isRead === 'true'
@@ -60,7 +60,7 @@ router.patch('/read-all', verifyToken, asyncHandler(async (req, res) => {
 router.delete('/:id', verifyToken, validateObjectId('id'), asyncHandler(async (req, res) => {
   const notification = await Notification.findOneAndDelete({
     _id: req.params.id,
-    userId: req.user.id
+    recipientUserId: req.user.id
   })
 
   if (!notification) {
@@ -73,7 +73,7 @@ router.delete('/:id', verifyToken, validateObjectId('id'), asyncHandler(async (r
 // Delete all read notifications
 router.delete('/clear/read', verifyToken, asyncHandler(async (req, res) => {
   const result = await Notification.deleteMany({
-    userId: req.user.id,
+    recipientUserId: req.user.id,
     isRead: true
   })
 

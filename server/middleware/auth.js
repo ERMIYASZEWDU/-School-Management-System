@@ -78,7 +78,7 @@ export const isParent = (req, res, next) => {
 export const verifyTeacherStudentAccess = async (req, res, next) => {
   try {
     const teacherId = req.user.id
-    const studentId = req.params.studentId || req.body.studentId
+    const studentId = req.params.studentId || req.params.id || req.body.studentId
 
     if (!studentId) {
       return res.status(400).json({ message: 'Student ID required' })
@@ -135,7 +135,7 @@ export const verifyTeacherStudentAccess = async (req, res, next) => {
 export const verifyParentChildAccess = async (req, res, next) => {
   try {
     const parentUserId = req.user.id
-    const studentId = req.params.studentId || req.body.studentId
+    const studentId = req.params.studentId || req.params.id || req.body.studentId
 
     if (!studentId) {
       return res.status(400).json({ message: 'Student ID required' })

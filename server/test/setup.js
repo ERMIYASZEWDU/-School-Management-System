@@ -177,6 +177,26 @@ export async function buildTestApp() {
   const { default: notificationRoutes } = await import('../routes/notification.js')
   app.use('/api/notifications', notificationRoutes)
 
+  // Import and mount academic year routes
+  const { default: academicYearRoutes } = await import('../routes/academicYear.js')
+  app.use('/api/academic-years', academicYearRoutes)
+
+  // Import and mount term routes
+  const { default: termRoutes } = await import('../routes/term.js')
+  app.use('/api/terms', termRoutes)
+
+  // Import and mount student routes
+  const { default: studentRoutes } = await import('../routes/student.js')
+  app.use('/api/student', studentRoutes)
+
+  // Import and mount parent routes
+  const { default: parentRoutes } = await import('../routes/parent.js')
+  app.use('/api/parent', parentRoutes)
+
+  // Import and mount enrollment routes
+  const { default: enrollmentRoutes } = await import('../routes/enrollment.js')
+  app.use('/api/enrollment', enrollmentRoutes)
+
   // Error handler
   const { errorHandler } = await import('../middleware/errorHandler.js')
   app.use(errorHandler)

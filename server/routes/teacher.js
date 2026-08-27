@@ -245,12 +245,20 @@ router.post('/assignment', verifyToken, checkRole(['teacher']), async (req, res)
   try {
     const { title, description, subject, grade, dueDate, classId } = req.body
 
+    // Resolve grade name: if classId is given, look up the class to get the grade string
+    let resolvedGrade = grade
+    if (!resolvedGrade && classId) {
+      const classDoc = await Class.findById(classId).lean()
+      resolvedGrade = classDoc ? classDoc.grade : classId
+    }
+
     const assignment = new Assignment({
       teacherId: req.user.id,
       title,
       description,
       subject,
-      grade: grade || classId,
+      grade: resolvedGrade || classId,
+      classId: classId || undefined,
       dueDate,
       createdAt: new Date()
     })

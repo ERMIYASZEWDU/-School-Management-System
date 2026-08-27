@@ -38,7 +38,7 @@ router.post('/enroll', authenticateToken, authorizeRoles('admin'), async (req, r
     }
 
     // Check if class exists
-    const classData = await Class.findById(classId).populate('academicYearId')
+    const classData = await Class.findById(classId)
     if (!classData) {
       return res.status(404).json({ message: 'Class not found' })
     }
@@ -49,7 +49,10 @@ router.post('/enroll', authenticateToken, authorizeRoles('admin'), async (req, r
       return res.status(404).json({ message: 'Academic year not found' })
     }
 
-    if (classData.academicYearId.toString() !== academicYearId) {
+    const classAcademicYearId = classData.academicYearId?._id
+      ? classData.academicYearId._id.toString()
+      : classData.academicYearId.toString()
+    if (classAcademicYearId !== academicYearId.toString()) {
       return res.status(400).json({ 
         message: 'Class does not belong to the specified academic year' 
       })
@@ -163,7 +166,7 @@ router.post('/promote', authenticateToken, authorizeRoles('admin'), async (req, 
     }
 
     // Check target class exists
-    const targetClass = await Class.findById(targetClassId).populate('academicYearId')
+    const targetClass = await Class.findById(targetClassId)
     if (!targetClass) {
       return res.status(404).json({ message: 'Target class not found' })
     }
@@ -175,7 +178,10 @@ router.post('/promote', authenticateToken, authorizeRoles('admin'), async (req, 
     }
 
     // Validate target class belongs to target academic year
-    if (targetClass.academicYearId.toString() !== targetAcademicYearId) {
+    const targetClassAYId = targetClass.academicYearId?._id
+      ? targetClass.academicYearId._id.toString()
+      : targetClass.academicYearId.toString()
+    if (targetClassAYId !== targetAcademicYearId.toString()) {
       return res.status(400).json({ 
         message: 'Target class does not belong to the specified academic year' 
       })
@@ -379,6 +385,9 @@ router.post('/transfer', authenticateToken, authorizeRoles('admin'), async (req,
     )
     const newRollNumber = enrolledCount + 1
 
+    // Update current enrollment status FIRST to avoid unique index conflict
+    await currentEnrollment.updateStatus('transferred', reason || 'Transferred to another class', req.user.id)
+
     // Create new enrollment
     const newEnrollment = new Enrollment({
       studentId,
@@ -396,8 +405,7 @@ router.post('/transfer', authenticateToken, authorizeRoles('admin'), async (req,
 
     await newEnrollment.save()
 
-    // Update current enrollment status
-    await currentEnrollment.updateStatus('transferred', reason || 'Transferred to another class', req.user.id)
+    // Link enrollments
     currentEnrollment.transferredTo = newEnrollment._id
     await currentEnrollment.save()
 
