@@ -591,7 +591,7 @@ router.get('/:id/pdf-data', asyncHandler(async (req, res) => {
 
   // Format data for PDF generation
   const pdfData = {
-    schoolName: 'Smart SMS School',
+    schoolName: 'Aykel School',
     academicYear: reportCard.academicYearId.name,
     term: reportCard.termId.name,
     student: {

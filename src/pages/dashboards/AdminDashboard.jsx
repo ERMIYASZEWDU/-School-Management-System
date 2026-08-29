@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Users, BookOpen, TrendingUp, AlertTriangle, Download, Calendar } from 'lucide-react'
+import { Users, BookOpen, TrendingUp, AlertTriangle, Download, Calendar, UserPlus, GraduationCap, ClipboardCheck, BarChart3 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
 import { AddStudentModal } from '../../components/AddStudentModal'
 import { AddTeacherModal } from '../../components/AddTeacherModal'
@@ -132,11 +132,11 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
   }
 
   const quickActions = [
-    { icon: '👤', label: 'Add Student', onClick: () => setShowAddStudent(true) },
-    { icon: '👨‍🏫', label: 'Add Teacher', onClick: () => setShowAddTeacher(true) },
-    { icon: '📚', label: 'Add Class', onClick: () => navigate('/admin/classes') },
-    { icon: '📋', label: 'Mark Attendance', onClick: () => setShowMarkAttendance(true) },
-    { icon: '📊', label: 'View Reports', onClick: () => navigate('/admin/reports') }
+    { icon: UserPlus, label: 'Add Student', onClick: () => setShowAddStudent(true) },
+    { icon: GraduationCap, label: 'Add Teacher', onClick: () => setShowAddTeacher(true) },
+    { icon: BookOpen, label: 'Add Class', onClick: () => navigate('/admin/classes') },
+    { icon: ClipboardCheck, label: 'Mark Attendance', onClick: () => setShowMarkAttendance(true) },
+    { icon: BarChart3, label: 'View Reports', onClick: () => navigate('/admin/reports') }
   ]
 
   const stats = [
@@ -264,7 +264,7 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
             onClick={action.onClick}
             className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-center hover:shadow-md transition cursor-pointer"
           >
-            <div className="text-3xl mb-2">{action.icon}</div>
+            <action.icon size={28} className="mb-2 text-blue-600 dark:text-blue-400" />
             <p className="text-gray-800 dark:text-gray-100 font-semibold text-sm">{action.label}</p>
           </button>
         ))}

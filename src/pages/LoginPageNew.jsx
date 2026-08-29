@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../store/authStore'
-import { Mail, Lock, Eye, EyeOff, BookOpen } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, BookOpen, Users, Calendar, FileText, BarChart3 } from 'lucide-react'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import apiClient from '../utils/api'
 
@@ -69,13 +69,13 @@ export const LoginPageNew = () => {
           <p className="text-2xl text-gray-600 mb-12 font-light">{t('auth.completeSolution')}</p>
           <div className="grid grid-cols-2 gap-8">
             {[
-              { icon: '👥', title: t('auth.features.students'), subtitle: t('auth.features.management') },
-              { icon: '📅', title: t('auth.features.attendance'), subtitle: t('auth.features.management') },
-              { icon: '📝', title: t('auth.features.examination'), subtitle: t('auth.features.management') },
-              { icon: '📊', title: t('auth.features.reports'), subtitle: t('auth.features.analytics') }
+              { icon: Users, title: t('auth.features.students'), subtitle: t('auth.features.management') },
+              { icon: Calendar, title: t('auth.features.attendance'), subtitle: t('auth.features.management') },
+              { icon: FileText, title: t('auth.features.examination'), subtitle: t('auth.features.management') },
+              { icon: BarChart3, title: t('auth.features.reports'), subtitle: t('auth.features.analytics') }
             ].map((f, i) => (
               <div key={i} className="flex items-center gap-4 p-4 bg-white/70 rounded-xl backdrop-blur-sm shadow-sm">
-                <span className="text-3xl">{f.icon}</span>
+                <f.icon size={28} className="text-blue-600 dark:text-blue-400" />
                 <div>
                   <p className="font-semibold text-gray-800 text-lg">{f.title}</p>
                   <p className="text-gray-600">{f.subtitle}</p>

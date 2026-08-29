@@ -111,7 +111,7 @@ const sendViaAfricasTalking = async (phone, message) => {
       username,
       to: phone,
       message,
-      from: process.env.SMS_SENDER_ID || 'SmartSMS'
+      from: process.env.SMS_SENDER_ID || 'AykelSchool'
     })
   })
   
@@ -194,7 +194,7 @@ const sendViaTestMode = async (phone, message) => {
  * @returns {Promise<{success: boolean}>}
  */
 export const sendOTPSMS = async (phone, otp) => {
-  const message = `Your Smart SMS verification code is: ${otp}. Valid for 5 minutes. Do not share this code.`
+  const message = `Your Aykel School verification code is: ${otp}. Valid for 5 minutes. Do not share this code.`
   
   const result = await sendSMS(phone, message)
   

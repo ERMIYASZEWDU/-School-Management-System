@@ -320,7 +320,7 @@ export const notifyStudentEnrollment = async (
     await createNotification({
       recipientUserId: student.userId._id,
       type: 'student_enrollment',
-      title: 'Welcome to Smart SMS',
+      title: 'Welcome to Aykel School',
       message: `You have been enrolled in ${className} for academic year ${academicYear}`,
       relatedEntity: 'student',
       relatedEntityId: studentId,

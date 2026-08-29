@@ -64,9 +64,9 @@ export const sendOTPEmail = async (email, otp, userName = 'User') => {
     const transporter = await createTransporter()
     
     const mailOptions = {
-      from: process.env.EMAIL_FROM || '"Smart SMS" <noreply@smartsms.et>',
+      from: process.env.EMAIL_FROM || '"Aykel School" <noreply@aykelschool.et>',
       to: email,
-      subject: 'Password Reset OTP - Smart SMS',
+      subject: 'Password Reset OTP - Aykel School',
       html: `
 <!DOCTYPE html>
 <html>
@@ -93,7 +93,7 @@ export const sendOTPEmail = async (email, otp, userName = 'User') => {
     <div class="content">
       <p>Hello <strong>${userName}</strong>,</p>
       
-      <p>We received a request to reset your password for your Smart SMS account.</p>
+      <p>We received a request to reset your password for your Aykel School account.</p>
       
       <div class="otp-box">
         <p style="margin: 0; color: #666; font-size: 14px;">Your verification code is:</p>
@@ -107,7 +107,7 @@ export const sendOTPEmail = async (email, otp, userName = 'User') => {
         <strong>⚠️ Security Notice:</strong>
         <ul style="margin: 10px 0; padding-left: 20px;">
           <li>Never share this code with anyone</li>
-          <li>Smart SMS staff will never ask for this code</li>
+          <li>Aykel School staff will never ask for this code</li>
           <li>This code expires in 5 minutes</li>
           <li>If you didn't request this, please ignore this email</li>
         </ul>
@@ -132,7 +132,7 @@ export const sendOTPEmail = async (email, otp, userName = 'User') => {
       text: `
 Hello ${userName},
 
-We received a request to reset your password for your Smart SMS account.
+We received a request to reset your password for your Aykel School account.
 
 Your verification code is: ${otp}
 
@@ -142,11 +142,11 @@ Enter this code in the password reset form to continue.
 
 SECURITY NOTICE:
 - Never share this code with anyone
-- Smart SMS staff will never ask for this code
+- Aykel School staff will never ask for this code
 - This code expires in 5 minutes
 - If you didn't request this, please ignore this email
 
-Smart School Management System
+Aykel School
 This is an automated email. Please do not reply to this message.
       `
     }
@@ -195,9 +195,9 @@ export const sendPasswordResetConfirmation = async (email, userName = 'User') =>
     const transporter = await createTransporter()
     
     const mailOptions = {
-      from: process.env.EMAIL_FROM || '"Smart SMS" <noreply@smartsms.et>',
+      from: process.env.EMAIL_FROM || '"Aykel School" <noreply@aykelschool.et>',
       to: email,
-      subject: 'Password Reset Successful - Smart SMS',
+      subject: 'Password Reset Successful - Aykel School',
       html: `
 <!DOCTYPE html>
 <html>
@@ -224,7 +224,7 @@ export const sendPasswordResetConfirmation = async (email, userName = 'User') =>
       
       <p>Your password has been successfully reset.</p>
       
-      <p>You can now log in to your Smart SMS account with your new password.</p>
+      <p>You can now log in to your Aykel School account with your new password.</p>
       
       <p style="color: #dc3545; background: #fff5f5; padding: 15px; border-left: 4px solid #dc3545; border-radius: 4px;">
         <strong>⚠️ Didn't reset your password?</strong><br>
@@ -232,7 +232,7 @@ export const sendPasswordResetConfirmation = async (email, userName = 'User') =>
       </p>
     </div>
     <div class="footer">
-      <p>Smart School Management System</p>
+      <p>Aykel School</p>
       <p>This is an automated email. Please do not reply to this message.</p>
     </div>
   </div>
@@ -244,12 +244,12 @@ Hello ${userName},
 
 Your password has been successfully reset.
 
-You can now log in to your Smart SMS account with your new password.
+You can now log in to your Aykel School account with your new password.
 
 ⚠️ Didn't reset your password?
 If you did not perform this action, please contact your system administrator immediately.
 
-Smart School Management System
+Aykel School
 This is an automated email. Please do not reply to this message.
       `
     }

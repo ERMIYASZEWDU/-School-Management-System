@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Users, BookOpen, CheckCircle, Clock, TrendingUp, AlertTriangle, Download, Calendar, Menu, Bell, Search, User } from 'lucide-react'
+import { Users, BookOpen, CheckCircle, Clock, TrendingUp, AlertTriangle, Download, Calendar, Menu, Bell, Search, User, ClipboardCheck, FileSpreadsheet, MessageSquare, GraduationCap, PenLine, BarChart3 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
 import { getTeacherDashboard } from '../../services/teacherApi'
 import { useNavigate } from 'react-router-dom'
@@ -287,10 +287,10 @@ export const TeacherDashboard = () => {
             </div>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {[
-                { icon: '📋', title: 'Attendance sheet submission deadline today', time: '2 hours ago', color: 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-900/50' },
-                { icon: '📅', title: 'Parent-Teacher meeting scheduled on 30 May', time: '1 day ago', color: 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-900/50' },
-                { icon: '✅', title: 'Assignment submissions closed for Grade 11-A', time: '2 days ago', color: 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-900/50' },
-                { icon: '🎓', title: 'Final exam schedule has been published', time: '3 days ago', color: 'bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-900/50' }
+                { icon: ClipboardCheck, title: 'Attendance sheet submission deadline today', time: '2 hours ago', color: 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-900/50', iconColor: 'text-red-500' },
+                { icon: Calendar, title: 'Parent-Teacher meeting scheduled on 30 May', time: '1 day ago', color: 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-900/50', iconColor: 'text-green-500' },
+                { icon: CheckCircle, title: 'Assignment submissions closed for Grade 11-A', time: '2 days ago', color: 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-900/50', iconColor: 'text-blue-500' },
+                { icon: GraduationCap, title: 'Final exam schedule has been published', time: '3 days ago', color: 'bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-900/50', iconColor: 'text-purple-500' }
               ].map((notif, idx) => (
                 <motion.div
                   key={idx}
@@ -300,7 +300,7 @@ export const TeacherDashboard = () => {
                   className={`p-3 ${notif.color} border rounded-lg`}
                 >
                   <div className="flex gap-2">
-                    <span className="text-lg flex-shrink-0">{notif.icon}</span>
+                    <notif.icon size={18} className={`flex-shrink-0 ${notif.iconColor}`} />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-gray-800 dark:text-gray-100 line-clamp-2">{notif.title}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{notif.time}</p>
@@ -320,12 +320,12 @@ export const TeacherDashboard = () => {
           className="grid md:grid-cols-3 gap-4"
         >
           {[
-            { icon: '📝', label: 'Create Assignment', action: () => navigate('/teacher/assignments') },
-            { icon: '✔️', label: 'Mark Attendance', action: () => navigate('/teacher/attendance') },
-            { icon: '📊', label: 'Upload Grades', action: () => navigate('/teacher/grades') },
-            { icon: '💬', label: 'Message Parents', action: () => {} },
-            { icon: '📚', label: 'View Syllabus', action: () => {} },
-            { icon: '👥', label: 'Student Reports', action: () => navigate('/teacher/students') }
+            { icon: PenLine, label: 'Create Assignment', action: () => navigate('/teacher/assignments') },
+            { icon: ClipboardCheck, label: 'Mark Attendance', action: () => navigate('/teacher/attendance') },
+            { icon: BarChart3, label: 'Upload Grades', action: () => navigate('/teacher/grades') },
+            { icon: MessageSquare, label: 'Message Parents', action: () => {} },
+            { icon: BookOpen, label: 'View Syllabus', action: () => {} },
+            { icon: Users, label: 'Student Reports', action: () => navigate('/teacher/students') }
           ].map((link, idx) => (
             <motion.button
               key={idx}
@@ -337,7 +337,7 @@ export const TeacherDashboard = () => {
               onClick={link.action}
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-center hover:shadow-md transition"
             >
-              <div className="text-3xl mb-2">{link.icon}</div>
+              <link.icon size={28} className="mb-2 text-blue-600 dark:text-blue-400" />
               <p className="text-gray-800 dark:text-gray-100 font-semibold text-sm">{link.label}</p>
             </motion.button>
           ))}

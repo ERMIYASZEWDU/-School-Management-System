@@ -103,9 +103,9 @@ export const Sidebar = ({ role, isOpen, onClose, isMobile, user }) => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                SMS
+                AS
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 font-medium">Smart School Management System</p>
+              <p className="text-gray-600 dark:text-gray-400 text-xs mt-1 font-medium">Aykel School</p>
             </div>
             {isMobile && (
               <button 
