@@ -371,18 +371,6 @@ npm test
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/YourFeature`
-3. Run tests: `cd server && npm test`
-4. Commit changes: `git commit -m 'Add YourFeature'`
-5. Push to branch: `git push origin feature/YourFeature`
-6. Open a Pull Request
-
----
 
 ## 📝 License
 
