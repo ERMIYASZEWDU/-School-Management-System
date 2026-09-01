@@ -558,6 +558,7 @@ router.get('/teachers', verifyToken, checkRole(['admin']), async (req, res) => {
           ...teacher,
           profile,
           // Surface fields the teacher form uses (edit round-trip + list display)
+          qualification: profile?.qualification || '',
           subject: profile?.department || profile?.assignedSubjectIds?.[0]?.name || '',
           assignedClasses: profile?.assignedClassIds || []
         }

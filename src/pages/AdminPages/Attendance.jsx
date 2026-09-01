@@ -172,7 +172,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Present</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.present}</p>
                 <p className="text-xs text-green-600 dark:text-green-400 font-semibold mt-1">
-                  {((stats.present / stats.total) * 100).toFixed(1)}%
+                  {stats.total > 0 ? ((stats.present / stats.total) * 100).toFixed(1) : '0.0'}%
                 </p>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-xl">
@@ -192,7 +192,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Absent</p>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.absent}</p>
                 <p className="text-xs text-red-600 dark:text-red-400 font-semibold mt-1">
-                  {((stats.absent / stats.total) * 100).toFixed(1)}%
+                  {stats.total > 0 ? ((stats.absent / stats.total) * 100).toFixed(1) : '0.0'}%
                 </p>
               </div>
               <div className="p-4 bg-red-50 dark:bg-red-900/30 rounded-xl">
@@ -212,7 +212,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Late</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.late}</p>
                 <p className="text-xs text-orange-600 dark:text-orange-400 font-semibold mt-1">
-                  {((stats.late / stats.total) * 100).toFixed(1)}%
+                  {stats.total > 0 ? ((stats.late / stats.total) * 100).toFixed(1) : '0.0'}%
                 </p>
               </div>
               <div className="p-4 bg-orange-50 dark:bg-orange-900/30 rounded-xl">
@@ -232,7 +232,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
                 <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Excused</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.excused}</p>
                 <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-1">
-                  {((stats.excused / stats.total) * 100).toFixed(1)}%
+                  {stats.total > 0 ? ((stats.excused / stats.total) * 100).toFixed(1) : '0.0'}%
                 </p>
               </div>
               <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
