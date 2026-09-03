@@ -37,6 +37,7 @@ app.use(helmet({
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
+  'https://school-management-system-smoky-one.vercel.app',
   'https://school-management-ebon-five.vercel.app',
   'https://smart-sms-school-management.vercel.app', // Old URL (keep for compatibility)
   process.env.CORS_ORIGIN
