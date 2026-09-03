@@ -1,8 +1,4 @@
 import jwt from 'jsonwebtoken'
-import Teacher from '../models/Teacher.js'
-import Parent from '../models/Parent.js'
-import Student from '../models/Student.js'
-import Class from '../models/Class.js'
 
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization
@@ -16,10 +12,8 @@ export const verifyToken = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret')
     req.user = decoded
-    console.log('✅ Token verified for user:', { id: decoded.id, role: decoded.role })
     next()
   } catch (err) {
-    console.warn('❌ Invalid token:', err.message)
     return res.status(401).json({ message: 'Invalid or expired token', requiresAuth: true })
   }
 }
@@ -29,18 +23,14 @@ export const checkRole = (allowedRoles) => {
     if (!req.user) {
       console.error('❌ checkRole: No user found in request')
       return res.status(401).json({ message: 'Unauthorized' })
-    }
-
-    if (!allowedRoles.includes(req.user.role)) {
-      console.warn(`❌ Access denied: User role '${req.user.role}' not in allowed roles [${allowedRoles.join(', ')}]`)
+    }    if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({ 
-        message: 'Access denied', 
+        message: 'Access denied',
         requiredRoles: allowedRoles,
         userRole: req.user.role 
       })
     }
 
-    console.log(`✅ Role check passed: ${req.user.role} accessing ${req.path}`)
     next()
   }
 }
@@ -74,9 +64,25 @@ export const isParent = (req, res, next) => {
   return res.status(403).json({ message: 'Parent access required' })
 }
 
+// Lazy-load models only when needed (avoids loading on every request)
+let Teacher, Parent, Student, Class
+const loadModels = async () => {
+  if (!Teacher) {
+    const teacherMod = await import('../models/Teacher.js')
+    Teacher = teacherMod.default
+    const parentMod = await import('../models/Parent.js')
+    Parent = parentMod.default
+    const studentMod = await import('../models/Student.js')
+    Student = studentMod.default
+    const classMod = await import('../models/Class.js')
+    Class = classMod.default
+  }
+}
+
 // Verify teacher has access to specific student
 export const verifyTeacherStudentAccess = async (req, res, next) => {
   try {
+    await loadModels()
     const teacherId = req.user.id
     const studentId = req.params.studentId || req.params.id || req.body.studentId
 
@@ -134,6 +140,7 @@ export const verifyTeacherStudentAccess = async (req, res, next) => {
 // Verify parent has access to specific student
 export const verifyParentChildAccess = async (req, res, next) => {
   try {
+    await loadModels()
     const parentUserId = req.user.id
     const studentId = req.params.studentId || req.params.id || req.body.studentId
 

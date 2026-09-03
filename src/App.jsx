@@ -11,7 +11,6 @@ import { StudentDashboard } from './pages/dashboards/StudentDashboard'
 import { TeacherDashboard } from './pages/dashboards/TeacherDashboard'
 import { ParentDashboard } from './pages/dashboards/ParentDashboard'
 import { AdminDashboard } from './pages/dashboards/AdminDashboard'
-import { SuperAdminDashboard } from './pages/dashboards/SuperAdminDashboard'
 import { UserManagement } from './pages/AdminPages/UserManagement'
 import { Students } from './pages/AdminPages/Students'
 import { Teachers } from './pages/AdminPages/Teachers'
@@ -162,9 +161,6 @@ export default function App() {
         <Route path="/admin/settings" element={<ProtectedRoute role="admin"><DashboardLayout role="admin" user={user} onLogout={logout}><Settings /></DashboardLayout></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute role="admin"><DashboardLayout role="admin" user={user} onLogout={logout}><UserManagement /></DashboardLayout></ProtectedRoute>} />
         <Route path="/admin/announcements" element={<ProtectedRoute role="admin"><DashboardLayout role="admin" user={user} onLogout={logout}><Announcements /></DashboardLayout></ProtectedRoute>} />
-
-        {/* ── SUPERADMIN ── */}
-        <Route path="/superadmin" element={<ProtectedRoute role="superadmin"><DashboardLayout role="superadmin" user={user} onLogout={logout}><SuperAdminDashboard /></DashboardLayout></ProtectedRoute>} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

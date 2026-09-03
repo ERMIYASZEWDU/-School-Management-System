@@ -114,15 +114,13 @@ export const Header = ({ toggleSidebar, user, onLogout, sidebarOpen, isMobile })
                     <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</p>
                   </div>
 
-                  {user?.role !== 'superadmin' && (
-                    <button
-                      onClick={handleNavigateProfile}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                      <User size={16} className="text-gray-500 dark:text-gray-400 shrink-0" />
-                      {t('nav.profile', 'Profile')}
-                    </button>
-                  )}
+                  <button
+                    onClick={handleNavigateProfile}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+                  >
+                    <User size={16} className="text-gray-500 dark:text-gray-400 shrink-0" />
+                    {t('nav.profile', 'Profile')}
+                  </button>
 
                   <button
                     onClick={handleLogout}

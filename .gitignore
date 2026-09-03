@@ -8,6 +8,7 @@ build/
 uploads/
 .DS_Store
 *.log
+*.log.err
 .vscode/
 .idea/
 *.swp
@@ -19,3 +20,4 @@ uploads/
 out/
 *.pem
 *.pck
+.freebuff/

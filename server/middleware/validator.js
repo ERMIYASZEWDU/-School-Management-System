@@ -28,7 +28,7 @@ export const validateRegister = [
     .trim()
     .isLength({ min: 2 })
     .withMessage('Name must be at least 2 characters'),
-  // Self-registration must never grant admin/superadmin. Admin accounts
+  // Self-registration must never grant admin. Admin accounts
   // are created by existing admins through user management only.
   body('role')
     .isIn(['student', 'teacher', 'parent'])

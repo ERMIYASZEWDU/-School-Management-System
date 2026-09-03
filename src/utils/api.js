@@ -79,8 +79,9 @@ apiClient.interceptors.response.use(
       const authStore = useAuthStore.getState()
       authStore.logout()
       
-      // Only redirect if not already on login page
-      if (window.location.pathname !== '/login') {
+      // Only redirect if not already on login or landing page
+      const path = window.location.pathname
+      if (path !== '/login' && path !== '/' && !path.startsWith('/login')) {
         window.location.href = '/login'
       }
       

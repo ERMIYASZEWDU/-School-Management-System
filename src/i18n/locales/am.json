@@ -1,6 +1,6 @@
 {
-  "app_name": "አይኬል ትምህርት ቤት",
-  "welcome": "ወደ አይኬል ትምህርት ቤት እንኳን በደህና መጡ",
+  "app_name": "አይከል ትምህርት ቤት",
+  "welcome": "ወደ አይከል ትምህርት ቤት እንኳን በደህና መጡ",
 
   "enrollmentManagement": "የተማሪ መመዝገቢ አስተዳደር",
   "enrollmentManagementDesc": "የተማሪዎችን መመዝገቢ፣ ማamanagements እና ማስተላለፍ ያስተዳድሩ",
@@ -239,8 +239,8 @@
     "accountLocked": "መለያ ተቆልፏል",
     "sessionExpired": "ክፍለ ጊዜ አልቋል። እባክዎ እንደገና ይግቡ",
     "welcomeToFuture": "እንኳን ወደ",
-    "educationManagement": "አይኬል ትምህርት ቤት",
-    "schoolManagement": "አይኬል ትምህርት ቤት",
+    "educationManagement": "አይከል ትምህርት ቤት",
+    "schoolManagement": "አይከል ትምህርት ቤት",
     "system": "",
     "completeSolution": "ትምህርት ቤትዎን በቀላሉ እና በብቃት ለማስተዳደር ሙሉ መፍትሄ",
     "signInToContinue": "ለመቀጠል ይግቡ",

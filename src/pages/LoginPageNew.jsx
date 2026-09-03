@@ -27,7 +27,7 @@ export const LoginPageNew = () => {
       login(token, user)
       const roleRoutes = {
         admin: '/admin', teacher: '/teacher', student: '/student',
-        parent: '/parent', superadmin: '/superadmin'
+        parent: '/parent'
       }
       navigate(roleRoutes[user.role] || '/')
     } catch (err) {

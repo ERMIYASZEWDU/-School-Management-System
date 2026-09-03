@@ -67,9 +67,6 @@ const menuItems = {
       { icon: Users, label: 'nav.users', path: '/admin/users' },
       { icon: Settings, label: 'nav.settings', path: '/admin/settings' }
     ]}
-  ],
-  superadmin: [
-    { icon: LayoutDashboard, label: 'nav.dashboard', path: '/superadmin' }
   ]
 }
 

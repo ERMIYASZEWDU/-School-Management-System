@@ -1557,7 +1557,7 @@ router.post('/teacher/:teacherId/assign-subjects', verifyToken, checkRole(['admi
   }
 })
 
-router.get('/users', verifyToken, checkRole(['admin', 'superadmin']), async (req, res) => {
+router.get('/users', verifyToken, checkRole(['admin']), async (req, res) => {
   try {
     const users = await User.find().select('-password')
     res.json(users)

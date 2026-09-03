@@ -82,12 +82,12 @@ describe('Notification API Routes', () => {
       assert.ok(res.body.notifications.every(n => n.title === 'Hello Student'))
     })
 
-    it('supports isRead filter', async () => {
+    it('supports unreadOnly filter', async () => {
       await createNotif(studentUser._id, { title: 'Unread', isRead: false })
       await createNotif(studentUser._id, { title: 'Read', isRead: true })
 
       const unreadRes = await request(app)
-        .get('/api/notifications?isRead=false')
+        .get('/api/notifications?unreadOnly=true')
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(200)
 
@@ -118,48 +118,50 @@ describe('Notification API Routes', () => {
     })
   })
 
-  describe('PATCH /api/notifications/:id/read', () => {
-    // NOTE: Routes query on 'userId' but model uses 'recipientUserId'.
-    // findOneAndUpdate with { _id, userId } may not match since userId
-    // is stripped from saved docs. The route returns 200 either way.
-    it('accepts read-mark request', async () => {
+  describe('PUT /api/notifications/:id/read', () => {
+    it('marks a notification as read', async () => {
       const n = await createNotif(studentUser._id, { isRead: false })
 
       await request(app)
-        .patch(`/api/notifications/${n._id}/read`)
+        .put(`/api/notifications/${n._id}/read`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(200)
     })
 
-    it('accepts read-mark for other user\'s notification (userId not enforced)', async () => {
+    it('returns 404 for other user\'s notification', async () => {
       const n = await createNotif(adminUser._id, { isRead: false })
 
       await request(app)
-        .patch(`/api/notifications/${n._id}/read`)
+        .put(`/api/notifications/${n._id}/read`)
         .set('Authorization', `Bearer ${studentToken}`)
-        .expect(200)
+        .expect(404)
     })
   })
 
-  describe('PATCH /api/notifications/read-all', () => {
-    it('accepts read-all request', async () => {
+  describe('PUT /api/notifications/read-all', () => {
+    it('marks all user notifications as read', async () => {
       await createNotif(studentUser._id, { isRead: false })
       await createNotif(studentUser._id, { isRead: false })
 
-      await request(app)
-        .patch('/api/notifications/read-all')
+      const res = await request(app)
+        .put('/api/notifications/read-all')
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(200)
+
+      assert.ok('modifiedCount' in res.body)
     })
 
-    it('accepts read-all request (userId isolation not enforced)', async () => {
+    it('does not mark other user notifications as read', async () => {
       await createNotif(studentUser._id, { isRead: false })
       await createNotif(adminUser._id, { isRead: false })
 
-      await request(app)
-        .patch('/api/notifications/read-all')
+      const res = await request(app)
+        .put('/api/notifications/read-all')
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(200)
+
+      // Only student's notification should be marked
+      assert.equal(res.body.modifiedCount, 1)
     })
   })
 
@@ -182,20 +184,7 @@ describe('Notification API Routes', () => {
     })
   })
 
-  describe('DELETE /api/notifications/clear/read', () => {
-    it('accepts clear-read request', async () => {
-      await createNotif(studentUser._id, { isRead: true })
-      await createNotif(studentUser._id, { isRead: true })
-      await createNotif(studentUser._id, { isRead: false })
 
-      const res = await request(app)
-        .delete('/api/notifications/clear/read')
-        .set('Authorization', `Bearer ${studentToken}`)
-        .expect(200)
-
-      assert.ok('deletedCount' in res.body)
-    })
-  })
 })
 
 // ═══════════════════════════════════════════════════════════════════════════════

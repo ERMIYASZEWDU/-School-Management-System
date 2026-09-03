@@ -174,7 +174,7 @@ export async function buildTestApp() {
   app.use('/api/announcements', announcementRoutes)
 
   // Import and mount notification routes
-  const { default: notificationRoutes } = await import('../routes/notification.js')
+  const { default: notificationRoutes } = await import('../routes/notifications.js')
   app.use('/api/notifications', notificationRoutes)
 
   // Import and mount academic year routes
