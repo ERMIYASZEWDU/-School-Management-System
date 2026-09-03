@@ -1,7 +1,6 @@
 {
   "app_name": "አይከል ትምህርት ቤት",
   "welcome": "ወደ አይከል ትምህርት ቤት እንኳን በደህና መጡ",
-
   "enrollmentManagement": "የተማሪ መመዝገቢ አስተዳደር",
   "enrollmentManagementDesc": "የተማሪዎችን መመዝገቢ፣ ማamanagements እና ማስተላለፍ ያስተዳድሩ",
   "enroll": "መመዝገቢ",
@@ -40,13 +39,23 @@
   "transferring": "በማስተላለፍ ላይ...",
   "reason": "ምክንያት",
   "history": "ታሪክ",
-  "filters": "ማጣሪያዎች",
+  "filters": {
+    "filters": "ማጣሪያዎች",
+    "applyFilters": "ማጣሪያዎችን ተግብር",
+    "clearFilters": "ማጣሪያዎችን አጽዳ",
+    "searchPlaceholder": "ፈልግ...",
+    "filterBy": "በ...",
+    "sortBy": "በ... ደርድር",
+    "allClasses": "ሁሉም ክፍሎች",
+    "allGrades": "ሁሉም ደረጃዎች",
+    "allSubjects": "ሁሉም ትምህርቶች",
+    "allStatuses": "ሁሉም ሁኔታዎች"
+  },
   "all": "ሁሉም",
   "status": "ሁኔታ",
   "loading": "በመጫን ላይ...",
   "noEnrollmentsFound": "ምንም መመዝገቢ አልተገኘም",
   "loadingError": "የትምህርት ዓመቶችን መጫን አልተሳካም",
-
   "landing": {
     "subtitle": "የትምህርት ቤት አስተዳደር ስርዓት",
     "tagline": "ሙሉ የትምህርት ቤት አስተዳደር በአንድ መድረክ",
@@ -174,7 +183,6 @@
     "create": "ፍጠር",
     "optional": "አማራጭ"
   },
-
   "nav": {
     "dashboard": "ዳሽቦርድ",
     "students": "ተማሪዎች",
@@ -202,7 +210,6 @@
     "enrollment": "ምዝገባ",
     "academicYears": "የትምህርት ዓመታት"
   },
-
   "auth": {
     "login": "ግባ",
     "loginTitle": "እንኳን በደህና ተመለሱ!",
@@ -255,7 +262,6 @@
       "management": "አስተዳደር"
     }
   },
-
   "dashboard": {
     "title": "ዳሽቦርድ",
     "welcomeBack": "እንኳን በደህና ተመለሱ",
@@ -276,9 +282,10 @@
     "presentToday": "ዛሬ ተገኝተዋል",
     "absentToday": "ዛሬ አልተገኙም",
     "fromLastMonth": "ከባለፈው ወር",
-    "fromYesterday": "ከትናንት ጀምሮ"
+    "fromYesterday": "ከትናንት ጀምሮ",
+    "enrolledParents": "የተመዝገቡ ወላጆች",
+    "activeClasses": "ንቁ ክፍሎች"
   },
-
   "students": {
     "title": "ተማሪዎች",
     "student": "ተማሪ",
@@ -332,9 +339,15 @@
     "newStudents": "አዳዲስ ተማሪዎች",
     "stream": "ዘርፍ",
     "naturalScience": "የተፈጥሮ ሳይንስ",
-    "socialScience": "ማህበራዊ ሳይንስ"
+    "socialScience": "ማህበራዊ ሳይንስ",
+    "bloodGroup": "የደም ቡድን",
+    "city": "ከተማ",
+    "state": "ግዛት",
+    "country": "ሀገር",
+    "zipCode": "ፖስታል ቁጥር",
+    "guardianEmail": "የአሳዳጊ ኢሜይል",
+    "guardianRelation": "የአሳዳጊ ግንኙነት"
   },
-
   "teachers": {
     "title": "መምህራን",
     "teacher": "መምህር",
@@ -357,9 +370,13 @@
     "teacherDeleteConfirm": "እርግጠኛ ነዎት ይህን መምህር መሰረዝ ይፈልጋሉ?",
     "searchByName": "በስም ወይም የሰራተኛ መታወቂያ ይፈልጉ",
     "totalTeachers": "ጠቅላላ መምህራን",
-    "activeTeachers": "ንቁ መምህራን"
+    "activeTeachers": "ንቁ መምህራን",
+    "specialization": "መ同胞_ids",
+    "designation": "ምństwo",
+    "department": "ክፍል",
+    "salary": "ደመዕዝ",
+    "emergencyContact": "አስቸኳይ ስብረት"
   },
-
   "parents": {
     "title": "ወላጆች",
     "parent": "ወላጅ",
@@ -378,9 +395,13 @@
     "parentDeletedSuccess": "ወላጅ በተሳካ ሁኔታ ተሰርዟል",
     "parentDeleteConfirm": "እርግጠኛ ነዎት ይህን ወላጅ መሰረዝ ይፈልጋሉ?",
     "totalParents": "ጠቅላላ ወላጆች",
-    "totalChildren": "ጠቅላላ ልጆች"
+    "totalChildren": "ጠቅላላ ልጆች",
+    "editParent": "ወላጅ አርትዕ",
+    "deleteParent": "ወላጅ ሰርዝ",
+    "parentDetails": "የወላጅ ዝርዝሮች",
+    "parentList": "የወላጆች ዝርዝር",
+    "parentProfile": "የወላጅ መገለጫ"
   },
-
   "classes": {
     "title": "ክፍሎች",
     "class": "ክፍል",
@@ -408,7 +429,6 @@
     "totalClasses": "ጠቅላላ ክፍሎች",
     "activeClasses": "ንቁ ክፍሎች"
   },
-
   "subjects": {
     "title": "ትምህርቶች",
     "subject": "ትምህርት",
@@ -427,7 +447,6 @@
     "subjectDeletedSuccess": "ትምህርት በተሳካ ሁኔታ ተሰርዟል",
     "subjectDeleteConfirm": "እርግጠኛ ነዎት ይህን ትምህርት መሰረዝ ይፈልጋሉ?"
   },
-
   "attendance": {
     "title": "መገኘት",
     "markAttendance": "መገኘት ምልክት ያድርጉ",
@@ -452,9 +471,19 @@
     "attendanceUpdatedSuccess": "መገኘት በተሳካ ሁኔታ ተዘምኗል",
     "attendanceStatistics": "የመገኘት ስታቲስቲክስ",
     "overallPercentage": "አጠቃላይ መቶኛ",
-    "averageAttendance": "አማካይ መገኘት"
+    "averageAttendance": "አማካይ መገኘት",
+    "attendanceRecord": "የመገኘት መዝገብ",
+    "attendanceReport": "የመገኘት ሪፖርት",
+    "startDate": "የመጀመሪያ ቀን",
+    "endDate": "የመጨረሻ ቀን",
+    "halfDay": "ግማሽ ቀን",
+    "lateDays": "የዘግይተዋል ቀናት",
+    "excusedDays": "የተቅረጡ ቀናት",
+    "selectStudents": "ተማሪዎችን ይምረጡ",
+    "markAll": "ሁሉንም ምልክት ያድርጉ",
+    "markPresent": "ተገኝቷል ይምለክቱ",
+    "markAbsent": "አልተገኘም ይምለክቱ"
   },
-
   "grades": {
     "title": "ውጤቶች",
     "grade": "ውጤት",
@@ -475,9 +504,22 @@
     "gradeAddedSuccess": "ውጤት በተሳካ ሁኔታ ታክሏል",
     "selectStudent": "ተማሪ ይምረጡ",
     "selectSubject": "ትምህርት ይምረጡ",
-    "enterScore": "ውጤት ያስገቡ"
+    "enterScore": "ውጤት ያስገቡ",
+    "editGrade": "ውጤት አርትዕ",
+    "deleteGrade": "ውጤት ሰርዝ",
+    "gradeDetails": "የውጤት ዝርዝሮች",
+    "gradeReport": "የውጤት ሪፖርት",
+    "marks": "ምልክቶች",
+    "totalMarks": "ጠቅላላ ምልክቶች",
+    "obtainedMarks": "የተ斩获ኘ ምልክቶች",
+    "term": "ክፍለ ጊዜ",
+    "semester": "ሰሚስተር",
+    "academicYear": "የትምህርት ዓመት",
+    "passMarks": "የማለፊያ ምልክቶች",
+    "gradeUpdatedSuccess": "ውጤት በተሳካ ሁኔታ ተዘምኗል",
+    "gradeDeletedSuccess": "ውጤት በተሳካ ሁኔታ ተሰርዟል",
+    "gradeDeleteConfirm": "እርግጠኛ ነዎት ይህን ውጤት መሰረዝ ይፈልጋሉ?"
   },
-
   "assignments": {
     "title": "ግዴታዎች",
     "assignment": "ግዴታ",
@@ -495,9 +537,25 @@
     "submitAssignment": "ግዴታ አቅርብ",
     "attachments": "አባሪዎች",
     "noAssignmentsFound": "ግዴታዎች አልተገኙም",
-    "assignmentSubmittedSuccess": "ግዴታ በተሳካ ሁኔታ ቀርቧል"
+    "assignmentSubmittedSuccess": "ግዴታ በተሳካ ሁኔታ ቀርቧል",
+    "editAssignment": "ግዴታ አርትዕ",
+    "deleteAssignment": "ግዴታ ሰርዝ",
+    "assignmentDetails": "የግዴታ ዝርዝሮች",
+    "submittedAssignments": "የተስተናገዱ ግዴታዎች",
+    "assignmentName": "የግዴታ ስም",
+    "submissionDate": "የማስገቢያ ቀን",
+    "submittedOn": "የተስተነገገበት ቀን",
+    "graded": "ተመ夸大Rank",
+    "late": "ዘግይቷል",
+    "notSubmitted": "አልተስተነገገም",
+    "viewSubmission": "ማስገቢያ ይመልከቱ",
+    "submission": "ማስገቢያ",
+    "uploadFile": "ፋይል ስቀል",
+    "assignmentAddedSuccess": "ግዴታ በተሳካ ሁኔታ ታክሏል",
+    "assignmentUpdatedSuccess": "ግዴታ በተሳካ ሁኔታ ተዘምኗል",
+    "assignmentDeletedSuccess": "ግዴታ በተሳካ ሁኔታ ተሰርዟል",
+    "assignmentGradedSuccess": "ግዴታ በተሳካ ሁኔታ ተደምጽዋል"
   },
-
   "timetable": {
     "title": "የጊዜ ሰሌዳ",
     "myTimetable": "የእኔ የጊዜ ሰሌዳ",
@@ -511,9 +569,13 @@
     "friday": "አርብ",
     "saturday": "ቅዳሜ",
     "sunday": "እሁድ",
-    "noTimetableFound": "የጊዜ ሰሌዳ አልተገኘም"
+    "noTimetableFound": "የጊዜ ሰሌዳ አልተገኘም",
+    "classTimetable": "የክፍል የጊዜ ሰሌዳ",
+    "teacherTimetable": "የመምህር የጊዜ ሰሌዳ",
+    "viewTimetable": "የጊዜ ሰሌዳ ይመልከቱ",
+    "startTime": "የመጀመሪያ ጊዜ",
+    "endTime": "የመጨረሻ ጊዜ"
   },
-
   "announcements": {
     "title": "ማስታወቂያዎች",
     "announcement": "ማስታወቂያ",
@@ -568,7 +630,6 @@
     "expired": "ጊዜው አልፏል",
     "targetAudience": "ዒላማ ታዳሚ"
   },
-
   "notifications": {
     "title": "ማሳወቂያዎች",
     "notification": "ማሳወቂያ",
@@ -587,7 +648,6 @@
     "emptyState": "ሁሉንም ተከታትለዋል!",
     "emptyDescription": "በአሁኑ ጊዜ አዲስ ማሳወቂያዎች የሉም"
   },
-
   "settings": {
     "title": "ቅንብሮች",
     "profileSettings": "የመገለጫ ቅንብሮች",
@@ -597,9 +657,17 @@
     "changePassword": "የይለፍ ቃል ቀይር",
     "currentPassword": "የአሁኑ የይለፍ ቃል",
     "newPassword": "አዲስ የይለፍ ቃል",
-    "settingsSavedSuccess": "ቅንብሮች በተሳካ ሁኔታ ተቀምጠዋል"
+    "settingsSavedSuccess": "ቅንብሮች በተሳካ ሁኔታ ተቀምጠዋል",
+    "generalSettings": "አጠቃላይ ቅንብሮች",
+    "accountSettings": "የመለያ ቅንብሮች",
+    "securitySettings": "የደህንነት ቅንብሮች",
+    "notificationSettings": "የማሳወቂያ ቅንብሮች",
+    "confirmNewPassword": "አዲሱን የይለፍ ቃል አረጋግጥ",
+    "emailNotifications": "የኢሜይል ማሳወቂያዎች",
+    "pushNotifications": "የግፊታ ማሳወቂያዎች",
+    "smsNotifications": "የኤስኤምኤስ ማሳወቂያዎች",
+    "passwordChangedSuccess": "የይለፍ ቃል በተሳካ ሁኔታ ተቀይጧል"
   },
-
   "profile": {
     "title": "መገለጫ",
     "myProfile": "የእኔ መገለጫ",
@@ -644,7 +712,6 @@
     "passwordChangeError": "የይለፍ ቃል በመቀየር ላይ ስህተት",
     "incorrectPassword": "የአሁኑ የይለፍ ቃል ልክ አይደለም"
   },
-
   "enrollment": {
     "title": "የምዝገባ አስተዳደር",
     "enrollment": "ምዝገባ",
@@ -733,7 +800,6 @@
     "fromAcademicYear": "ከትምህርት ዓመት",
     "toAcademicYear": "ወደ ትምህርት ዓመት"
   },
-
   "academicYears": {
     "title": "የትምህርት ዓመት አስተዳደር",
     "academicYear": "የትምህርት ዓመት",
@@ -774,7 +840,6 @@
     "cannotDeleteActiveYear": "ንቁውን የትምህርት ዓመት መሰረዝ አይቻልም",
     "noAcademicYearsFound": "የትምህርት ዓመታት አልተገኙም"
   },
-
   "messages": {
     "successTitle": "ተሳክቷል",
     "errorTitle": "ስህተት",
@@ -789,9 +854,16 @@
     "loadingData": "መረጃ በመጫን ላይ...",
     "networkError": "የኔትወርክ ስህተት። እባክዎ ግንኙነትዎን ያረጋግጡ።",
     "permissionDenied": "ፈቃድ ተከልክሏል",
-    "requiredField": "ይህ መስክ ያስፈልጋል"
+    "requiredField": "ይህ መስክ ያስፈልጋል",
+    "unsavedChanges": "ያልተቀመጡ ለውጦች አሉዎት። መቼት መውጣት ይፈልጋሉ?",
+    "savingData": "ውሂብ በማስቀመጥ ላይ...",
+    "processingRequest": "ጥያቄዎን በማስኬድ ላይ...",
+    "serverError": "የเซርቨር ስህተት። እባክዎ ከትናንት ይሞክሩ።",
+    "notFound": "አልተገኘም",
+    "invalidInput": "ልክ ያልሆነ ግብአት",
+    "invalidEmail": "ልክ ያልሆነ ኢሜይል አድራሻ",
+    "invalidPhone": "ልክ ያልሆነ ስልክ ቁጥር"
   },
-
   "table": {
     "serialNumber": "ተ.ቁ",
     "name": "ስም",
@@ -801,12 +873,224 @@
     "noRecords": "መዝገቦች አልተገኙም",
     "showing": "በማሳየት ላይ",
     "of": "ከ",
-    "entries": "መዝገቦች"
+    "entries": "መዝገቦች",
+    "rowsPerPage": "በገጹ ላይ የሚያomorphic ረድፎች",
+    "page": "ገጽ",
+    "first": "መጀመሪያ",
+    "last": "መጨረሻ",
+    "sortBy": "በ... ደርድር",
+    "ascending": "ከниз ወደ ላይ",
+    "descending": "ከላይ ወደ ታች"
   },
-
   "language": {
     "english": "English",
     "amharic": "አማርኛ",
-    "selectLanguage": "ቋንቋ ይምረጡ"
+    "selectLanguage": "ቋንቋ ይምረጡ",
+    "changeLanguage": "ቋንቋ ቀይር"
+  },
+  "selectSection": "ክፍል ይምረጡ",
+  "enrolledParents": "የተመዝገቡ ወላጆች",
+  "activeClasses": "ንቁ ክፍሎች",
+  "bloodGroup": "የደም ቡድን",
+  "city": "ከተማ",
+  "state": "ግዛት",
+  "country": "ሀገር",
+  "zipCode": "ፖስታል ቁጥር",
+  "guardianEmail": "የአሳዳጊ ኢሜይል",
+  "guardianRelation": "የአሳዳጊ ግንኙነት",
+  "specialization": "መ同胞_ids",
+  "designation": "ምństwo",
+  "department": "ክፍል",
+  "salary": "ደመዕዝ",
+  "emergencyContact": "አስቸኳይ ስብረት",
+  "editParent": "ወላጅ አርትዕ",
+  "deleteParent": "ወላጅ ሰርዝ",
+  "parentDetails": "የወላጅ ዝርዝሮች",
+  "parentList": "የወላጆች ዝርዝር",
+  "parentProfile": "የወላጅ መገለጫ",
+  "attendanceRecord": "የመገኘት መዝገብ",
+  "attendanceReport": "የመገኘት ሪፖርት",
+  "startDate": "የመጀመሪያ ቀን",
+  "endDate": "የመጨረሻ ቀን",
+  "halfDay": "ግማሽ ቀን",
+  "lateDays": "የዘግይተዋል ቀናት",
+  "excusedDays": "የተቅረጡ ቀናት",
+  "selectStudents": "ተማሪዎችን ይምረጡ",
+  "markAll": "ሁሉንም ምልክት ያድርጉ",
+  "markPresent": "ተገኝቷል ይምለክቱ",
+  "markAbsent": "አልተገኘም ይምለክቱ",
+  "editGrade": "ውጤት አርትዕ",
+  "deleteGrade": "ውጤት ሰርዝ",
+  "gradeDetails": "የውጤት ዝርዝሮች",
+  "gradeReport": "የውጤት ሪፖርት",
+  "marks": "ምልክቶች",
+  "totalMarks": "ጠቅላላ ምልክቶች",
+  "obtainedMarks": "የተ斩获ኘ ምልክቶች",
+  "term": "ክፍለ ጊዜ",
+  "semester": "ሰሚስተር",
+  "passMarks": "የማለፊያ ምልክቶች",
+  "gradeUpdatedSuccess": "ውጤት በተሳካ ሁኔታ ተዘምኗል",
+  "gradeDeletedSuccess": "ውጤት በተሳካ ሁኔታ ተሰርዟል",
+  "gradeDeleteConfirm": "እርግጠኛ ነዎት ይህን ውጤት መሰረዝ ይፈልጋሉ?",
+  "results": {
+    "title": "ውጤቶች",
+    "result": "ውጤት",
+    "myResults": "የእኔ ውጤቶች",
+    "resultCard": "የውጤት ካርድ",
+    "reportCard": "የሪፖርት ካርድ",
+    "viewResult": "ውጤት ይመልከቱ",
+    "publishResult": "ውጤት ማuale",
+    "published": "የታuale",
+    "unpublished": "ያልታuale",
+    "rank": "ደረጃ",
+    "totalScore": "ጠቅላላ ውጤት",
+    "percentage": "መቶኛ",
+    "passStatus": "የማለፊያ ሁኔታ",
+    "passed": "ጓ哒 UNUSED_UNUSED",
+    "failed": "አልተሳካም",
+    "noResultsFound": "ውጤቶች አልተገኙም",
+    "resultPublishedSuccess": "ውጤት በተሳካ ሁኔታ ተታውቷል"
+  },
+  "examinations": {
+    "title": "ፈተናዎች",
+    "examination": "ፈተና",
+    "exam": "ፈተና",
+    "addExam": "ፈተና ጨምር",
+    "editExam": "ፈተና አርትዕ",
+    "deleteExam": "ፈተና ሰርዝ",
+    "examDetails": "የፈተና ዝርዝሮች",
+    "examSchedule": "የፈተና ሰሌዳ",
+    "upcomingExams": "የሚቀጥሉ ፈተናዎች",
+    "examName": "የፈተና ስም",
+    "examDate": "የፈተና ቀን",
+    "examTime": "የፈተና ጊዜ",
+    "duration": "ጊዜ ርዝመት",
+    "totalMarks": "ጠቅላላ ምልክቶች",
+    "passingMarks": "የማለፊያ ምልክቶች",
+    "instructions": "መመሪያዎች",
+    "venue": "ቦታ",
+    "hall": "ማዕከል",
+    "noExamsFound": "ፈተናዎች አልተገኙም",
+    "examAddedSuccess": "ፈተና በተሳካ ሁኔታ ታክሏል",
+    "examUpdatedSuccess": "ፈተና በተሳካ ሁኔታ ተዘምኗል",
+    "examDeletedSuccess": "ፈተና በተሳካ ሁኔታ ተሰርዟል"
+  },
+  "editAssignment": "ግዴታ አርትዕ",
+  "deleteAssignment": "ግዴታ ሰርዝ",
+  "assignmentDetails": "የግዴታ ዝርዝሮች",
+  "submittedAssignments": "የተስተናገዱ ግዴታዎች",
+  "assignmentName": "የግዴታ ስም",
+  "submissionDate": "የማስገቢያ ቀን",
+  "submittedOn": "የተስተነገገበት ቀን",
+  "graded": "ተመ夸大Rank",
+  "late": "ዘግይቷል",
+  "notSubmitted": "አልተስተነገገም",
+  "viewSubmission": "ማስገቢያ ይመልከቱ",
+  "submission": "ማስገቢያ",
+  "uploadFile": "ፋይል ስቀል",
+  "assignmentAddedSuccess": "ግዴታ በተሳካ ሁኔታ ታክሏል",
+  "assignmentUpdatedSuccess": "ግዴታ በተሳካ ሁኔታ ተዘምኗል",
+  "assignmentDeletedSuccess": "ግዴታ በተሳካ ሁኔታ ተሰርዟል",
+  "assignmentGradedSuccess": "ግዴታ በተሳካ ሁኔታ ተደምጽዋል",
+  "classTimetable": "የክፍል የጊዜ ሰሌዳ",
+  "teacherTimetable": "የመምህር የጊዜ ሰሌዳ",
+  "viewTimetable": "የጊዜ ሰሌዳ ይመልከቱ",
+  "startTime": "የመጀመሪያ ጊዜ",
+  "endTime": "የመጨረሻ ጊዜ",
+  "fees": {
+    "title": "ክፍያዎች",
+    "feeCollection": "የክፍያ ስብስብ",
+    "feeStructure": "የክፍያ መ造血",
+    "myFees": "የእኔ ክፍያዎች",
+    "collectFee": "ክፍያ ስብስብ",
+    "payFee": "ክፍያ ስጥ",
+    "feeType": "የክፍያ አይነት",
+    "amount": "መጠን",
+    "paidAmount": "የተከፈለ መጠን",
+    "dueAmount": "የሚያስፈልግ መጠን",
+    "totalFees": "ጠቅላላ ክፍያዎች",
+    "paid": "የተከፈለ",
+    "unpaid": "ያልተከፈለ",
+    "partial": "ከፊል",
+    "overdue": "ጊዜው አልፏል",
+    "paymentDate": "የክፍያ ቀን",
+    "paymentMethod": "የክፍያ ዘዴ",
+    "receiptNumber": "የደረሰኝ ቁጥር",
+    "cash": "ገንዘብ",
+    "card": "ካርድ",
+    "online": "በመስመር ላይ",
+    "bank": "ባንክ ዝውውር",
+    "noFeesFound": "ክፍያዎች አልተገኙም",
+    "feeCollectedSuccess": "ክፍያ በተሳካ ሁኔታ ተሰብስቧል",
+    "feePaidSuccess": "ክፍያ በተሳካ ሁኔታ ተከፍልዋል"
+  },
+  "reports": {
+    "title": "ሪፖርቶች",
+    "generateReport": "ሪፖርት ፍጠር",
+    "downloadReport": "ሪፖርት አውርድ",
+    "reportType": "የሪፖርት አይነት",
+    "attendanceReport": "የመገኘት ሪፖርት",
+    "gradeReport": "የውጤት ሪፖርት",
+    "feeReport": "የክፍያ ሪፖርት",
+    "studentReport": "የተማሪ ሪፖርት",
+    "classReport": "የክፍል ሪፖርት",
+    "customReport": "የተማRank ሪፖርት",
+    "selectReportType": "የሪፖርት አይነት ይምረጡ",
+    "dateRange": "የቀን ክልል",
+    "from": "ከ",
+    "to": "እስከ"
+  },
+  "generalSettings": "አጠቃላይ ቅንብሮች",
+  "accountSettings": "የመለያ ቅንብሮች",
+  "securitySettings": "የደህንነት ቅንብሮች",
+  "notificationSettings": "የማሳወቂያ ቅንብሮች",
+  "confirmNewPassword": "አዲሱን የይለፍ ቃል አረጋግጥ",
+  "emailNotifications": "የኢሜይል ማሳወቂያዎች",
+  "pushNotifications": "የግፊታ ማሳወቂያዎች",
+  "smsNotifications": "የኤስኤምኤስ ማሳወቂያዎች",
+  "passwordChangedSuccess": "የይለፍ ቃል በተሳካ ሁኔታ ተቀይጧል",
+  "unsavedChanges": "ያልተቀመጡ ለውጦች አሉዎት። መቼት መውጣት ይፈልጋሉ?",
+  "savingData": "ውሂብ በማስቀመጥ ላይ...",
+  "processingRequest": "ጥያቄዎን በማስኬድ ላይ...",
+  "serverError": "የเซርቨር ስህተት። እባክዎ ከትናንት ይሞክሩ።",
+  "notFound": "አልተገኘም",
+  "invalidInput": "ልክ ያልሆነ ግብአት",
+  "invalidEmail": "ልክ ያልሆነ ኢሜይል አድራሻ",
+  "invalidPhone": "ልክ ያልሆነ ስልክ ቁጥር",
+  "rowsPerPage": "በገጹ ላይ የሚያomorphic ረድፎች",
+  "page": "ገጽ",
+  "first": "መጀመሪያ",
+  "last": "መጨረሻ",
+  "sortBy": "በ... ደርድር",
+  "ascending": "ከниз ወደ ላይ",
+  "descending": "ከላይ ወደ ታች",
+  "changeLanguage": "ቋንቋ ቀይር",
+  "today": "ዛሬ",
+  "yesterday": "ትናንት",
+  "tomorrow": "ነገ",
+  "thisWeek": "በዚህ ሳምንት",
+  "lastWeek": "በባለፈው ሳምንት",
+  "thisMonth": "በዚህ ወር",
+  "lastMonth": "በባለፈው ወር",
+  "thisYear": "በዚህ ዓመት",
+  "lastYear": "በባለፈው ዓመት",
+  "custom": "ተまRank",
+  "morning": "ጧት",
+  "afternoon": "ከሰዓት በኋላ",
+  "evening": "ማታ",
+  "time": {
+    "today": "ዛሬ",
+    "yesterday": "ትናንት",
+    "tomorrow": "ነገ",
+    "thisWeek": "በዚህ ሳምንት",
+    "lastWeek": "በባለፈው ሳምንት",
+    "thisMonth": "በዚህ ወር",
+    "lastMonth": "በባለፈው ወር",
+    "thisYear": "በዚህ ዓመት",
+    "lastYear": "በባለፈው ዓመት",
+    "custom": "ተまRank",
+    "morning": "ጧት",
+    "afternoon": "ከሰዓት በኋላ",
+    "evening": "ማታ"
   }
 }
