@@ -6,6 +6,27 @@ export const getAdminDashboard = async () => {
   return response.data
 }
 
+// Assignments (admin) — live data
+export const getAdminAssignments = async () => {
+  const response = await apiClient.get('/api/admin/assignments')
+  return response.data
+}
+
+export const createAdminAssignment = async (assignmentData) => {
+  const response = await apiClient.post('/api/admin/assignment', assignmentData)
+  return response.data
+}
+
+export const updateAdminAssignment = async (id, assignmentData) => {
+  const response = await apiClient.put(`/api/admin/assignment/${id}`, assignmentData)
+  return response.data
+}
+
+export const deleteAdminAssignment = async (id) => {
+  const response = await apiClient.delete(`/api/admin/assignment/${id}`)
+  return response.data
+}
+
 // Students
 export const getStudents = async (params = {}) => {
   const query = buildQuery(params)

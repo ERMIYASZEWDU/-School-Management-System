@@ -22,6 +22,7 @@ import Enrollment from '../models/Enrollment.js'
 import AcademicYear from '../models/AcademicYear.js'
 import { notifyStudentEnrollment, notifyTeacherClassAssignment } from '../services/notificationService.js'
 import Assignment from '../models/Assignment.js'
+import AssignmentSubmission from '../models/AssignmentSubmission.js'
 import Class from '../models/Class.js'
 import Subject from '../models/Subject.js'
 import Announcement from '../models/Announcement.js'
@@ -54,6 +55,107 @@ router.get('/dashboard', verifyToken, checkRole(['admin']), asyncHandler(async (
     avgAttendance: parseFloat(avgAttendance),
     message: 'Admin dashboard loaded successfully'
   })
+}))
+
+// ========== ASSIGNMENTS (live data) ==========
+
+// All assignments with real submission counts from AssignmentSubmission
+router.get('/assignments', verifyToken, checkRole(['admin']), asyncHandler(async (req, res) => {
+  const [classDocs, assignments, submissions, studentCounts] = await Promise.all([
+    Class.find({ isActive: true }).lean(),
+    Assignment.find().sort({ dueDate: -1 }).lean(),
+    AssignmentSubmission.find({}, 'assignmentId status').lean(),
+    Student.aggregate([
+      { $match: { classId: { $ne: null } } },
+      { $group: { _id: '$classId', total: { $sum: 1 } } }
+    ])
+  ])
+
+  const classById = new Map(classDocs.map(c => [String(c._id), c]))
+  const studentsByClass = new Map(studentCounts.map(r => [String(r._id), r.total]))
+
+  const subsByAssignment = new Map()
+  for (const s of submissions) {
+    const key = String(s.assignmentId)
+    if (!subsByAssignment.has(key)) subsByAssignment.set(key, [])
+    subsByAssignment.get(key).push(s)
+  }
+
+  const now = new Date()
+  const data = assignments.map(a => {
+    const classDoc = a.classId ? classById.get(String(a.classId)) : null
+    const subs = subsByAssignment.get(String(a._id)) || []
+    const roster = a.classId ? (studentsByClass.get(String(a.classId)) || 0) : 0
+    const status = roster > 0 && subs.length >= roster
+      ? 'Completed'
+      : (new Date(a.dueDate) < now ? 'Overdue' : 'Active')
+    return {
+      id: String(a._id),
+      title: a.title,
+      description: a.description || '',
+      subject: a.subject,
+      grade: a.grade || (classDoc ? classDoc.grade : ''),
+      classId: a.classId ? String(a.classId) : null,
+      className: classDoc ? classDoc.name : (a.grade || ''),
+      dueDate: a.dueDate,
+      maxScore: a.maxScore || 100,
+      submitted: subs.length,
+      pending: Math.max(roster - subs.length, 0),
+      status
+    }
+  })
+
+  res.json({ assignments: data })
+}))
+
+router.post('/assignment', verifyToken, checkRole(['admin']), asyncHandler(async (req, res) => {
+  const { title, description, subject, grade, classId, dueDate, maxScore } = req.body
+  if (!title || !subject || !dueDate) {
+    return res.status(400).json({ message: 'Title, subject and due date are required' })
+  }
+  let resolvedGrade = grade
+  if (!resolvedGrade && classId) {
+    const classDoc = await Class.findById(classId).lean()
+    resolvedGrade = classDoc ? classDoc.grade : classId
+  }
+  const assignment = new Assignment({
+    teacherId: req.user.id,
+    title,
+    description: description || title,
+    subject,
+    grade: resolvedGrade || classId,
+    classId: classId || undefined,
+    dueDate,
+    maxScore: maxScore || 100
+  })
+  await assignment.save()
+  res.status(201).json({ message: 'Assignment created', assignment })
+}))
+
+router.put('/assignment/:id', verifyToken, checkRole(['admin']), validateObjectId('id'), asyncHandler(async (req, res) => {
+  const { title, description, subject, grade, classId, dueDate, maxScore } = req.body
+  const update = { updatedAt: new Date() }
+  if (title !== undefined) update.title = title
+  if (description !== undefined) update.description = description
+  if (subject !== undefined) update.subject = subject
+  if (grade !== undefined) update.grade = grade
+  if (classId !== undefined) update.classId = classId || null
+  if (dueDate !== undefined) update.dueDate = dueDate
+  if (maxScore !== undefined) update.maxScore = maxScore
+  const assignment = await Assignment.findByIdAndUpdate(req.params.id, update, { new: true }).lean()
+  if (!assignment) {
+    return res.status(404).json({ message: 'Assignment not found' })
+  }
+  res.json({ message: 'Assignment updated', assignment })
+}))
+
+router.delete('/assignment/:id', verifyToken, checkRole(['admin']), validateObjectId('id'), asyncHandler(async (req, res) => {
+  const assignment = await Assignment.findByIdAndDelete(req.params.id)
+  if (!assignment) {
+    return res.status(404).json({ message: 'Assignment not found' })
+  }
+  await AssignmentSubmission.deleteMany({ assignmentId: assignment._id })
+  res.json({ message: 'Assignment deleted' })
 }))
 
 // ========== STUDENT CRUD ==========

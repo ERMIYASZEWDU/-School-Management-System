@@ -13,6 +13,7 @@ export const Reports = () => {
   const [students, setStudents] = useState([])
   const [teachers, setTeachers] = useState([])
   const [grades, setGrades] = useState([])
+  const [dashboardCounts, setDashboardCounts] = useState({ totalClasses: 0, avgAttendance: 0 })
   const [selectedReportType, setSelectedReportType] = useState(null)
   const [dateRange, setDateRange] = useState({ from: '', to: '' })
   const [selectedClass, setSelectedClass] = useState('all')
@@ -22,12 +23,18 @@ export const Reports = () => {
     // Fetch data from API when component mounts
     const fetchData = async () => {
       try {
-        const { getStudents, getTeachers, getGrades } = await import('../../services/adminApi')
-        const [studentsResponse, teachersResponse, gradesResponse] = await Promise.all([
+        const { getStudents, getTeachers, getGrades, getAdminDashboard } = await import('../../services/adminApi')
+        const [studentsResponse, teachersResponse, gradesResponse, dashboardResponse] = await Promise.all([
           getStudents(),
           getTeachers(),
-          getGrades()
+          getGrades(),
+          getAdminDashboard()
         ])
+        
+        setDashboardCounts({
+          totalClasses: dashboardResponse?.totalClasses || 0,
+          avgAttendance: dashboardResponse?.avgAttendance || 0
+        })
         
         // Handle different response structures
         // Students API returns { students: [], pagination: {} }
@@ -155,10 +162,8 @@ export const Reports = () => {
   const stats = {
     totalStudents: Array.isArray(students) ? students.length : 0,
     totalTeachers: Array.isArray(teachers) ? teachers.length : 0,
-    totalClasses: Array.isArray(students) && students.length > 0
-      ? [...new Set(students.map(s => `${s.grade}-${s.section}`).filter(Boolean))].length
-      : 0,
-    avgAttendance: 85.5,
+    totalClasses: dashboardCounts.totalClasses,
+    avgAttendance: dashboardCounts.avgAttendance,
     passRate: Array.isArray(grades) && grades.length > 0 
       ? ((grades.filter(g => (g.score / (g.maxScore || 100)) >= 0.5).length / grades.length) * 100).toFixed(1)
       : 0
