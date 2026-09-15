@@ -5,8 +5,10 @@ import { Modal } from '../../components/Modal'
 import { Button } from '../../components/Button'
 import { Input } from '../../components/Input'
 import { getSubjects, createSubject, updateSubject, deleteSubject, getTeachers } from '../../services/adminApi'
+import { useTranslation } from 'react-i18next'
 
 export const Subjects = () => {
+  const { t } = useTranslation()
   const [subjects, setSubjects] = useState([])
   const [teachers, setTeachers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -38,7 +40,7 @@ export const Subjects = () => {
       setError('')
     } catch (err) {
       console.error('❌ Error fetching subjects:', err)
-      setError('Failed to load subjects')
+      setError(t('admin.subjects.loadFailed', 'Failed to load subjects'))
     } finally {
       setLoading(false)
     }
@@ -80,18 +82,18 @@ export const Subjects = () => {
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this subject? This may affect grades and assignments.')) {
+    if (!window.confirm(t('admin.subjects.deleteConfirm', 'Are you sure you want to delete this subject? This may affect grades and assignments.'))) {
       return
     }
 
     try {
       await deleteSubject(id)
-      alert('✅ Subject deleted successfully!')
+      alert(t('admin.subjects.deleted', '✅ Subject deleted successfully!'))
       await fetchSubjects()
     } catch (err) {
       console.error('❌ Error deleting subject:', err)
       const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
-      alert(`Failed to delete subject: ${errorMsg}`)
+      alert(`${t('admin.subjects.deleteFailed', 'Failed to delete subject')}: ${errorMsg}`)
     }
   }
 
@@ -101,10 +103,10 @@ export const Subjects = () => {
       
       if (showEditModal && selectedSubject) {
         await updateSubject(selectedSubject._id, formData)
-        alert('✅ Subject updated successfully!')
+        alert(t('admin.subjects.updated', '✅ Subject updated successfully!'))
       } else {
         await createSubject(formData)
-        alert('✅ Subject created successfully!')
+        alert(t('admin.subjects.created', '✅ Subject created successfully!'))
       }
 
       await fetchSubjects()
@@ -113,19 +115,19 @@ export const Subjects = () => {
     } catch (err) {
       console.error('❌ Error saving subject:', err)
       const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
-      alert(`Failed to save subject: ${errorMsg}`)
+      alert(`${t('admin.subjects.saveFailed', 'Failed to save subject')}: ${errorMsg}`)
     }
   }
 
   const getTeacherName = (teacherId) => {
-    if (!teacherId) return 'No teacher assigned'
+    if (!teacherId) return t('admin.classes.noTeacherAssigned', 'No teacher assigned')
     
     if (typeof teacherId === 'object' && teacherId.name) {
       return teacherId.name
     }
     
-    const teacher = teachers.find(t => t._id === teacherId)
-    return teacher ? teacher.name : 'Unknown'
+    const teacher = teachers.find(x => x._id === teacherId)
+    return teacher ? teacher.name : t('admin.classes.unknown', 'Unknown')
   }
 
   if (loading) {
@@ -133,7 +135,7 @@ export const Subjects = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading subjects...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('admin.subjects.loading', 'Loading subjects...')}</p>
         </div>
       </div>
     )
@@ -151,14 +153,14 @@ export const Subjects = () => {
             <div className="flex items-center gap-3">
               <GraduationCap size={36} className="text-purple-600 dark:text-purple-400" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Subjects
+                {t('admin.subjects.title', 'Subjects')}
               </h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">Manage curriculum and subjects</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">{t('admin.subjects.subtitle', 'Manage curriculum and subjects')}</p>
           </div>
           <Button onClick={handleAdd} className="flex items-center gap-2">
             <Plus size={20} />
-            Add New Subject
+            {t('admin.subjects.addNew', 'Add New Subject')}
           </Button>
         </div>
 
@@ -172,7 +174,7 @@ export const Subjects = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Subjects</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.subjects.totalSubjects', 'Total Subjects')}</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{subjects.length}</p>
               </div>
               <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
@@ -184,7 +186,7 @@ export const Subjects = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Active</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('statusLabels.active', 'Active')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                   {subjects.filter(s => s.isActive).length}
                 </p>
@@ -198,7 +200,7 @@ export const Subjects = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">With Teachers</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.subjects.withTeachers', 'With Teachers')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                   {subjects.filter(s => s.teacherId).length}
                 </p>
@@ -212,7 +214,7 @@ export const Subjects = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Credits</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.subjects.totalCredits', 'Total Credits')}</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                   {subjects.reduce((sum, s) => sum + (s.credits || 0), 0)}
                 </p>
@@ -229,13 +231,13 @@ export const Subjects = () => {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-purple-50 dark:from-purple-900/40 to-blue-50 dark:to-blue-900/40">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Code</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Name</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Grade</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Teacher</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Credits</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Status</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Actions</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.subjects.code', 'Code')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.name', 'Name')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.students.grade', 'Grade')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('roles.teacher', 'Teacher')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.subjects.credits', 'Credits')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.classes.statusColumn', 'Status')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -251,7 +253,7 @@ export const Subjects = () => {
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           subject.isActive ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'
                         }`}>
-                          {subject.isActive ? 'Active' : 'Inactive'}
+                          {subject.isActive ? t('statusLabels.active', 'Active') : t('statusLabels.inactive', 'Inactive')}
                         </span>
                       </td>
                       <td className="p-4">
@@ -270,7 +272,7 @@ export const Subjects = () => {
                   <tr>
                     <td colSpan={7} className="p-12 text-center text-gray-500 dark:text-gray-400">
                       <GraduationCap size={48} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-                      <p className="text-lg">No subjects found</p>
+                      <p className="text-lg">{t('admin.subjects.noSubjects', 'No subjects found')}</p>
                     </td>
                   </tr>
                 )}
@@ -284,70 +286,70 @@ export const Subjects = () => {
         <Modal
           isOpen={showAddModal || showEditModal}
           onClose={() => { setShowAddModal(false); setShowEditModal(false) }}
-          title={showAddModal ? 'Add New Subject' : 'Edit Subject'}
+          title={showAddModal ? t('admin.subjects.addTitle', 'Add New Subject') : t('admin.subjects.editTitle', 'Edit Subject')}
         >
           <div className="space-y-4">
             <Input
-              label="Subject Name *"
+              label={t('admin.subjects.subjectName', 'Subject Name *')}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Mathematics"
+              placeholder={t('teacher.subjectPlaceholder', 'e.g., Mathematics')}
               required
             />
             <Input
-              label="Subject Code *"
+              label={t('admin.subjects.subjectCode', 'Subject Code *')}
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-              placeholder="e.g., MATH101"
+              placeholder={t('admin.subjects.codePlaceholder', 'e.g., MATH101')}
               required
             />
             <Input
-              label="Grade *"
+              label={t('admin.students.grade', 'Grade *')}
               value={formData.grade}
               onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-              placeholder="e.g., Grade 10"
+              placeholder={t('admin.subjects.gradePlaceholder', 'e.g., Grade 10')}
               required
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Assign Teacher</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.classes.assignTeacherLabel', 'Assign Teacher')}</label>
               <select
                 value={formData.teacherId}
                 onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800"
               >
-                <option value="">No teacher assigned</option>
+                <option value="">{t('admin.classes.noTeacherAssigned', 'No teacher assigned')}</option>
                 {teachers.map(t => (
                   <option key={t._id} value={t._id}>{t.name}</option>
                 ))}
               </select>
             </div>
             <Input
-              label="Credits *"
+              label={t('admin.subjects.credits', 'Credits *')}
               type="number"
               value={formData.credits}
               onChange={(e) => setFormData({ ...formData, credits: parseInt(e.target.value) || 1 })}
-              placeholder="e.g., 3"
+              placeholder={t('admin.subjects.creditsPlaceholder', 'e.g., 3')}
               required
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.subjects.description', 'Description')}</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Brief description..."
+                placeholder={t('admin.subjects.descriptionPlaceholder', 'Brief description...')}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none"
                 rows={3}
               />
             </div>
             <div className="flex gap-3 pt-4">
               <Button onClick={handleSave} className="flex-1">
-                {showAddModal ? 'Add Subject' : 'Save Changes'}
+                {showAddModal ? t('admin.subjects.addSubject', 'Add Subject') : t('admin.subjects.saveChanges', 'Save Changes')}
               </Button>
               <Button
                 onClick={() => { setShowAddModal(false); setShowEditModal(false) }}
                 className="flex-1 bg-gray-500 hover:bg-gray-600"
               >
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </Button>
             </div>
           </div>

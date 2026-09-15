@@ -3,8 +3,10 @@ import { motion } from 'framer-motion'
 import { Plus, Trash2, Edit2, Search, Filter, Power } from 'lucide-react'
 import { getTeachers, createTeacher, updateTeacher, deleteTeacher } from '../../services/adminApi'
 import { getClasses } from '../../services/adminApi'
+import { useTranslation } from 'react-i18next'
 
 export const Teachers = () => {
+  const { t } = useTranslation()
   const [teachers, setTeachers] = useState([])
   const [classes, setClasses] = useState([])
   const [loading, setLoading] = useState(true)
@@ -41,7 +43,7 @@ export const Teachers = () => {
       setError('')
     } catch (err) {
       console.error('❌ Error fetching teachers:', err)
-      setError('Failed to load teachers')
+      setError(t('admin.teachers.loadFailed', 'Failed to load teachers'))
     } finally {
       setLoading(false)
     }
@@ -96,15 +98,15 @@ export const Teachers = () => {
           delete updateData.password
         }
         await updateTeacher(editingId, updateData)
-        alert('✅ Teacher updated successfully!')
+        alert(t('admin.teachers.updated', '✅ Teacher updated successfully!'))
       } else {
         // For create, password is required
         if (!formData.password) {
-          alert('Password is required for new teachers')
+          alert(t('admin.teachers.passwordRequired', 'Password is required for new teachers'))
           return
         }
         await createTeacher(formData)
-        alert('✅ Teacher created successfully!')
+        alert(t('admin.teachers.created', '✅ Teacher created successfully!'))
       }
 
       await fetchTeachers()
@@ -122,22 +124,22 @@ export const Teachers = () => {
     } catch (err) {
       console.error('❌ Error saving teacher:', err)
       const errorMsg = err.response?.data?.message || err.message || 'Unknown error'
-      alert(`Failed to save teacher: ${errorMsg}`)
+      alert(`${t('admin.teachers.saveFailed', 'Failed to save teacher')}: ${errorMsg}`)
     }
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this teacher? This action cannot be undone.')) {
+    if (!confirm(t('admin.teachers.deleteConfirm', 'Are you sure you want to delete this teacher? This action cannot be undone.'))) {
       return
     }
 
     try {
       await deleteTeacher(id)
-      alert('✅ Teacher deleted successfully!')
+      alert(t('admin.teachers.deleted', '✅ Teacher deleted successfully!'))
       await fetchTeachers()
     } catch (err) {
       console.error('❌ Error deleting teacher:', err)
-      alert('Failed to delete teacher')
+      alert(t('admin.teachers.deleteFailed', 'Failed to delete teacher'))
     }
   }
 
@@ -148,7 +150,7 @@ export const Teachers = () => {
       await fetchTeachers()
     } catch (err) {
       console.error('Error toggling status:', err)
-      alert('Failed to update status')
+      alert(t('admin.teachers.statusUpdateFailed', 'Failed to update status'))
     }
   }
 
@@ -167,7 +169,7 @@ export const Teachers = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading teachers...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('admin.teachers.loading', 'Loading teachers...')}</p>
         </div>
       </div>
     )
@@ -183,8 +185,8 @@ export const Teachers = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Teachers Management</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage all teachers in the school</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{t('admin.teachers.title', 'Teachers Management')}</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">{t('admin.teachers.subtitle', 'Manage all teachers in the school')}</p>
           </div>
           <motion.button
             initial={{ opacity: 0, x: 20 }}
@@ -195,7 +197,7 @@ export const Teachers = () => {
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
           >
             <Plus size={20} />
-            Add New Teacher
+            {t('admin.teachers.addNew', 'Add New Teacher')}
           </motion.button>
         </div>
 
@@ -222,7 +224,7 @@ export const Teachers = () => {
               <Search className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" size={18} />
               <input
                 type="text"
-                placeholder="Search by name or email..."
+                placeholder={t('admin.teachers.searchPlaceholder', 'Search by name or email...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -235,7 +237,7 @@ export const Teachers = () => {
                 onChange={(e) => setFilterSubject(e.target.value)}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
               >
-                <option value="all">All Subjects</option>
+                <option value="all">{t('admin.teachers.allSubjects', 'All Subjects')}</option>
                 {subjects.map(subject => (
                   <option key={subject} value={subject}>{subject}</option>
                 ))}
@@ -255,12 +257,12 @@ export const Teachers = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Name</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Email</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Phone</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Subject</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Qualification</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.name', 'Name')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('profile.email', 'Email')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.teachers.phone', 'Phone')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.subjectLabel', 'Subject')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.teachers.qualification', 'Qualification')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -287,7 +289,7 @@ export const Teachers = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleOpenModal(teacher)}
                             className="p-2 hover:bg-blue-100 text-blue-600 dark:text-blue-400 rounded-lg transition"
-                            title="Edit teacher"
+                            title={t('admin.teachers.editTeacher', 'Edit teacher')}
                           >
                             <Edit2 size={16} />
                           </motion.button>
@@ -296,7 +298,7 @@ export const Teachers = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleDelete(teacher._id)}
                             className="p-2 hover:bg-red-100 text-red-600 dark:text-red-400 rounded-lg transition"
-                            title="Delete teacher"
+                            title={t('admin.teachers.deleteTeacher', 'Delete teacher')}
                           >
                             <Trash2 size={16} />
                           </motion.button>
@@ -307,8 +309,8 @@ export const Teachers = () => {
                 ) : (
                   <tr>
                     <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                      <p className="text-lg">No teachers found</p>
-                      <p className="text-sm mt-1">Try adjusting your search or filter criteria, or add a new teacher</p>
+                      <p className="text-lg">{t('admin.teachers.noTeachers', 'No teachers found')}</p>
+                      <p className="text-sm mt-1">{t('admin.teachers.noTeachersHint', 'Try adjusting your search or filter criteria, or add a new teacher')}</p>
                     </td>
                   </tr>
                 )}
@@ -325,15 +327,15 @@ export const Teachers = () => {
           className="mt-6 grid md:grid-cols-3 gap-4"
         >
           <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4">
-            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Total Teachers</p>
+            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{t('admin.teachers.totalTeachers', 'Total Teachers')}</p>
             <p className="text-2xl font-bold text-blue-700 dark:text-blue-300 mt-1">{teachers.length}</p>
           </div>
           <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-900/50 rounded-lg p-4">
-            <p className="text-sm text-green-600 dark:text-green-400 font-medium">Active Teachers</p>
+            <p className="text-sm text-green-600 dark:text-green-400 font-medium">{t('admin.teachers.activeTeachers', 'Active Teachers')}</p>
             <p className="text-2xl font-bold text-green-700 dark:text-green-300 mt-1">{teachers.filter(t => t.status !== 'inactive').length}</p>
           </div>
           <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-900/50 rounded-lg p-4">
-            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">Filtered Results</p>
+            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">{t('admin.students.filteredResults', 'Filtered Results')}</p>
             <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 mt-1">{filteredTeachers.length}</p>
           </div>
         </motion.div>
@@ -357,7 +359,7 @@ export const Teachers = () => {
             {/* Header */}
             <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
               <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                {editingId ? 'Edit Teacher' : 'Add New Teacher'}
+                {t(editingId ? 'admin.teachers.editTitle' : 'admin.teachers.addTitle', editingId ? 'Edit Teacher' : 'Add New Teacher')}
               </h2>
             </div>
 
@@ -365,19 +367,19 @@ export const Teachers = () => {
             <div className="flex-1 overflow-y-auto px-5 py-4">
               <form id="teacher-form" onSubmit={handleSubmit} className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Teacher Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.teachers.teacherName', 'Teacher Name')} *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Enter teacher name"
+                    placeholder={t('admin.teachers.enterTeacherName', 'Enter teacher name')}
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('profile.email', 'Email')} *</label>
                   <input
                     type="email"
                     value={formData.email}
@@ -390,20 +392,20 @@ export const Teachers = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                    Password {editingId ? '(leave blank to keep current)' : '*'}
+                    {t('admin.students.password', 'Password')} {editingId ? t('admin.students.keepCurrentPassword', '(leave blank to keep current)') : '*'}
                   </label>
                   <input
                     type="password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder={editingId ? "Leave blank to keep current" : "Enter password"}
+                    placeholder={editingId ? t('admin.students.keepCurrentPassword', 'Leave blank to keep current') : t('admin.students.enterPassword', 'Enter password')}
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required={!editingId}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.teachers.phone', 'Phone')}</label>
                   <input
                     type="tel"
                     value={formData.phone}
@@ -414,13 +416,13 @@ export const Teachers = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Subject</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.subjectLabel', 'Subject')}</label>
                   <select
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                   >
-                    <option value="">Select Subject</option>
+                    <option value="">{t('admin.teachers.selectSubject', 'Select Subject')}</option>
                     {subjects.map(subject => (
                       <option key={subject} value={subject}>{subject}</option>
                     ))}
@@ -428,13 +430,13 @@ export const Teachers = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Qualification</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.teachers.qualification', 'Qualification')}</label>
                   <select
                     value={formData.qualification}
                     onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                   >
-                    <option value="">Select Qualification</option>
+                    <option value="">{t('admin.teachers.selectQualification', 'Select Qualification')}</option>
                     {qualifications.map(qual => (
                       <option key={qual} value={qual}>{qual}</option>
                     ))}
@@ -451,14 +453,14 @@ export const Teachers = () => {
                   form="teacher-form"
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-sm"
                 >
-                  {editingId ? 'Update Teacher' : 'Add Teacher'}
+                  {t(editingId ? 'admin.teachers.updateTeacher' : 'admin.teachers.addTeacher', editingId ? 'Update Teacher' : 'Add Teacher')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold text-sm"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
               </div>
             </div>

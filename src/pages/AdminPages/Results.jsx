@@ -5,8 +5,10 @@ import { Modal } from '../../components/Modal'
 import { Button } from '../../components/Button'
 import { Input } from '../../components/Input'
 import { getGrades, getStudents, getSubjects, createGrade, updateGrade } from '../../services/adminApi'
+import { useTranslation } from 'react-i18next'
 
 export const Results = () => {
+  const { t } = useTranslation()
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(true)
   const [students, setStudents] = useState([])
@@ -98,17 +100,17 @@ export const Results = () => {
 
   const handleSave = async () => {
     if (!formData.studentId || !formData.subject) {
-      alert('Please select a student and enter a subject')
+      alert(t('admin.results.selectStudentSubject', 'Please select a student and enter a subject'))
       return
     }
     const score = parseFloat(formData.score)
     const maxScore = parseFloat(formData.maxScore) || 100
     if (isNaN(score)) {
-      alert('Please enter a valid score')
+      alert(t('admin.results.validScore', 'Please enter a valid score'))
       return
     }
     if (score > maxScore) {
-      alert(`Score cannot exceed the max score (${maxScore})`)
+      alert(t('admin.results.scoreExceedsMax', 'Score cannot exceed the max score ({{max}})', { max: maxScore }))
       return
     }
 
@@ -123,17 +125,17 @@ export const Results = () => {
       }
       if (showAddModal) {
         await createGrade(payload)
-        alert('Result added successfully!')
+        alert(t('admin.results.added', 'Result added successfully!'))
       } else {
         await updateGrade(selectedResult._id, payload)
-        alert('Result updated successfully!')
+        alert(t('admin.results.updated', 'Result updated successfully!'))
       }
       setShowAddModal(false)
       setShowEditModal(false)
       await fetchData()
     } catch (err) {
       console.error('Error saving result:', err)
-      alert(err.response?.data?.message || 'Failed to save result')
+      alert(err.response?.data?.message || t('admin.results.saveFailed', 'Failed to save result'))
     } finally {
       setSaving(false)
     }
@@ -180,14 +182,14 @@ export const Results = () => {
             <div className="flex items-center gap-3">
               <Award size={36} className="text-indigo-600 dark:text-indigo-400" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Results
+                {t('admin.results.title', 'Results')}
               </h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">Manage student exam results and marks</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">{t('admin.results.subtitle', 'Manage student exam results and marks')}</p>
           </div>
           <Button onClick={handleAdd} className="flex items-center gap-2">
             <Plus size={20} />
-            Add Result
+            {t('admin.results.addResult', 'Add Result')}
           </Button>
         </div>
 
@@ -201,7 +203,7 @@ export const Results = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Results</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.results.totalResults', 'Total Results')}</p>
                 <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{stats.total}</p>
               </div>
               <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl">
@@ -218,7 +220,7 @@ export const Results = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Passed</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.results.passed', 'Passed')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.passed}</p>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-xl">
@@ -235,7 +237,7 @@ export const Results = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Failed</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.results.failed', 'Failed')}</p>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
               </div>
               <div className="p-4 bg-red-50 dark:bg-red-900/30 rounded-xl">
@@ -252,7 +254,7 @@ export const Results = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Avg Percentage</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.results.avgPercentage', 'Avg Percentage')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.avgPercentage}%</p>
               </div>
               <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
@@ -273,7 +275,7 @@ export const Results = () => {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" size={20} />
             <input
               type="text"
-              placeholder="Search by student name, roll number, or subject..."
+              placeholder={t('admin.results.searchPlaceholder', 'Search by student name, roll number, or subject...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 shadow-sm"
@@ -292,19 +294,19 @@ export const Results = () => {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-indigo-50 dark:from-indigo-900/40 to-purple-50 dark:to-purple-900/40">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Student</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Roll No</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Class</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Subject</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Exam</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Quiz</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Mid</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Final</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Total</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.student', 'Student')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.rollNo', 'Roll No')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.classes.classLabel', 'Class')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.subjectLabel', 'Subject')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.results.exam', 'Exam')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('gradeTypes.quiz', 'Quiz')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('gradeTypes.midterm', 'Mid')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('gradeTypes.final', 'Final')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.total', 'Total')}</th>
                   <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">%</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Grade</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Status</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Actions</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('dashboards.grade', 'Grade')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.classes.statusColumn', 'Status')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -312,20 +314,20 @@ export const Results = () => {
                   <tr>
                     <td colSpan={13} className="p-8 text-center text-gray-600 dark:text-gray-300">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
-                      Loading results...
+                      {t('teacher.loadingGrades', 'Loading results...')}
                     </td>
                   </tr>
                 ) : filteredResults.length === 0 ? (
                   <tr>
                     <td colSpan={13} className="p-8 text-center text-gray-600 dark:text-gray-300">
-                      No results found
+                      {t('admin.results.noResults', 'No results found')}
                     </td>
                   </tr>
                 ) : (
                   filteredResults.map((result, index) => {
                     const percentage = ((result.score / (result.maxScore || 100)) * 100).toFixed(1)
                     const grade = calculateGrade(result.score, result.maxScore)
-                    const status = parseFloat(percentage) >= 50 ? 'Pass' : 'Fail'
+                    const status = parseFloat(percentage) >= 50 ? t('admin.results.pass', 'Pass') : t('admin.results.fail', 'Fail')
                     
                     return (
                       <motion.tr
@@ -335,11 +337,11 @@ export const Results = () => {
                         transition={{ delay: 0.7 + index * 0.05 }}
                         className="border-b border-gray-100 dark:border-gray-800 hover:bg-indigo-50 transition-colors"
                       >
-                        <td className="p-4 font-semibold text-gray-800 dark:text-gray-100">{result.studentId?.name || 'Unknown'}</td>
+                        <td className="p-4 font-semibold text-gray-800 dark:text-gray-100">{result.studentId?.name || t('admin.classes.unknown', 'Unknown')}</td>
                         <td className="p-4 text-gray-700 dark:text-gray-200">{result.studentId?.enrollmentNumber || 'N/A'}</td>
                         <td className="p-4 text-gray-700 dark:text-gray-200">{result.studentId?.grade || 'N/A'} {result.studentId?.section || ''}</td>
                         <td className="p-4 text-indigo-600 dark:text-indigo-400 font-medium">{result.subject}</td>
-                        <td className="p-4 text-gray-700 dark:text-gray-200">{result.gradeType}</td>
+                        <td className="p-4 text-gray-700 dark:text-gray-200">{String(t(`gradeTypes.${result.gradeType}`, result.gradeType))}</td>
                         <td className="p-4 text-blue-600 dark:text-blue-400 font-semibold">-</td>
                         <td className="p-4 text-purple-600 dark:text-purple-400 font-semibold">-</td>
                         <td className="p-4 text-green-600 dark:text-green-400 font-semibold">-</td>
@@ -360,7 +362,7 @@ export const Results = () => {
                             <button
                               onClick={() => handleEdit(result)}
                               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
-                              title="Edit"
+                              title={t('common.edit', 'Edit')}
                             >
                               <Edit size={16} className="text-gray-600 dark:text-gray-300" />
                             </button>
@@ -384,19 +386,19 @@ export const Results = () => {
             setShowAddModal(false)
             setShowEditModal(false)
           }}
-          title={showAddModal ? 'Add Result' : 'Edit Result'}
+          title={showAddModal ? t('admin.results.addTitle', 'Add Result') : t('admin.results.editTitle', 'Edit Result')}
         >
           <div className="space-y-4">
             {/* Student Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Student</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('teacher.student', 'Student')}</label>
               <select
                 value={formData.studentId}
                 onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800"
                 disabled={showEditModal}
               >
-                <option value="">Select Student</option>
+                <option value="">{t('teacher.selectStudent', 'Select Student')}</option>
                 {students.map(student => (
                   <option key={student._id} value={student._id}>
                     {student.name} - {student.rollNumber} ({student.grade} {student.section})
@@ -407,35 +409,35 @@ export const Results = () => {
 
             {/* Subject */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Subject</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('teacher.subjectLabel', 'Subject')}</label>
               <Input
                 type="text"
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                placeholder="e.g., Mathematics"
+                placeholder={t('teacher.subjectPlaceholder', 'e.g., Mathematics')}
               />
             </div>
 
             {/* Exam Type (midterm/final only — teacher types are teacher-only) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Exam Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('teacher.gradeType', 'Exam Type')}</label>
               <select
                 value={formData.gradeType}
                 onChange={(e) => setFormData({ ...formData, gradeType: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800"
               >
-                <option value="midterm">Midterm Exam</option>
-                <option value="final">Final Exam</option>
+                <option value="midterm">{t('gradeTypes.midterm', 'Midterm Exam')}</option>
+                <option value="final">{t('gradeTypes.final', 'Final Exam')}</option>
               </select>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Midterm and final exams are entered by the admin — quizzes, assignments, and classwork are entered by teachers.
+                {t('teacher.addGradeModalNote', 'Midterm and final exams are entered by the admin — quizzes, assignments, and classwork are entered by teachers.')}
               </p>
             </div>
 
             {/* Score + Max Score */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Score</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('teacher.score', 'Score')}</label>
                 <Input
                   type="number"
                   value={formData.score}
@@ -446,7 +448,7 @@ export const Results = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Max Score</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('teacher.maxScore', 'Max Score')}</label>
                 <Input
                   type="number"
                   value={formData.maxScore}
@@ -461,28 +463,28 @@ export const Results = () => {
             {/* Preview Calculation */}
             {formData.score && formData.maxScore && (
               <div className="p-4 bg-gradient-to-r from-green-50 dark:from-green-900/40 to-blue-50 dark:to-blue-900/40 rounded-lg border-2 border-green-200 dark:border-green-900/50">
-                <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">Result Preview</h4>
+                <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">{t('admin.results.preview', 'Result Preview')}</h4>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-gray-600 dark:text-gray-300">Score:</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t('teacher.score', 'Score')}:</span>
                     <span className="font-bold text-indigo-600 dark:text-indigo-400 ml-1">{formData.score} / {formData.maxScore}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600 dark:text-gray-300">Percentage:</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t('studentLabels.percentage', 'Percentage')}:</span>
                     <span className="font-bold text-blue-600 dark:text-blue-400 ml-1">
                       {((parseFloat(formData.score) / parseFloat(formData.maxScore)) * 100).toFixed(1)}%
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600 dark:text-gray-300">Grade:</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t('dashboards.grade', 'Grade')}:</span>
                     <span className="font-bold text-green-600 dark:text-green-400 ml-1">
                       {calculateGrade((parseFloat(formData.score) / parseFloat(formData.maxScore)) * 100)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600 dark:text-gray-300">Status:</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t('admin.classes.statusColumn', 'Status')}:</span>
                     <span className="font-bold text-green-600 dark:text-green-400 ml-1">
-                      {(parseFloat(formData.score) / parseFloat(formData.maxScore)) * 100 >= 50 ? 'Pass' : 'Fail'}
+                      {(parseFloat(formData.score) / parseFloat(formData.maxScore)) * 100 >= 50 ? t('admin.results.pass', 'Pass') : t('admin.results.fail', 'Fail')}
                     </span>
                   </div>
                 </div>
@@ -491,7 +493,7 @@ export const Results = () => {
 
             <div className="flex gap-3 pt-4">
               <Button onClick={handleSave} disabled={saving} className="flex-1">
-                {saving ? 'Saving...' : (showAddModal ? 'Add Result' : 'Save Changes')}
+                {saving ? t('teacher.saving', 'Saving...') : (showAddModal ? t('admin.results.addResult', 'Add Result') : t('admin.subjects.saveChanges', 'Save Changes'))}
               </Button>
               <Button
                 onClick={() => {
@@ -501,7 +503,7 @@ export const Results = () => {
                 variant="secondary"
                 className="flex-1"
               >
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </Button>
             </div>
           </div>

@@ -4,8 +4,10 @@ import { BookOpen, Plus, Edit2, Users, GraduationCap, UserCheck } from 'lucide-r
 import { getClasses, createClass, getTeachers } from '../../services/adminApi'
 import apiClient from '../../utils/api'
 import api from '../../utils/api'
+import { useTranslation } from 'react-i18next'
 
 export const Classes = () => {
+  const { t } = useTranslation()
   const [classes, setClasses] = useState([])
   const [teachers, setTeachers] = useState([])
   const [academicYears, setAcademicYears] = useState([])
@@ -54,7 +56,7 @@ export const Classes = () => {
       
       setError('')
     } catch (err) {
-      setError('Failed to load data')
+      setError(t('admin.classes.loadFailed', 'Failed to load data'))
     } finally {
       setLoading(false)
     }
@@ -136,7 +138,7 @@ export const Classes = () => {
         err.response?.data?.message || 
         err.response?.data?.error || 
         err.message || 
-        'Failed to create class. Please check if this class already exists.'
+        t('admin.classes.createFailed', 'Failed to create class. Please check if this class already exists.')
       
       console.error('❌ Error creating class:', errorMessage)
       setModalError(errorMessage) // Show error in modal instead of alert
@@ -156,7 +158,7 @@ export const Classes = () => {
       setAssignTeacherId('')
       await fetchAll()
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to assign teacher')
+      alert(err.response?.data?.message || t('admin.classes.assignFailed', 'Failed to assign teacher'))
     } finally {
       setSaving(false)
     }
@@ -171,10 +173,10 @@ export const Classes = () => {
   }
 
   const getTeacherName = (teacherId) => {
-    if (!teacherId) return 'No teacher assigned'
+    if (!teacherId) return t('admin.classes.noTeacherAssigned', 'No teacher assigned')
     if (typeof teacherId === 'object' && teacherId.name) return teacherId.name
-    const t = teachers.find(t => t._id === teacherId)
-    return t ? t.name : 'Unknown'
+    const found = teachers.find(x => x._id === teacherId)
+    return found ? found.name : t('admin.classes.unknown', 'Unknown')
   }
 
   if (loading) {
@@ -182,7 +184,7 @@ export const Classes = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading classes...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('admin.classes.loading', 'Loading classes...')}</p>
         </div>
       </div>
     )
@@ -197,9 +199,9 @@ export const Classes = () => {
           <div>
             <div className="flex items-center gap-3">
               <BookOpen size={36} className="text-blue-600 dark:text-blue-400" />
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Classes</h1>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{t('admin.classes.title', 'Classes')}</h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage classes and assign teachers</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">{t('admin.classes.subtitle', 'Manage classes and assign teachers')}</p>
           </div>
           <button
             onClick={() => {
@@ -208,7 +210,7 @@ export const Classes = () => {
             }}
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
           >
-            <Plus size={20} /> Add Class
+            <Plus size={20} /> {t('admin.classes.add', 'Add Class')}
           </button>
         </div>
 
@@ -217,21 +219,21 @@ export const Classes = () => {
         {/* Stats */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Total Classes</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('admin.classes.totalClasses', 'Total Classes')}</p>
             <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">{classes.length}</p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Total Enrolled Students</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('admin.classes.totalEnrolled', 'Total Enrolled Students')}</p>
             <p className="text-3xl font-bold text-emerald-600 mt-1">
               {Object.values(enrollmentCounts).reduce((sum, count) => sum + count, 0)}
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">With Teacher Assigned</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('admin.classes.withTeacher', 'With Teacher Assigned')}</p>
             <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">{classes.filter(c => c.teacherId).length}</p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Without Teacher</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('admin.classes.withoutTeacher', 'Without Teacher')}</p>
             <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-1">{classes.filter(c => !c.teacherId).length}</p>
           </div>
         </div>
@@ -242,16 +244,16 @@ export const Classes = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Class Name</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Grade</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Section</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Stream</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Academic Year</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Enrolled</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Assigned Teacher</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Room</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Capacity</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.classes.className', 'Class Name')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.grade', 'Grade')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.section', 'Section')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.stream', 'Stream')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.academicYear', 'Academic Year')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.classes.enrolled', 'Enrolled')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.classes.assignedTeacher', 'Assigned Teacher')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.room', 'Room')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.classes.capacity', 'Capacity')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -274,8 +276,8 @@ export const Classes = () => {
                             : 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'
                         }`}>
                           {cls.stream === 'natural' || cls.stream === 'Natural Science' 
-                            ? 'Natural Science' 
-                            : 'Social Science'}
+                            ? t('admin.students.naturalScience', 'Natural Science') 
+                            : t('admin.students.socialScience', 'Social Science')}
                         </span>
                       ) : '—'}
                     </td>
@@ -311,14 +313,14 @@ export const Classes = () => {
                         className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition"
                       >
                         <Edit2 size={12} />
-                        Assign Teacher
+                        {t('admin.classes.assignTeacher', 'Assign Teacher')}
                       </button>
                     </td>
                   </motion.tr>
                 )) : (
                   <tr>
                     <td colSpan={10} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                      No classes found. Add a class to get started.
+                      {t('admin.classes.noClasses', 'No classes found. Add a class to get started.')}
                     </td>
                   </tr>
                 )}
@@ -336,7 +338,7 @@ export const Classes = () => {
             animate={{ scale: 1, y: 0 }}
             className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-6"
           >
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Add New Class</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">{t('admin.classes.addNewTitle', 'Add New Class')}</h2>
             
             {/* Error Message Display */}
             {modalError && (
@@ -348,7 +350,7 @@ export const Classes = () => {
             <form onSubmit={handleAdd} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Grade *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.grade', 'Grade')} *</label>
                   <select
                     value={formData.grade}
                     onChange={e => {
@@ -367,7 +369,7 @@ export const Classes = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Section *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.section', 'Section')} *</label>
                   <select
                     value={formData.section}
                     onChange={e => setFormData({ ...formData, section: e.target.value })}
@@ -382,62 +384,62 @@ export const Classes = () => {
               {/* Stream field - Only for Grade 11 and 12 */}
               {(formData.grade === 'Grade 11' || formData.grade === 'Grade 12') && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Stream *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.stream', 'Stream')} *</label>
                   <select
                     value={formData.stream}
                     onChange={e => setFormData({ ...formData, stream: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-sm"
                     required
                   >
-                    <option value="">Select Stream</option>
-                    <option value="Natural Science">Natural Science</option>
-                    <option value="Social Science">Social Science</option>
+                    <option value="">{t('admin.students.selectStream', 'Select Stream')}</option>
+                    <option value="Natural Science">{t('admin.students.naturalScience', 'Natural Science')}</option>
+                    <option value="Social Science">{t('admin.students.socialScience', 'Social Science')}</option>
                   </select>
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Assign Teacher</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.classes.assignTeacherLabel', 'Assign Teacher')}</label>
                 <select
                   value={formData.teacherId}
                   onChange={e => setFormData({ ...formData, teacherId: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-sm"
                 >
-                  <option value="">No teacher assigned</option>
+                  <option value="">{t('admin.classes.noTeacherAssigned', 'No teacher assigned')}</option>
                   {teachers.map(t => <option key={t._id} value={t._id}>{t.name}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Room</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.room', 'Room')}</label>
                   <input type="text" value={formData.room} onChange={e => setFormData({ ...formData, room: e.target.value })} placeholder="e.g., 101" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Capacity *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.classes.capacity', 'Capacity')} *</label>
                   <input type="number" min="1" value={formData.capacity} onChange={e => setFormData({ ...formData, capacity: parseInt(e.target.value) || 40 })} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" required />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Academic Year *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.academicYear', 'Academic Year')} *</label>
                 <select
                   value={formData.academicYearId}
                   onChange={e => setFormData({ ...formData, academicYearId: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-sm"
                   required
                 >
-                  <option value="">Select Academic Year</option>
+                  <option value="">{t('admin.classes.selectAcademicYear', 'Select Academic Year')}</option>
                   {academicYears.map(year => (
                     <option key={year._id} value={year._id}>
-                      {year.name} {year.isActive ? '(Active)' : ''}
+                      {year.name} {year.isActive ? t('admin.students.activeYear', '(Active)') : ''}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={saving} className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-sm disabled:opacity-60">
-                  {saving ? 'Creating...' : 'Create Class'}
+                  {saving ? t('admin.classes.creating', 'Creating...') : t('admin.classes.create', 'Create Class')}
                 </button>
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold text-sm">
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
               </div>
             </form>
@@ -453,16 +455,16 @@ export const Classes = () => {
             animate={{ scale: 1, y: 0 }}
             className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-sm w-full p-6"
           >
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Assign Teacher</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Class: <strong>{assignModal.name}</strong></p>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">{t('admin.classes.assignTeacher', 'Assign Teacher')}</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{t('admin.classes.classLabel', 'Class')}: <strong>{assignModal.name}</strong></p>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Select Teacher</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.classes.selectTeacher', 'Select Teacher')}</label>
               <select
                 value={assignTeacherId}
                 onChange={e => setAssignTeacherId(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
               >
-                <option value="">— Remove teacher assignment —</option>
+                <option value="">{t('admin.classes.removeAssignment', '— Remove teacher assignment —')}</option>
                 {teachers.map(t => (
                   <option key={t._id} value={t._id}>{t.name}</option>
                 ))}
@@ -470,15 +472,15 @@ export const Classes = () => {
             </div>
             <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-3 mb-4">
               <p className="text-xs text-blue-700 dark:text-blue-300">
-                Assigning a teacher to this class means the teacher will see all students in this class on their dashboard and can mark attendance and add grades for them.
+                {t('admin.classes.assignInfo', 'Assigning a teacher to this class means the teacher will see all students in this class on their dashboard and can mark attendance and add grades for them.')}
               </p>
             </div>
             <div className="flex gap-3">
               <button onClick={handleAssignTeacher} disabled={saving} className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-sm disabled:opacity-60">
-                {saving ? 'Saving...' : 'Save Assignment'}
+                {saving ? t('teacher.saving', 'Saving...') : t('admin.classes.saveAssignment', 'Save Assignment')}
               </button>
               <button onClick={() => { setAssignModal(null); setAssignTeacherId('') }} className="flex-1 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold text-sm">
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </button>
             </div>
           </motion.div>

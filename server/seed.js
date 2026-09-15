@@ -9,6 +9,18 @@ import Class from './models/Class.js'
 import Subject from './models/Subject.js'
 import AcademicYear from './models/AcademicYear.js'
 import Enrollment from './models/Enrollment.js'
+import Term from './models/Term.js'
+import Grade from './models/Grade.js'
+import Attendance from './models/Attendance.js'
+import Assignment from './models/Assignment.js'
+import AssignmentSubmission from './models/AssignmentSubmission.js'
+import Announcement from './models/Announcement.js'
+import Notification from './models/Notification.js'
+import AuditLog from './models/AuditLog.js'
+import Timetable from './models/Timetable.js'
+import Promotion from './models/Promotion.js'
+import Transfer from './models/Transfer.js'
+import ReportCard from './models/ReportCard.js'
 
 dotenv.config()
 
@@ -26,6 +38,19 @@ export const seedUsers = async () => {
     await Class.deleteMany({})
     await Subject.deleteMany({})
     await AcademicYear.deleteMany({})
+    await Term.deleteMany({})
+    await Enrollment.deleteMany({})
+    await Grade.deleteMany({})
+    await Attendance.deleteMany({})
+    await Assignment.deleteMany({})
+    await AssignmentSubmission.deleteMany({})
+    await Announcement.deleteMany({})
+    await Notification.deleteMany({})
+    await AuditLog.deleteMany({})
+    await Timetable.deleteMany({})
+    await Promotion.deleteMany({})
+    await Transfer.deleteMany({})
+    await ReportCard.deleteMany({})
     console.log('✅ Existing data cleared')
 
     // Step 1: Create the active academic year (Class now requires academicYearId)

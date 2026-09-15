@@ -16,8 +16,42 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Inter covers Latin; Noto Sans Ethiopic covers አማርኛ. Ethiopic is a
+         separate family (not a subset) so both load in one request. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>Aykel School</title>
+    <script>
+      // Service-worker eviction guard (dev hardening).
+      // Any service worker registered on this origin (e.g. left over from a
+      // different app served earlier on the same dev port) intercepts fetches
+      // and can serve a stale app shell instead of this one. This app ships
+      // no SW, so unregister everything and drop all caches before boot.
+      (function () {
+        if (!('serviceWorker' in navigator)) return
+        var clean = function () {
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            regs.forEach(function (r) { r.unregister() })
+          }).catch(function () {})
+          if (window.caches && caches.keys) {
+            caches.keys().then(function (keys) {
+              keys.forEach(function (k) { caches.delete(k) })
+            }).catch(function () {})
+          }
+        }
+        clean()
+        // A takeover can complete after first load; keep watching briefly.
+        var ticks = 0
+        var iv = setInterval(function () {
+          clean()
+          if (++ticks >= 10) clearInterval(iv)
+        }, 1000)
+        // If a controller appeared late, reload once without the SW.
+        if (navigator.serviceWorker.controller && !sessionStorage.getItem('sw-evicted-reload')) {
+          sessionStorage.setItem('sw-evicted-reload', '1')
+          location.reload()
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

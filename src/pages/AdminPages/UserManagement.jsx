@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, Trash2, Edit2, Search, Filter, MoreVertical, Power, Lock } from 'lucide-react'
 import { getUsers, createUser, updateUser, toggleUserStatus, deleteUser } from '../../services/adminApi'
+import { useTranslation } from 'react-i18next'
 
 export const UserManagement = () => {
+  const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterRole, setFilterRole] = useState('all')
@@ -28,7 +30,7 @@ export const UserManagement = () => {
       setUsers(data)
     } catch (err) {
       console.error('Error loading users:', err)
-      setError(err.message || 'Failed to load users')
+      setError(err.message || t('admin.users.loadFailed', 'Failed to load users'))
     } finally {
       setLoading(false)
     }
@@ -65,7 +67,7 @@ export const UserManagement = () => {
       }
       await loadUsers()
     } catch (err) {
-      alert(err.response?.data?.message || err.message || 'Failed to save user')
+      alert(err.response?.data?.message || err.message || t('admin.users.saveFailed', 'Failed to save user'))
       return
     }
 
@@ -75,12 +77,12 @@ export const UserManagement = () => {
   }
 
   const handleDelete = async (id) => {
-    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+    if (confirm(t('admin.users.deleteConfirm', 'Are you sure you want to delete this user? This action cannot be undone.'))) {
       try {
         await deleteUser(id)
         await loadUsers()
       } catch (err) {
-        alert(err.response?.data?.message || err.message || 'Failed to delete user')
+        alert(err.response?.data?.message || err.message || t('admin.users.deleteFailed', 'Failed to delete user'))
       }
       setActionMenu(null)
     }
@@ -91,7 +93,7 @@ export const UserManagement = () => {
       await toggleUserStatus(id)
       await loadUsers()
     } catch (err) {
-      alert(err.response?.data?.message || err.message || 'Failed to update user status')
+      alert(err.response?.data?.message || err.message || t('admin.users.statusUpdateFailed', 'Failed to update user status'))
     }
     setActionMenu(null)
   }
@@ -127,8 +129,8 @@ export const UserManagement = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">User Management</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage all system users</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{t('admin.users.title', 'User Management')}</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">{t('admin.users.subtitle', 'Manage all system users')}</p>
           </div>
           <motion.button
             initial={{ opacity: 0, x: 20 }}
@@ -139,7 +141,7 @@ export const UserManagement = () => {
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
           >
             <Plus size={20} />
-            Add New User
+            {t('admin.users.addNew', 'Add New User')}
           </motion.button>
         </div>
 
@@ -155,7 +157,7 @@ export const UserManagement = () => {
               <Search className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" size={18} />
               <input
                 type="text"
-                placeholder="Search by name or email..."
+                placeholder={t('admin.teachers.searchPlaceholder', 'Search by name or email...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -168,11 +170,11 @@ export const UserManagement = () => {
                 onChange={(e) => setFilterRole(e.target.value)}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
               >
-                <option value="all">All Roles</option>
-                <option value="student">Student</option>
-                <option value="teacher">Teacher</option>
-                <option value="parent">Parent</option>
-                <option value="admin">Admin</option>
+                <option value="all">{t('admin.users.allRoles', 'All Roles')}</option>
+                <option value="student">{t('roles.student', 'Student')}</option>
+                <option value="teacher">{t('roles.teacher', 'Teacher')}</option>
+                <option value="parent">{t('roles.parent', 'Parent')}</option>
+                <option value="admin">{t('roles.admin', 'Admin')}</option>
               </select>
             </div>
           </div>
@@ -189,20 +191,20 @@ export const UserManagement = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Name</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Email</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Phone</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Role</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Status</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Created</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.name', 'Name')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('profile.email', 'Email')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.teachers.phone', 'Phone')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.users.role', 'Role')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.classes.statusColumn', 'Status')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.users.created', 'Created')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                      <p className="text-lg">Loading users...</p>
+                      <p className="text-lg">{t('admin.users.loading', 'Loading users...')}</p>
                     </td>
                   </tr>
                 ) : error ? (
@@ -213,7 +215,7 @@ export const UserManagement = () => {
                         onClick={loadUsers}
                         className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
                       >
-                        Retry
+                        {t('admin.users.retry', 'Retry')}
                       </button>
                     </td>
                   </tr>
@@ -233,12 +235,12 @@ export const UserManagement = () => {
                       <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{user.phone || '—'}</td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${roleColors[user.role] || 'bg-gray-100 dark:bg-gray-800'}`}>
-                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                          {String(t(`roles.${user.role}`, user.role))}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[user.status] || statusColors.active}`}>
-                          {(user.status || 'active').charAt(0).toUpperCase() + (user.status || 'active').slice(1)}
+                          {String(t(`statusLabels.${user.status || 'active'}`, user.status || 'Active'))}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-gray-600 dark:text-gray-300 text-sm">
@@ -251,7 +253,7 @@ export const UserManagement = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleOpenModal(user)}
                             className="p-2 hover:bg-blue-100 text-blue-600 dark:text-blue-400 rounded-lg transition"
-                            title="Edit user"
+                            title={t('admin.users.editUser', 'Edit user')}
                           >
                             <Edit2 size={16} />
                           </motion.button>
@@ -264,7 +266,7 @@ export const UserManagement = () => {
                                 ? 'hover:bg-yellow-100 text-yellow-600 dark:text-yellow-400'
                                 : 'hover:bg-green-100 text-green-600 dark:text-green-400'
                             }`}
-                            title={(user.status || 'active') === 'active' ? 'Deactivate user' : 'Activate user'}
+                            title={(user.status || 'active') === 'active' ? t('admin.users.deactivateUser', 'Deactivate user') : t('admin.users.activateUser', 'Activate user')}
                           >
                             <Power size={16} />
                           </motion.button>
@@ -273,7 +275,7 @@ export const UserManagement = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleDelete(user._id)}
                             className="p-2 hover:bg-red-100 text-red-600 dark:text-red-400 rounded-lg transition"
-                            title="Delete user"
+                            title={t('admin.users.deleteUser', 'Delete user')}
                           >
                             <Trash2 size={16} />
                           </motion.button>
@@ -284,8 +286,8 @@ export const UserManagement = () => {
                 ) : (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                      <p className="text-lg">No users found</p>
-                      <p className="text-sm mt-1">Try adjusting your search or filter criteria</p>
+                      <p className="text-lg">{t('admin.users.noUsers', 'No users found')}</p>
+                      <p className="text-sm mt-1">{t('admin.users.noUsersHint', 'Try adjusting your search or filter criteria')}</p>
                     </td>
                   </tr>
                 )}
@@ -302,19 +304,19 @@ export const UserManagement = () => {
           className="mt-6 grid md:grid-cols-4 gap-4"
         >
           <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4">
-            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Total Users</p>
+            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{t('admin.users.totalUsers', 'Total Users')}</p>
             <p className="text-2xl font-bold text-blue-700 dark:text-blue-300 mt-1">{users.length}</p>
           </div>
           <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-900/50 rounded-lg p-4">
-            <p className="text-sm text-green-600 dark:text-green-400 font-medium">Active Users</p>
+            <p className="text-sm text-green-600 dark:text-green-400 font-medium">{t('admin.users.activeUsers', 'Active Users')}</p>
             <p className="text-2xl font-bold text-green-700 dark:text-green-300 mt-1">{users.filter(u => (u.status || 'active') === 'active').length}</p>
           </div>
           <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">Inactive Users</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">{t('admin.users.inactiveUsers', 'Inactive Users')}</p>
             <p className="text-2xl font-bold text-gray-700 dark:text-gray-200 mt-1">{users.filter(u => (u.status || 'active') === 'inactive').length}</p>
           </div>
           <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-900/50 rounded-lg p-4">
-            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">Filtered Results</p>
+            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">{t('admin.students.filteredResults', 'Filtered Results')}</p>
             <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 mt-1">{filteredUsers.length}</p>
           </div>
         </motion.div>
@@ -336,67 +338,67 @@ export const UserManagement = () => {
             className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6"
           >
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
-              {editingId ? 'Edit User' : 'Add New User'}
+              {t(editingId ? 'admin.users.editTitle' : 'admin.users.addTitle', editingId ? 'Edit User' : 'Add New User')}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('profile.fullName', 'Full Name')}</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter full name"
+                  placeholder={t('admin.users.enterFullName', 'Enter full name')}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('profile.email', 'Email')}</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="Enter email"
+                  placeholder={t('admin.users.enterEmail', 'Enter email')}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Phone</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.teachers.phone', 'Phone')}</label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="Enter phone number"
+                  placeholder={t('admin.users.enterPhone', 'Enter phone number')}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Role</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.users.role', 'Role')}</label>
                 <select
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="student">Student</option>
-                  <option value="teacher">Teacher</option>
-                  <option value="parent">Parent</option>
-                  <option value="admin">Admin</option>
+                  <option value="student">{t('roles.student', 'Student')}</option>
+                  <option value="teacher">{t('roles.teacher', 'Teacher')}</option>
+                  <option value="parent">{t('roles.parent', 'Parent')}</option>
+                  <option value="admin">{t('roles.admin', 'Admin')}</option>
                 </select>
               </div>
 
               {!editingId && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Password</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.password', 'Password')}</label>
                   <input
                     type="password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Enter password"
+                    placeholder={t('admin.students.enterPassword', 'Enter password')}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required={!editingId}
                   />
@@ -408,14 +410,14 @@ export const UserManagement = () => {
                   type="submit"
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
                 >
-                  {editingId ? 'Update User' : 'Create User'}
+                  {t(editingId ? 'admin.users.updateUser' : 'admin.users.createUser', editingId ? 'Update User' : 'Create User')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
               </div>
             </form>

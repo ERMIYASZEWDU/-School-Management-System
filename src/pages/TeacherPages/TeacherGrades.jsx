@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Award, Edit, Save, X, Plus } from 'lucide-react'
 import { getGrades, updateGrade, createGrade, getMyStudents } from '../../services/teacherApi'
 
-// Grade types teachers are allowed to enter (midterm/final are entered by the admin)
+// Grade type labels resolve through i18n at render time (see typeLabel below)
 const TEACHER_GRADE_TYPES = [
-  { value: 'quiz', label: 'Quiz', defaultMax: 10 },
-  { value: 'assignment', label: 'Assignment', defaultMax: 20 },
-  { value: 'classwork', label: 'Classwork', defaultMax: 10 }
+  { value: 'quiz', label: 'quiz', defaultMax: 10 },
+  { value: 'assignment', label: 'assignment', defaultMax: 20 },
+  { value: 'classwork', label: 'classwork', defaultMax: 10 }
 ]
 
 const typeColor = (type) => {
@@ -20,6 +21,7 @@ const typeColor = (type) => {
 }
 
 export const TeacherGrades = () => {
+  const { t } = useTranslation()
   const [grades, setGrades] = useState([])
   const [loading, setLoading] = useState(true)
   const [students, setStudents] = useState([])
@@ -81,7 +83,7 @@ export const TeacherGrades = () => {
       setEditForm({ score: '', maxScore: '100' })
     } catch (error) {
       console.error('Error updating grade:', error)
-      alert(error.response?.data?.message || 'Failed to update grade')
+      alert(error.response?.data?.message || t('teacher.failedToUpdateGrade', 'Failed to update grade'))
     }
   }
 
@@ -105,7 +107,7 @@ export const TeacherGrades = () => {
       await fetchGrades()
     } catch (error) {
       console.error('Error creating grade:', error)
-      alert(error.response?.data?.message || 'Failed to create grade')
+      alert(error.response?.data?.message || t('teacher.failedToCreateGrade', 'Failed to create grade'))
     }
   }
 
@@ -145,11 +147,11 @@ export const TeacherGrades = () => {
             <div className="flex items-center gap-3">
               <Award size={36} className="text-green-600 dark:text-green-400" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                Grades
+                {t('dashboards.grades', 'Grades')}
               </h1>
             </div>
             <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Add quiz, assignment, and classwork grades — midterm and final exams are entered by the admin
+              {t('teacher.gradesSubtitle', 'Add quiz, assignment, and classwork grades — midterm and final exams are entered by the admin')}
             </p>
           </div>
           <button
@@ -157,19 +159,19 @@ export const TeacherGrades = () => {
             className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold"
           >
             <Plus size={20} />
-            Add Grade
+            {t('teacher.addGrade', 'Add Grade')}
           </button>
         </div>
 
         {loading ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading grades...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingGrades', 'Loading grades...')}</p>
           </div>
         ) : displayGrades.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
             <Award size={48} className="mx-auto text-gray-300 dark:text-gray-400 mb-4" />
-            <p className="text-gray-600 dark:text-gray-300">No grades found. Add grades to get started.</p>
+            <p className="text-gray-600 dark:text-gray-300">{t('teacher.noGradesFound', 'No grades found. Add grades to get started.')}</p>
           </div>
         ) : (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -177,15 +179,15 @@ export const TeacherGrades = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Student</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Roll No</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Class</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Subject</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Type</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Score</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.student', 'Student')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.rollNo', 'Roll No')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('dashboards.class', 'Class')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.subjectLabel', 'Subject')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.type', 'Type')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.score', 'Score')}</th>
                     <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">%</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Grade</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('dashboards.grade', 'Grade')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,7 +199,7 @@ export const TeacherGrades = () => {
                       <td className="px-6 py-4 text-gray-700 dark:text-gray-200">{student.subject}</td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${typeColor(student.gradeType)}`}>
-                          {student.gradeType ? student.gradeType.charAt(0).toUpperCase() + student.gradeType.slice(1) : 'Quiz'}
+                          {String(t(`gradeTypes.${student.gradeType || 'quiz'}`, student.gradeType || 'Quiz'))}
                         </span>
                       </td>
                       {editingId === student._id ? (
@@ -232,14 +234,14 @@ export const TeacherGrades = () => {
                               <button
                                 onClick={() => handleSaveEdit(student._id)}
                                 className="p-2 hover:bg-green-100 text-green-600 dark:text-green-400 rounded-lg transition"
-                                title="Save"
+                                title={t('common.save', 'Save')}
                               >
                                 <Save size={16} />
                               </button>
                               <button
                                 onClick={handleCancelEdit}
                                 className="p-2 hover:bg-red-100 text-red-600 dark:text-red-400 rounded-lg transition"
-                                title="Cancel"
+                                title={t('common.cancel', 'Cancel')}
                               >
                                 <X size={16} />
                               </button>
@@ -265,7 +267,7 @@ export const TeacherGrades = () => {
                             <button
                               onClick={() => handleEdit(student)}
                               className="p-2 hover:bg-blue-100 text-blue-600 dark:text-blue-400 rounded-lg transition"
-                              title="Edit"
+                              title={t('common.edit', 'Edit')}
                             >
                               <Edit size={16} />
                             </button>
@@ -288,27 +290,27 @@ export const TeacherGrades = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full"
             >
-              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">Add New Grade</h3>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">{t('teacher.addNewGrade', 'Add New Grade')}</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Quiz, assignment, and classwork only — midterm and final exams are entered by the admin.
+                {t('teacher.addGradeModalNote', 'Quiz, assignment, and classwork only — midterm and final exams are entered by the admin.')}
               </p>
               <form onSubmit={handleAddGrade} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Student</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.student', 'Student')}</label>
                   <select
                     value={newGrade.studentId}
                     onChange={(e) => setNewGrade({...newGrade, studentId: e.target.value})}
                     required
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100"
                   >
-                    <option value="">Select Student</option>
+                    <option value="">{t('teacher.selectStudent', 'Select Student')}</option>
                     {students.map(s => (
                       <option key={s._id} value={s._id}>{s.name} - {s.rollNumber}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Subject</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.subjectLabel', 'Subject')}</label>
                   <input
                     type="text"
                     value={newGrade.subject}
@@ -318,20 +320,20 @@ export const TeacherGrades = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Grade Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.gradeType', 'Grade Type')}</label>
                   <select
                     value={newGrade.gradeType}
                     onChange={(e) => handleTypeChange(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100"
                   >
-                    {TEACHER_GRADE_TYPES.map(t => (
-                      <option key={t.value} value={t.value}>{t.label}</option>
+                    {TEACHER_GRADE_TYPES.map(gt => (
+                      <option key={gt.value} value={gt.value}>{t(`gradeTypes.${gt.value}`, gt.label)}</option>
                     ))}
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Score</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.score', 'Score')}</label>
                     <input
                       type="number"
                       min="0"
@@ -342,7 +344,7 @@ export const TeacherGrades = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Max Score</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.maxScore', 'Max Score')}</label>
                     <input
                       type="number"
                       min="1"
@@ -354,7 +356,7 @@ export const TeacherGrades = () => {
                   </div>
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300">
-                  Total: {newGrade.score || 0}/{newGrade.maxScore || 0} —{' '}
+                  {t('teacher.total', 'Total')}: {newGrade.score || 0}/{newGrade.maxScore || 0} —{' '}
                   {calculateGrade(newGrade.maxScore ? (parseFloat(newGrade.score || '0') / parseFloat(newGrade.maxScore)) * 100 : 0)}
                 </div>
                 <div className="flex gap-3 justify-end">
@@ -363,13 +365,13 @@ export const TeacherGrades = () => {
                     onClick={() => setShowAddModal(false)}
                     className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
                   >
-                    Cancel
+                    {t('common.cancel', 'Cancel')}
                   </button>
                   <button
                     type="submit"
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                   >
-                    Add Grade
+                    {t('teacher.addGrade', 'Add Grade')}
                   </button>
                 </div>
               </form>

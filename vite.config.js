@@ -17,7 +17,11 @@ export default defineConfig(({ mode }) => {
       target: 'es2020',
     },
     server: {
-      port: 5173,
+      // Own port, away from the portfolio's 5173 (and Vite's auto-fallback
+      // 5174): sharing an origin with another dev app is what let a stale
+      // service worker hijack this app's preview. See index.html SW guard.
+      port: 5175,
+      host: true,
       proxy: {
         '/api': {
           target: apiUrl || 'http://localhost:5000',

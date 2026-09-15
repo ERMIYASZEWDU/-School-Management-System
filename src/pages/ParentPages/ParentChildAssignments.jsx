@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { FileText, ArrowLeft, CheckCircle, Clock, AlertTriangle, Calendar, User } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getChildAssignments, getChildDetails } from '../../services/parentApi'
 
 export const ParentChildAssignments = () => {
+  const { t } = useTranslation()
   const { studentId } = useParams()
   const navigate = useNavigate()
   const [assignments, setAssignments] = useState([])
@@ -28,7 +30,7 @@ export const ParentChildAssignments = () => {
       setError('')
     } catch (err) {
       console.error('Error fetching data:', err)
-      setError('Failed to load assignments')
+      setError(t('studentLabels.failedToLoadAssignments', 'Failed to load assignments'))
     } finally {
       setLoading(false)
     }
@@ -40,14 +42,14 @@ export const ParentChildAssignments = () => {
         return (
           <span className="px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold border-2 border-green-300 flex items-center gap-1">
             <CheckCircle size={14} />
-            Graded: {assignment.submission.grade}
+            {t('studentLabels.graded', 'Graded')}: {assignment.submission.grade}
           </span>
         )
       }
       return (
         <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold border-2 border-blue-300 flex items-center gap-1">
           <CheckCircle size={14} />
-          Submitted
+          {t('studentLabels.submitted', 'Submitted')}
         </span>
       )
     }
@@ -56,14 +58,14 @@ export const ParentChildAssignments = () => {
       return (
         <span className="px-3 py-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-full text-xs font-semibold border-2 border-red-300 flex items-center gap-1">
           <AlertTriangle size={14} />
-          Overdue
+          {t('studentLabels.overdue', 'Overdue')}
         </span>
       )
     }
     return (
       <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 rounded-full text-xs font-semibold border-2 border-yellow-300 flex items-center gap-1">
         <Clock size={14} />
-        Pending
+        {t('dashboards.pending', 'Pending')}
       </span>
     )
   }
@@ -74,10 +76,10 @@ export const ParentChildAssignments = () => {
     const diffTime = due.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     
-    if (diffDays < 0) return `${Math.abs(diffDays)} days overdue`
-    if (diffDays === 0) return 'Due today'
-    if (diffDays === 1) return 'Due tomorrow'
-    return `${diffDays} days remaining`
+    if (diffDays < 0) return t('studentLabels.daysOverdue', '{{count}} days overdue', { count: Math.abs(diffDays) })
+    if (diffDays === 0) return t('studentLabels.dueToday', 'Due today')
+    if (diffDays === 1) return t('studentLabels.dueTomorrow', 'Due tomorrow')
+    return t('studentLabels.daysRemaining', '{{count}} days remaining', { count: diffDays })
   }
 
   const submittedCount = assignments.filter(a => a.submission).length
@@ -90,7 +92,7 @@ export const ParentChildAssignments = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading assignments...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingAssignments', 'Loading assignments...')}</p>
         </div>
       </div>
     )
@@ -104,14 +106,14 @@ export const ParentChildAssignments = () => {
           className="flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 mb-6"
         >
           <ArrowLeft size={20} />
-          Back to Children
+          {t('parent.backToChildren', 'Back to Children')}
         </button>
 
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <FileText size={36} className="text-purple-600 dark:text-purple-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              {child?.name}'s Assignments
+              {t('parent.childAssignments', "{{name}}'s Assignments", { name: child?.name || '' })}
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-300">{child?.grade} {child?.section} • {child?.enrollmentNumber}</p>
@@ -127,7 +129,7 @@ export const ParentChildAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('teacher.total', 'Total')}</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{assignments.length}</p>
               </div>
               <FileText size={28} className="text-purple-600 dark:text-purple-400" />
@@ -137,7 +139,7 @@ export const ParentChildAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Submitted</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.submitted', 'Submitted')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{submittedCount}</p>
               </div>
               <CheckCircle size={28} className="text-blue-600 dark:text-blue-400" />
@@ -147,7 +149,7 @@ export const ParentChildAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Pending</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.pending', 'Pending')}</p>
                 <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{pendingCount}</p>
               </div>
               <Clock size={28} className="text-yellow-600 dark:text-yellow-400" />
@@ -157,7 +159,7 @@ export const ParentChildAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Graded</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.graded', 'Graded')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{gradedCount}</p>
               </div>
               <CheckCircle size={28} className="text-green-600 dark:text-green-400" />
@@ -194,11 +196,11 @@ export const ParentChildAssignments = () => {
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                       <User size={16} className="text-blue-500" />
-                      <span>Teacher: {assignment.teacherId?.name || 'Unknown'}</span>
+                      <span>{t('teacher.studentsPageTitle', 'Teacher')}: {assignment.teacherId?.name || t('studentLabels.unknown', 'Unknown')}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                       <Calendar size={16} className="text-purple-500" />
-                      <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                      <span>{t('dashboards.due', 'Due')}: {new Date(assignment.dueDate).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm font-medium">
                       <Clock size={16} className={isOverdue ? 'text-red-500' : 'text-green-500'} />
@@ -212,22 +214,22 @@ export const ParentChildAssignments = () => {
                     <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3">
                         <p className="text-sm text-blue-700 dark:text-blue-300 font-semibold mb-1">
-                          Submission Status: {assignment.submission.status}
+                          {t('studentLabels.submissionStatus', 'Submission Status')}: {String(t(`statusLabels.${assignment.submission.status}`, assignment.submission.status))}
                         </p>
                         {assignment.submission.grade && (
                           <>
                             <p className="text-sm text-blue-700 dark:text-blue-300">
-                              Grade: <span className="font-bold">{assignment.submission.grade}</span>
+                              {t('dashboards.grade', 'Grade')}: <span className="font-bold">{assignment.submission.grade}</span>
                             </p>
                             {assignment.submission.feedback && (
                               <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                                Feedback: {assignment.submission.feedback}
+                                {t('studentLabels.feedback', 'Feedback')}: {assignment.submission.feedback}
                               </p>
                             )}
                           </>
                         )}
                         <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                          Submitted: {new Date(assignment.submission.submittedAt).toLocaleDateString()}
+                          {t('studentLabels.submitted', 'Submitted')}: {new Date(assignment.submission.submittedAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -238,7 +240,7 @@ export const ParentChildAssignments = () => {
           ) : (
             <div className="col-span-full text-center py-12">
               <FileText size={48} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 text-lg">No assignments found</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">{t('teacher.noAssignmentsYet', 'No assignments yet')}</p>
             </div>
           )}
         </div>

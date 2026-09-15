@@ -4,8 +4,10 @@ import { FileText, Plus, Edit, Trash2, Calendar, Clock, Users, Award } from 'luc
 import { Modal } from '../../components/Modal'
 import { Button } from '../../components/Button'
 import { Input } from '../../components/Input'
+import { useTranslation } from 'react-i18next'
 
 export const Examinations = () => {
+  const { t, i18n } = useTranslation()
   const [exams, setExams] = useState([
     { 
       id: 1, 
@@ -156,9 +158,9 @@ export const Examinations = () => {
   }
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this examination?')) {
+    if (window.confirm(t('admin.exams.deleteConfirm', 'Are you sure you want to delete this examination?'))) {
       setExams(exams.filter(e => e.id !== id))
-      alert('Examination deleted successfully!')
+      alert(t('admin.exams.deleted', 'Examination deleted successfully!'))
     }
   }
 
@@ -181,10 +183,10 @@ export const Examinations = () => {
         id: Math.max(...exams.map(e => e.id)) + 1
       }
       setExams([...exams, newExam])
-      alert('Examination added successfully!')
+      alert(t('admin.exams.added', 'Examination added successfully!'))
     } else {
       setExams(exams.map(e => e.id === selectedExam.id ? { ...examData, id: selectedExam.id } : e))
-      alert('Examination updated successfully!')
+      alert(t('admin.exams.updated', 'Examination updated successfully!'))
     }
     setShowAddModal(false)
     setShowEditModal(false)
@@ -220,14 +222,14 @@ export const Examinations = () => {
             <div className="flex items-center gap-3">
               <FileText size={36} className="text-indigo-600 dark:text-indigo-400" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Examinations
+                {t('admin.exams.title', 'Examinations')}
               </h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">Manage exams, tests, and assessments</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">{t('admin.exams.subtitle', 'Manage exams, tests, and assessments')}</p>
           </div>
           <Button onClick={handleAdd} className="flex items-center gap-2">
             <Plus size={20} />
-            Schedule New Exam
+            {t('admin.exams.scheduleNew', 'Schedule New Exam')}
           </Button>
         </div>
 
@@ -241,7 +243,7 @@ export const Examinations = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Exams</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.exams.totalExams', 'Total Exams')}</p>
                 <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{stats.total}</p>
               </div>
               <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl">
@@ -258,7 +260,7 @@ export const Examinations = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Scheduled</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('examStatus.Scheduled', 'Scheduled')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.scheduled}</p>
               </div>
               <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
@@ -275,7 +277,7 @@ export const Examinations = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">In Progress</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('examStatus.In Progress', 'In Progress')}</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.inProgress}</p>
               </div>
               <div className="p-4 bg-orange-50 dark:bg-orange-900/30 rounded-xl">
@@ -292,7 +294,7 @@ export const Examinations = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Completed</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('examStatus.Completed', 'Completed')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.completed}</p>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-xl">
@@ -313,16 +315,16 @@ export const Examinations = () => {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-indigo-50 dark:from-indigo-900/40 to-purple-50 dark:to-purple-900/40">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Exam Name</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Subject</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Class</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Date</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Time</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Duration</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Mark Breakdown</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Total</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Status</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Actions</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.exams.examName', 'Exam Name')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.subjectLabel', 'Subject')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.classes.classLabel', 'Class')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.date', 'Date')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.exams.time', 'Time')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.exams.duration', 'Duration')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.exams.markBreakdown', 'Mark Breakdown')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.total', 'Total')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.classes.statusColumn', 'Status')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -337,21 +339,21 @@ export const Examinations = () => {
                     <td className="p-4 font-semibold text-gray-800 dark:text-gray-100">{exam.name}</td>
                     <td className="p-4 text-indigo-600 dark:text-indigo-400 font-medium">{exam.subject}</td>
                     <td className="p-4 text-gray-700 dark:text-gray-200">{exam.class}</td>
-                    <td className="p-4 text-gray-700 dark:text-gray-200">{new Date(exam.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                    <td className="p-4 text-gray-700 dark:text-gray-200">{new Date(exam.date).toLocaleDateString(i18n.language === 'am' ? 'am-ET' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                     <td className="p-4 text-gray-700 dark:text-gray-200">{exam.time}</td>
                     <td className="p-4 text-gray-700 dark:text-gray-200">{exam.duration}</td>
                     <td className="p-4">
                       <div className="text-xs space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-300">Quiz:</span>
+                          <span className="text-gray-600 dark:text-gray-300">{t('gradeTypes.quiz', 'Quiz')}:</span>
                           <span className="font-semibold text-blue-600 dark:text-blue-400">{exam.markBreakdown.quiz}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-300">Mid:</span>
+                          <span className="text-gray-600 dark:text-gray-300">{t('gradeTypes.midterm', 'Mid')}:</span>
                           <span className="font-semibold text-purple-600 dark:text-purple-400">{exam.markBreakdown.midExam}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-300">Final:</span>
+                          <span className="text-gray-600 dark:text-gray-300">{t('gradeTypes.final', 'Final')}:</span>
                           <span className="font-semibold text-green-600 dark:text-green-400">{exam.markBreakdown.finalExam}</span>
                         </div>
                       </div>
@@ -359,10 +361,9 @@ export const Examinations = () => {
                     <td className="p-4">
                       <span className="text-xl font-bold text-gray-800 dark:text-gray-100">{exam.totalMarks}</span>
                     </td>
-                    <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border-2 ${getStatusColor(exam.status)}`}>
-                        {exam.status}
-                      </span>
+                    <td className="p-4">                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border-2 ${getStatusColor(exam.status)}`}>
+                          {String(t(`examStatus.${exam.status}`, exam.status))}
+                        </span>
                     </td>
                     <td className="p-4">
                       <div className="flex gap-2">
@@ -396,55 +397,55 @@ export const Examinations = () => {
             setShowAddModal(false)
             setShowEditModal(false)
           }}
-          title={showAddModal ? 'Schedule New Exam' : 'Edit Examination'}
+          title={showAddModal ? t('admin.exams.scheduleNew', 'Schedule New Exam') : t('admin.exams.editTitle', 'Edit Examination')}
         >
           <div className="space-y-4">
             <Input
-              label="Exam Name"
+              label={t('admin.exams.examName', 'Exam Name')}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Mid-Term Exam"
+              placeholder={t('admin.exams.examNamePlaceholder', 'e.g., Mid-Term Exam')}
             />
             <Input
-              label="Subject"
+              label={t('teacher.subjectLabel', 'Subject')}
               value={formData.subject}
               onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-              placeholder="e.g., Mathematics"
+              placeholder={t('teacher.subjectPlaceholder', 'e.g., Mathematics')}
             />
             <Input
-              label="Class"
+              label={t('admin.classes.classLabel', 'Class')}
               value={formData.class}
               onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-              placeholder="e.g., Class 1-A"
+              placeholder={t('admin.exams.classPlaceholder', 'e.g., Class 1-A')}
             />
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="Date"
+                label={t('studentLabels.date', 'Date')}
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               />
               <Input
-                label="Time"
+                label={t('admin.exams.time', 'Time')}
                 type="time"
                 value={formData.time}
                 onChange={(e) => setFormData({ ...formData, time: e.target.value })}
               />
             </div>
             <Input
-              label="Duration"
+              label={t('admin.exams.duration', 'Duration')}
               value={formData.duration}
               onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-              placeholder="e.g., 2 hours"
+              placeholder={t('admin.exams.durationPlaceholder', 'e.g., 2 hours')}
             />
             
             {/* Mark Breakdown Section */}
             <div className="border-t pt-4 mt-4">
-              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">Mark Breakdown</h3>
+              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{t('admin.exams.markBreakdown', 'Mark Breakdown')}</h3>
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                    Quiz Marks
+                    {t('admin.exams.quizMarks', 'Quiz Marks')}
                   </label>
                   <Input
                     type="number"
@@ -456,7 +457,7 @@ export const Examinations = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                    Mid Exam
+                    {t('gradeTypes.midterm', 'Mid Exam')}
                   </label>
                   <Input
                     type="number"
@@ -468,7 +469,7 @@ export const Examinations = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                    Final Exam
+                    {t('gradeTypes.final', 'Final Exam')}
                   </label>
                   <Input
                     type="number"
@@ -483,33 +484,33 @@ export const Examinations = () => {
               {/* Total Marks Display */}
               <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 dark:from-blue-900/40 to-purple-50 dark:to-purple-900/40 rounded-lg border-2 border-blue-200 dark:border-blue-900/50">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">Total Marks:</span>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.exams.totalMarks', 'Total Marks')}:</span>
                   <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                     {calculateTotalMarks(formData.quiz, formData.midExam, formData.finalExam)}
                   </span>
                 </div>
                 <div className="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                  Quiz ({formData.quiz || 0}) + Mid ({formData.midExam || 0}) + Final ({formData.finalExam || 0})
+                  {t('admin.exams.formula', 'Quiz ({{q}}) + Mid ({{m}}) + Final ({{f}})', { q: formData.quiz || 0, m: formData.midExam || 0, f: formData.finalExam || 0 })}
                 </div>
               </div>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Status</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.classes.statusColumn', 'Status')}</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800"
               >
-                <option value="Scheduled">Scheduled</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="Cancelled">Cancelled</option>
+                <option value="Scheduled">{t('examStatus.Scheduled', 'Scheduled')}</option>
+                <option value="In Progress">{t('examStatus.In Progress', 'In Progress')}</option>
+                <option value="Completed">{t('examStatus.Completed', 'Completed')}</option>
+                <option value="Cancelled">{t('examStatus.Cancelled', 'Cancelled')}</option>
               </select>
             </div>
             <div className="flex gap-3 pt-4">
               <Button onClick={handleSave} className="flex-1">
-                {showAddModal ? 'Schedule Exam' : 'Save Changes'}
+                {showAddModal ? t('admin.exams.scheduleExam', 'Schedule Exam') : t('admin.subjects.saveChanges', 'Save Changes')}
               </Button>
               <Button
                 onClick={() => {
@@ -519,7 +520,7 @@ export const Examinations = () => {
                 variant="secondary"
                 className="flex-1"
               >
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </Button>
             </div>
           </div>

@@ -9,9 +9,9 @@ import { useAuthStore } from '../../store/authStore'
 import { resolvePhotoUrl } from '../../utils/api'
 
 const assignmentStatusData = [
-  { name: 'Submitted', value: 280, fill: '#10b981' },
-  { name: 'Pending', value: 45, fill: '#f59e0b' },
-  { name: 'Not Submitted', value: 25, fill: '#ef4444' }
+  { name: 'submitted', value: 280, fill: '#10b981' },
+  { name: 'pending', value: 45, fill: '#f59e0b' },
+  { name: 'notSubmitted', value: 25, fill: '#ef4444' }
 ]
 
 export const TeacherDashboard = () => {
@@ -48,10 +48,10 @@ export const TeacherDashboard = () => {
   }, [])
 
   const stats = [
-    { icon: Users, label: 'Total Students', value: loading ? '...' : dashboardData.totalStudents.toString(), subtitle: '+4.2% from last month', bgColor: 'bg-blue-50 dark:bg-blue-900/30', textColor: 'text-blue-600 dark:text-blue-400', borderColor: 'border-blue-200 dark:border-blue-900/50' },
-    { icon: BookOpen, label: 'Classes', value: loading ? '...' : dashboardData.totalClasses.toString(), subtitle: '+1 new class', bgColor: 'bg-green-50 dark:bg-green-900/30', textColor: 'text-green-600 dark:text-green-400', borderColor: 'border-green-200 dark:border-green-900/50' },
-    { icon: CheckCircle, label: 'Assignments', value: loading ? '...' : dashboardData.assignmentsCount.toString(), subtitle: '+3 this week', bgColor: 'bg-purple-50 dark:bg-purple-900/30', textColor: 'text-purple-600 dark:text-purple-400', borderColor: 'border-purple-200 dark:border-purple-900/50' },
-    { icon: TrendingUp, label: 'Avg Score', value: loading ? '...' : `${dashboardData.avgScore}%`, subtitle: '+2.1% from last month', bgColor: 'bg-orange-50 dark:bg-orange-900/30', textColor: 'text-orange-600 dark:text-orange-400', borderColor: 'border-orange-200 dark:border-orange-900/50' }
+    { icon: Users, label: t('dashboards.totalStudents', 'Total Students'), value: loading ? '...' : dashboardData.totalStudents.toString(), subtitle: '+4.2% from last month', bgColor: 'bg-blue-50 dark:bg-blue-900/30', textColor: 'text-blue-600 dark:text-blue-400', borderColor: 'border-blue-200 dark:border-blue-900/50' },
+    { icon: BookOpen, label: t('dashboards.classes', 'Classes'), value: loading ? '...' : dashboardData.totalClasses.toString(), subtitle: '+1 new class', bgColor: 'bg-green-50 dark:bg-green-900/30', textColor: 'text-green-600 dark:text-green-400', borderColor: 'border-green-200 dark:border-green-900/50' },
+    { icon: CheckCircle, label: t('dashboards.assignments', 'Assignments'), value: loading ? '...' : dashboardData.assignmentsCount.toString(), subtitle: '+3 this week', bgColor: 'bg-purple-50 dark:bg-purple-900/30', textColor: 'text-purple-600 dark:text-purple-400', borderColor: 'border-purple-200 dark:border-purple-900/50' },
+    { icon: TrendingUp, label: t('dashboards.avgScore', 'Avg Score'), value: loading ? '...' : `${dashboardData.avgScore}%`, subtitle: '+2.1% from last month', bgColor: 'bg-orange-50 dark:bg-orange-900/30', textColor: 'text-orange-600 dark:text-orange-400', borderColor: 'border-orange-200 dark:border-orange-900/50' }
   ]
 
   if (loading) {
@@ -59,7 +59,7 @@ export const TeacherDashboard = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading dashboard...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('dashboards.loadingDashboard', 'Loading dashboard...')}</p>
         </div>
       </div>
     )
@@ -88,9 +88,9 @@ export const TeacherDashboard = () => {
                 animate={{ opacity: 1, x: 0 }}
                 className="text-3xl font-bold text-gray-800 dark:text-gray-100"
               >
-                Dashboard
+                {t('dashboards.teacherDashboard', 'Dashboard')}
               </motion.h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">Welcome back, {user?.name || 'Teacher'}! 👋</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">{t('dashboards.welcomeBack', 'Welcome back')}, {user?.name || 'Teacher'}! 👋</p>
             </div>
           </div>
           
@@ -103,7 +103,7 @@ export const TeacherDashboard = () => {
               className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-md transition"
             >
               <Calendar size={18} className="text-gray-600 dark:text-gray-300" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">This Month</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{t('dashboards.thisMonth', 'This Month')}</span>
             </motion.button>
             <motion.button
               initial={{ opacity: 0, x: 20 }}
@@ -113,7 +113,7 @@ export const TeacherDashboard = () => {
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
               <Download size={18} />
-              <span className="text-sm font-medium">Download Report</span>
+              <span className="text-sm font-medium">{t('dashboards.downloadReport', 'Download Report')}</span>
             </motion.button>
           </div>
         </div>
@@ -164,10 +164,10 @@ export const TeacherDashboard = () => {
             className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700"
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Attendance Trend</h3>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t('dashboards.attendanceTrend', 'Attendance Trend')}</h3>
               <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:border-gray-400 dark:hover:border-gray-500">
-                <option>Last 6 Months</option>
-                <option>Last Year</option>
+                <option>{t('dashboards.last6Months', 'Last 6 Months')}</option>
+                <option>{t('dashboards.lastYear', 'Last Year')}</option>
               </select>
             </div>
             <ResponsiveContainer width="100%" height={280}>
@@ -189,7 +189,7 @@ export const TeacherDashboard = () => {
             transition={{ delay: 0.45 }}
             className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700"
           >
-            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Assignment Status</h3>
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">{t('dashboards.assignmentStatus', 'Assignment Status')}</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie data={assignmentStatusData} cx="50%" cy="50%" innerRadius={50} outerRadius={90} dataKey="value">
@@ -210,7 +210,7 @@ export const TeacherDashboard = () => {
                 >
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.fill }}></span>
-                    <span className="text-gray-600 dark:text-gray-300">{item.name}</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t(`dashboards.${item.name}`, item.name)}</span>
                   </span>
                   <span className="font-semibold text-gray-800 dark:text-gray-100">{item.value}</span>
                 </motion.div>
@@ -229,21 +229,21 @@ export const TeacherDashboard = () => {
             className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700"
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Class Performance Overview</h3>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t('dashboards.classPerformance', 'Class Performance Overview')}</h3>
               <select className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer">
-                <option>This Month</option>
-                <option>Last Month</option>
+                <option>{t('dashboards.thisMonth', 'This Month')}</option>
+                <option>{t('dashboards.lastMonth', 'Last Month')}</option>
               </select>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead className="border-b border-gray-200 dark:border-gray-700">
                   <tr>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">Class</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">Avg Score</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">Excellent</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">Good</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">Average</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">{t('dashboards.class', 'Class')}</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">{t('dashboards.avgScore', 'Avg Score')}</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">{t('dashboards.excellent', 'Excellent')}</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">{t('dashboards.good', 'Good')}</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700 dark:text-gray-200">{t('dashboards.average', 'Average')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -282,15 +282,15 @@ export const TeacherDashboard = () => {
             className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700"
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Recent Notifications</h3>
-              <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs font-semibold">View All</a>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t('dashboards.recentNotifications', 'Recent Notifications')}</h3>
+              <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs font-semibold">{t('dashboards.viewAll', 'View All')}</a>
             </div>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {[
-                { icon: ClipboardCheck, title: 'Attendance sheet submission deadline today', time: '2 hours ago', color: 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-900/50', iconColor: 'text-red-500' },
-                { icon: Calendar, title: 'Parent-Teacher meeting scheduled on 30 May', time: '1 day ago', color: 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-900/50', iconColor: 'text-green-500' },
-                { icon: CheckCircle, title: 'Assignment submissions closed for Grade 11-A', time: '2 days ago', color: 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-900/50', iconColor: 'text-blue-500' },
-                { icon: GraduationCap, title: 'Final exam schedule has been published', time: '3 days ago', color: 'bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-900/50', iconColor: 'text-purple-500' }
+                { icon: ClipboardCheck, title: t('dashboards.notifAttendanceDeadline', 'Attendance sheet submission deadline today'), time: '2 hours ago', color: 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-900/50', iconColor: 'text-red-500' },
+                { icon: Calendar, title: t('dashboards.notifParentMeeting', 'Parent-Teacher meeting scheduled on 30 May'), time: '1 day ago', color: 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-900/50', iconColor: 'text-green-500' },
+                { icon: CheckCircle, title: t('dashboards.notifSubmissionsClosed', 'Assignment submissions closed for Grade 11-A'), time: '2 days ago', color: 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-900/50', iconColor: 'text-blue-500' },
+                { icon: GraduationCap, title: t('dashboards.notifExamSchedule', 'Final exam schedule has been published'), time: '3 days ago', color: 'bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-900/50', iconColor: 'text-purple-500' }
               ].map((notif, idx) => (
                 <motion.div
                   key={idx}
@@ -320,12 +320,12 @@ export const TeacherDashboard = () => {
           className="grid md:grid-cols-3 gap-4"
         >
           {[
-            { icon: PenLine, label: 'Create Assignment', action: () => navigate('/teacher/assignments') },
-            { icon: ClipboardCheck, label: 'Mark Attendance', action: () => navigate('/teacher/attendance') },
-            { icon: BarChart3, label: 'Upload Grades', action: () => navigate('/teacher/grades') },
-            { icon: MessageSquare, label: 'Message Parents', action: () => {} },
-            { icon: BookOpen, label: 'View Syllabus', action: () => {} },
-            { icon: Users, label: 'Student Reports', action: () => navigate('/teacher/students') }
+            { icon: PenLine, label: t('dashboards.createAssignment', 'Create Assignment'), action: () => navigate('/teacher/assignments') },
+            { icon: ClipboardCheck, label: t('dashboards.markAttendance', 'Mark Attendance'), action: () => navigate('/teacher/attendance') },
+            { icon: BarChart3, label: t('dashboards.uploadGrades', 'Upload Grades'), action: () => navigate('/teacher/grades') },
+            { icon: MessageSquare, label: t('dashboards.messageParents', 'Message Parents'), action: () => {} },
+            { icon: BookOpen, label: t('dashboards.viewSyllabus', 'View Syllabus'), action: () => {} },
+            { icon: Users, label: t('dashboards.studentReports', 'Student Reports'), action: () => navigate('/teacher/students') }
           ].map((link, idx) => (
             <motion.button
               key={idx}

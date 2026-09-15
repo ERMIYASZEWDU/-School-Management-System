@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Calendar, CheckCircle, XCircle, Clock, Save, AlertCircle } from 'lucide-react'
 import { getMyStudents, markAttendance, getAttendance } from '../../services/teacherApi'
 import apiClient from '../../utils/api'
 
 export const TeacherAttendance = () => {
+  const { t } = useTranslation()
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [selectedClassId, setSelectedClassId] = useState('all')
   const [classes, setClasses] = useState([])
@@ -53,7 +55,7 @@ export const TeacherAttendance = () => {
       data.forEach(s => { init[s._id] = 'present' })
       setAttendance(init)
     } catch (err) {
-      setError('Failed to load students')
+      setError(t('teacher.failedToLoadStudents', 'Failed to load students'))
     } finally {
       setLoading(false)
     }
@@ -82,7 +84,7 @@ export const TeacherAttendance = () => {
 
   const handleSaveAttendance = async () => {
     if (students.length === 0) {
-      setError('No students to mark attendance for.')
+      setError(t('teacher.noStudentsToMark', 'No students to mark attendance for.'))
       return
     }
     try {
@@ -97,11 +99,11 @@ export const TeacherAttendance = () => {
       }))
 
       await markAttendance({ classId, date: selectedDate, students: records })
-      setSuccess(`Attendance saved for ${students.length} students!`)
+      setSuccess(t('teacher.attendanceSavedFor', 'Attendance saved for {{count}} students!', { count: students.length }))
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Unknown error'
-      setError(`Failed to save attendance: ${msg}`)
+      const msg = err.response?.data?.message || err.message || t('teacher.unknownError', 'Unknown error')
+      setError(t('teacher.failedToSaveAttendance', 'Failed to save attendance: {{msg}}', { msg }))
     } finally {
       setSaving(false)
     }
@@ -127,9 +129,9 @@ export const TeacherAttendance = () => {
           <div>
             <div className="flex items-center gap-3">
               <Calendar size={36} className="text-orange-600 dark:text-orange-400" />
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Mark Attendance</h1>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{t('dashboards.markAttendance', 'Mark Attendance')}</h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Mark daily attendance for your classes</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">{t('teacher.markDailyAttendance', 'Mark daily attendance for your classes')}</p>
           </div>
           <div className="flex flex-wrap gap-3 items-center">
             {/* Class selector */}
@@ -138,7 +140,7 @@ export const TeacherAttendance = () => {
               onChange={e => setSelectedClassId(e.target.value)}
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-800 text-sm"
             >
-              <option value="all">All My Classes</option>
+              <option value="all">{t('teacher.allMyClasses', 'All My Classes')}</option>
               {classes.map(c => (
                 <option key={c._id} value={c._id}>{c.name}</option>
               ))}
@@ -155,7 +157,7 @@ export const TeacherAttendance = () => {
               className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold disabled:opacity-50 text-sm"
             >
               <Save size={18} />
-              {saving ? 'Saving...' : 'Save Attendance'}
+              {saving ? t('teacher.saving', 'Saving...') : t('teacher.saveAttendance', 'Save Attendance')}
             </button>
           </div>
         </div>
@@ -177,9 +179,9 @@ export const TeacherAttendance = () => {
           <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 rounded-lg p-6 mb-6 flex items-start gap-3">
             <AlertCircle size={24} className="text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-yellow-800">No classes assigned</p>
+              <p className="font-semibold text-yellow-800">{t('teacher.noClassesAssigned', 'No classes assigned')}</p>
               <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                Ask your admin to assign you to a class. Once assigned, students will appear here automatically.
+                {t('teacher.askAdminToAssign', 'Ask your admin to assign you to a class. Once assigned, students will appear here automatically.')}
               </p>
             </div>
           </div>
@@ -188,11 +190,11 @@ export const TeacherAttendance = () => {
         {/* Stats */}
         <div className="grid md:grid-cols-5 gap-4 mb-6">
           {[
-            { label: 'Total', value: stats.total, bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-600', num: 'text-gray-700' },
-            { label: 'Present', value: stats.present, bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-600', num: 'text-green-700' },
-            { label: 'Absent', value: stats.absent, bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-600', num: 'text-red-700' },
-            { label: 'Late', value: stats.late, bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-600', num: 'text-orange-700' },
-            { label: 'Excused', value: stats.excused, bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-600', num: 'text-blue-700' },
+            { label: t('teacher.total', 'Total'), value: stats.total, bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-600', num: 'text-gray-700' },
+            { label: t('dashboards.present', 'Present'), value: stats.present, bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-600', num: 'text-green-700' },
+            { label: t('dashboards.absent', 'Absent'), value: stats.absent, bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-600', num: 'text-red-700' },
+            { label: t('dashboards.late', 'Late'), value: stats.late, bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-600', num: 'text-orange-700' },
+            { label: t('dashboards.excused', 'Excused'), value: stats.excused, bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-600', num: 'text-blue-700' },
           ].map(s => (
             <div key={s.label} className={`${s.bg} rounded-lg p-4 border ${s.border}`}>
               <p className={`text-sm ${s.text}`}>{s.label}</p>
@@ -203,8 +205,8 @@ export const TeacherAttendance = () => {
 
         <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-900/50 rounded-lg p-4 mb-6 flex justify-between items-center">
           <div>
-            <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Attendance Rate</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">(Present + Late) / Total</p>
+            <p className="text-sm font-medium text-purple-600 dark:text-purple-400">{t('teacher.attendanceRate', 'Attendance Rate')}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">({t('dashboards.present', 'Present')} + {t('dashboards.late', 'Late')}) / {t('teacher.total', 'Total')}</p>
           </div>
           <p className="text-3xl font-bold text-purple-700 dark:text-purple-300">{attendanceRate}%</p>
         </div>
@@ -213,16 +215,16 @@ export const TeacherAttendance = () => {
         {loading ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading students...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingStudents', 'Loading students...')}</p>
           </div>
         ) : students.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
             <AlertCircle size={48} className="mx-auto text-gray-300 dark:text-gray-400 mb-4" />
-            <p className="text-gray-600 dark:text-gray-300 font-medium">No students found</p>
+            <p className="text-gray-600 dark:text-gray-300 font-medium">{t('teacher.noStudentsFound', 'No students found')}</p>
             <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
               {classes.length === 0
-                ? 'You have no assigned classes yet.'
-                : 'No active students in the selected class.'}
+                ? t('teacher.noAssignedClassesYet', 'You have no assigned classes yet.')
+                : t('teacher.noActiveStudentsInClass', 'No active students in the selected class.')}
             </p>
           </div>
         ) : (
@@ -231,10 +233,10 @@ export const TeacherAttendance = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Student</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Enrollment No</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Grade / Section</th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-200">Status</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.student', 'Student')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.enrollmentNo', 'Enrollment No')}</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.gradeSection', 'Grade / Section')}</th>
+                    <th className="px-6 py-3 text-center text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.status', 'Status')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -267,7 +269,7 @@ export const TeacherAttendance = () => {
                                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition capitalize ${isActive ? colors[status].active : colors[status].idle}`}
                               >
                                 {icons[status]}
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                                {t(`status.${status}`, status)}
                               </button>
                             )
                           })}

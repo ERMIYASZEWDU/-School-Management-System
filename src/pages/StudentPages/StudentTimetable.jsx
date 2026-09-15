@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Calendar, Clock, BookOpen, User, MapPin } from 'lucide-react'
 import { getStudentTimetable } from '../../services/studentApi'
 
 export const StudentTimetable = () => {
+  const { t } = useTranslation()
   const [timetable, setTimetable] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -22,7 +24,7 @@ export const StudentTimetable = () => {
       setError('')
     } catch (err) {
       console.error('Error fetching timetable:', err)
-      setError('Failed to load timetable')
+      setError(t('studentLabels.failedToLoadTimetable', 'Failed to load timetable'))
     } finally {
       setLoading(false)
     }
@@ -51,7 +53,7 @@ export const StudentTimetable = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading timetable...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingTimetable', 'Loading timetable...')}</p>
         </div>
       </div>
     )
@@ -71,10 +73,10 @@ export const StudentTimetable = () => {
           <div className="flex items-center gap-3 mb-2">
             <Calendar size={36} className="text-blue-600 dark:text-blue-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              My Timetable
+              {t('teacher.myTimetable', 'My Timetable')}
             </h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-300">Your weekly class schedule</p>
+          <p className="text-gray-600 dark:text-gray-300">{t('studentLabels.weeklyClassSchedule', 'Your weekly class schedule')}</p>
         </div>
 
         {error && (
@@ -88,7 +90,7 @@ export const StudentTimetable = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Classes</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.totalClasses', 'Total Classes')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{timetable.length}</p>
               </div>
               <BookOpen size={28} className="text-blue-600 dark:text-blue-400" />
@@ -98,7 +100,7 @@ export const StudentTimetable = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Subjects</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.subjects', 'Subjects')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                   {new Set(timetable.map(t => t.subjectId?._id)).size}
                 </p>
@@ -110,7 +112,7 @@ export const StudentTimetable = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Active Days</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.activeDays', 'Active Days')}</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                   {Object.values(groupedTimetable).filter(day => day.length > 0).length}
                 </p>
@@ -135,7 +137,7 @@ export const StudentTimetable = () => {
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
                   <h3 className="text-xl font-bold text-white flex items-center gap-2">
                     <Calendar size={24} />
-                    {day}
+                    {t(`days.${day}`, day)}
                   </h3>
                 </div>
 
@@ -162,10 +164,10 @@ export const StudentTimetable = () => {
                         <div className="mb-3">
                           <div className="flex items-center gap-2 mb-1">
                             <BookOpen size={16} />
-                            <span className="text-sm font-medium">Subject</span>
+                            <span className="text-sm font-medium">{t('teacher.subjectLabel', 'Subject')}</span>
                           </div>
                           <p className="text-lg font-bold">
-                            {item.subjectId?.name || 'Unknown Subject'}
+                            {item.subjectId?.name || t('studentLabels.unknownSubject', 'Unknown Subject')}
                           </p>
                           <p className="text-xs opacity-75">
                             {item.subjectId?.code || ''}
@@ -176,7 +178,7 @@ export const StudentTimetable = () => {
                         <div className="mb-3">
                           <div className="flex items-center gap-2 mb-1">
                             <User size={16} />
-                            <span className="text-sm font-medium">Teacher</span>
+                            <span className="text-sm font-medium">{t('teacher.studentsPageTitle', 'Teacher')}</span>
                           </div>
                           <p className="text-sm font-semibold">
                             {item.teacherId?.name || 'N/A'}
@@ -188,7 +190,7 @@ export const StudentTimetable = () => {
                           <div className="flex items-center gap-2">
                             <MapPin size={16} />
                             <span className="text-sm">
-                              Room: <span className="font-semibold">{item.room}</span>
+                              {t('teacher.room', 'Room')}: <span className="font-semibold">{item.room}</span>
                             </span>
                           </div>
                         )}
@@ -205,9 +207,9 @@ export const StudentTimetable = () => {
         {timetable.length === 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 p-12 text-center">
             <Calendar size={64} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 text-lg">No timetable available yet</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">{t('studentLabels.noTimetableYet', 'No timetable available yet')}</p>
             <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
-              Your class schedule will appear here once the admin creates it
+              {t('studentLabels.timetableWillAppear', 'Your class schedule will appear here once the admin creates it')}
             </p>
           </div>
         )}

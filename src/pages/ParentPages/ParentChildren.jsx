@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Users, Award, Calendar, FileText, TrendingUp, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -6,6 +7,7 @@ import { getParentChildren } from '../../services/parentApi'
 import { resolvePhotoUrl } from '../../utils/api'
 
 export const ParentChildren = () => {
+  const { t } = useTranslation()
   const [children, setChildren] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -23,7 +25,7 @@ export const ParentChildren = () => {
       setError('')
     } catch (err) {
       console.error('Error fetching children:', err)
-      setError('Failed to load children')
+      setError(t('parent.failedToLoadChildren', 'Failed to load children'))
     } finally {
       setLoading(false)
     }
@@ -46,7 +48,7 @@ export const ParentChildren = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading children...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('parent.loadingChildren', 'Loading children...')}</p>
         </div>
       </div>
     )
@@ -64,10 +66,10 @@ export const ParentChildren = () => {
           <div className="flex items-center gap-3 mb-2">
             <Users size={36} className="text-green-600 dark:text-green-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              My Children
+              {t('parent.myChildren', 'My Children')}
             </h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-300">Monitor your children's academic progress</p>
+          <p className="text-gray-600 dark:text-gray-300">{t('parent.monitorProgress', "Monitor your children's academic progress")}</p>
         </div>
 
         {error && (
@@ -108,7 +110,7 @@ export const ParentChildren = () => {
                         ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' 
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'
                     }`}>
-                      {child.status || 'Active'}
+                      {child.status ? String(t(`statusLabels.${child.status}`, child.status)) : t('statusLabels.active', 'Active')}
                     </span>
                   </div>
                 </div>
@@ -117,17 +119,17 @@ export const ParentChildren = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-2 text-sm">
                     <User size={16} className="text-blue-500" />
-                    <span className="text-gray-600 dark:text-gray-300">Grade:</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t('dashboards.grade', 'Grade')}:</span>
                     <span className="font-semibold text-gray-800 dark:text-gray-100">{child.grade} {child.section}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <TrendingUp size={16} className="text-purple-500" />
-                    <span className="text-gray-600 dark:text-gray-300">Score:</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t('dashboards.score', 'Score')}:</span>
                     <span className="font-semibold text-gray-800 dark:text-gray-100">{child.gpa ? `${Math.round(child.gpa * 25)}%` : 'N/A'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar size={16} className="text-green-500" />
-                    <span className="text-gray-600 dark:text-gray-300">Attendance:</span>
+                    <span className="text-gray-600 dark:text-gray-300">{t('dashboards.attendance', 'Attendance')}:</span>
                     <span className="font-semibold text-gray-800 dark:text-gray-100">
                       {child.attendance ? `${child.attendance}%` : 'N/A'}
                     </span>
@@ -141,21 +143,21 @@ export const ParentChildren = () => {
                     className="w-full py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:shadow-lg transition flex items-center justify-center gap-2"
                   >
                     <Award size={18} />
-                    View Grades
+                    {t('parent.viewGrades', 'View Grades')}
                   </button>
                   <button
                     onClick={() => viewAttendance(child._id)}
                     className="w-full py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:shadow-lg transition flex items-center justify-center gap-2"
                   >
                     <Calendar size={18} />
-                    View Attendance
+                    {t('parent.viewAttendance', 'View Attendance')}
                   </button>
                   <button
                     onClick={() => viewAssignments(child._id)}
                     className="w-full py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition flex items-center justify-center gap-2"
                   >
                     <FileText size={18} />
-                    View Assignments
+                    {t('parent.viewAssignments', 'View Assignments')}
                   </button>
                 </div>
               </motion.div>
@@ -163,8 +165,8 @@ export const ParentChildren = () => {
           ) : (
             <div className="col-span-full text-center py-12">
               <Users size={48} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 text-lg">No children found</p>
-              <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Please contact the admin to link your children</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">{t('parent.noChildrenFound', 'No children found')}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">{t('parent.contactAdminToLink', 'Please contact the admin to link your children')}</p>
             </div>
           )}
         </div>
@@ -180,7 +182,7 @@ export const ParentChildren = () => {
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Children</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('parent.totalChildren', 'Total Children')}</p>
                   <p className="text-3xl font-bold text-green-600 dark:text-green-400">{children.length}</p>
                 </div>
                 <Users size={28} className="text-green-600 dark:text-green-400" />
@@ -190,7 +192,7 @@ export const ParentChildren = () => {
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Active Students</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.activeStudents', 'Active Students')}</p>
                   <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                     {children.filter(c => c.status === 'active').length}
                   </p>
@@ -202,7 +204,7 @@ export const ParentChildren = () => {
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Average Score</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('parent.averageScore', 'Average Score')}</p>
                   <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                     {children.length > 0 && children.some(c => c.gpa)
                       ? `${(children.reduce((sum, c) => sum + (c.gpa || 0), 0) / children.filter(c => c.gpa).length * 25).toFixed(1)}%`

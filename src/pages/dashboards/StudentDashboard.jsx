@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { BookOpen, CheckCircle, Clock, TrendingUp } from 'lucide-react'
 import { getStudentDashboard } from '../../services/studentApi'
@@ -6,6 +7,7 @@ import { useAuthStore } from '../../store/authStore'
 import { resolvePhotoUrl } from '../../utils/api'
 
 export const StudentDashboard = () => {
+  const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
   const [dashboardData, setDashboardData] = useState({
     student: null,
@@ -36,31 +38,31 @@ export const StudentDashboard = () => {
   const stats = [
     { 
       icon: TrendingUp, 
-      label: 'GPA', 
+      label: t('dashboards.gpa', 'GPA'), 
       value: loading ? '...' : dashboardData.gpa?.toFixed(2) || '0.00', 
-      subtitle: 'Current GPA',
+      subtitle: t('dashboards.currentGpa', 'Current GPA'),
       bgColor: 'bg-blue-50 dark:bg-blue-900/30',
       iconColor: 'text-blue-600 dark:text-blue-400'
     },
     { 
       icon: CheckCircle, 
-      label: 'Attendance', 
+      label: t('dashboards.attendance', 'Attendance'), 
       value: loading ? '...' : `${dashboardData.attendancePercentage}%`,
-      subtitle: 'Present rate',
+      subtitle: t('dashboards.presentRate', 'Present rate'),
       bgColor: 'bg-green-50 dark:bg-green-900/30',
       iconColor: 'text-green-600 dark:text-green-400'
     },
     { 
       icon: Clock, 
-      label: 'Pending', 
+      label: t('dashboards.pending', 'Pending'), 
       value: loading ? '...' : dashboardData.pendingAssignments?.length || 0,
-      subtitle: 'Assignments',
+      subtitle: t('dashboards.assignments', 'Assignments'),
       bgColor: 'bg-orange-50 dark:bg-orange-900/30',
       iconColor: 'text-orange-600 dark:text-orange-400'
     },
     { 
       icon: BookOpen, 
-      label: 'Class', 
+      label: t('dashboards.class', 'Class'), 
       value: loading ? '...' : dashboardData.student?.grade || 'N/A',
       subtitle: dashboardData.student?.section || '',
       bgColor: 'bg-purple-50 dark:bg-purple-900/30',
@@ -85,10 +87,10 @@ export const StudentDashboard = () => {
           </div>
           <div className="min-w-0">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-              Student Dashboard
+              {t('dashboards.studentDashboard', 'Student Dashboard')}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Welcome back, {loading ? '...' : dashboardData.student?.name || 'Student'}! 👋
+              {t('dashboards.welcomeBack', 'Welcome back')}, {loading ? '...' : dashboardData.student?.name || 'Student'}! 👋
             </p>
           </div>
         </div>
@@ -128,11 +130,11 @@ export const StudentDashboard = () => {
           animate={{ opacity: 1, x: 0 }}
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800"
         >
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Recent Grades</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('dashboards.recentGrades', 'Recent Grades')}</h2>
           {loading ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</div>
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.loading', 'Loading...')}</div>
           ) : dashboardData.recentGrades?.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">No grades yet</div>
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.noGradesYet', 'No grades yet')}</div>
           ) : (
             <div className="space-y-3">
               {dashboardData.recentGrades?.map((grade, idx) => (
@@ -159,11 +161,11 @@ export const StudentDashboard = () => {
           animate={{ opacity: 1, x: 0 }}
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800"
         >
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Pending Assignments</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('dashboards.pendingAssignments', 'Pending Assignments')}</h2>
           {loading ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</div>
-          ) : dashboardData.pendingAssignments?.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">No pending assignments</div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.loading', 'Loading...')}</div>
+        ) : dashboardData.pendingAssignments?.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.noPendingAssignments', 'No pending assignments')}</div>
           ) : (
             <div className="space-y-3">
               {dashboardData.pendingAssignments?.map((assignment, idx) => (
@@ -172,7 +174,7 @@ export const StudentDashboard = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{assignment.subject}</p>
                   <div className="flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400">
                     <Clock size={14} />
-                    <span>Due: {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                    <span>{t('dashboards.due', 'Due')}: {new Date(assignment.dueDate).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))}
@@ -187,11 +189,11 @@ export const StudentDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800"
       >
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Announcements</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('dashboards.announcements', 'Announcements')}</h2>
         {loading ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.loading', 'Loading...')}</div>
         ) : dashboardData.announcements?.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">No announcements</div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.noAnnouncements', 'No announcements')}</div>
         ) : (
           <div className="space-y-4">
             {dashboardData.announcements?.map((announcement, idx) => (

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Award, TrendingUp, BookOpen, Filter, BarChart3 } from 'lucide-react'
 import { getStudentGrades } from '../../services/studentApi'
 
 export const StudentGrades = () => {
+  const { t } = useTranslation()
   const [grades, setGrades] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -26,7 +28,7 @@ export const StudentGrades = () => {
       setError('')
     } catch (err) {
       console.error('Error fetching grades:', err)
-      setError('Failed to load grades')
+      setError(t('studentLabels.failedToLoadGrades', 'Failed to load grades'))
     } finally {
       setLoading(false)
     }
@@ -78,7 +80,7 @@ export const StudentGrades = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading grades...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingGrades', 'Loading grades...')}</p>
         </div>
       </div>
     )
@@ -96,10 +98,10 @@ export const StudentGrades = () => {
           <div className="flex items-center gap-3 mb-2">
             <Award size={36} className="text-blue-600 dark:text-blue-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              My Grades
+              {t('studentLabels.myGrades', 'My Grades')}
             </h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-300">Track your academic performance</p>
+          <p className="text-gray-600 dark:text-gray-300">{t('studentLabels.trackPerformance', 'Track your academic performance')}</p>
         </div>
 
         {error && (
@@ -118,9 +120,9 @@ export const StudentGrades = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">GPA</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.gpa', 'GPA')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{calculateGPA()}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Out of 4.0</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('studentLabels.outOf4', 'Out of 4.0')}</p>
               </div>
               <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
                 <TrendingUp size={28} className="text-blue-600 dark:text-blue-400" />
@@ -136,9 +138,9 @@ export const StudentGrades = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Average</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.average', 'Average')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{calculateAverage()}%</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Overall performance</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('studentLabels.overallPerformance', 'Overall performance')}</p>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-xl">
                 <BarChart3 size={28} className="text-green-600 dark:text-green-400" />
@@ -154,9 +156,9 @@ export const StudentGrades = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Grades</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.totalGrades', 'Total Grades')}</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{grades.length}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">All assessments</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('studentLabels.allAssessments', 'All assessments')}</p>
               </div>
               <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
                 <BookOpen size={28} className="text-purple-600 dark:text-purple-400" />
@@ -179,7 +181,7 @@ export const StudentGrades = () => {
               onChange={(e) => setFilterSubject(e.target.value)}
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
             >
-              <option value="all">All Subjects</option>
+              <option value="all">{t('studentLabels.allSubjects', 'All Subjects')}</option>
               {subjects.map(subject => (
                 <option key={subject} value={subject}>{subject}</option>
               ))}
@@ -189,9 +191,9 @@ export const StudentGrades = () => {
               onChange={(e) => setFilterType(e.target.value)}
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
             >
-              <option value="all">All Types</option>
+              <option value="all">{t('studentLabels.allTypes', 'All Types')}</option>
               {gradeTypes.map(type => (
-                <option key={type} value={type}>{type}</option>
+                <option key={type} value={type}>{String(t(`gradeTypes.${type}`, type))}</option>
               ))}
             </select>
           </div>
@@ -208,13 +210,13 @@ export const StudentGrades = () => {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-blue-50 dark:from-blue-900/40 to-purple-50 dark:to-purple-900/40">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Subject</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Type</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Marks</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Percentage</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Grade</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Teacher</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Date</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.subjectLabel', 'Subject')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.type', 'Type')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.marks', 'Marks')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.percentage', 'Percentage')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('dashboards.grade', 'Grade')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.studentsPageTitle', 'Teacher')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.date', 'Date')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -234,7 +236,7 @@ export const StudentGrades = () => {
                         <td className="p-4 font-semibold text-gray-800 dark:text-gray-100">{grade.subject}</td>
                         <td className="p-4 text-gray-600 dark:text-gray-300">
                           <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium">
-                            {grade.gradeType}
+                            {String(t(`gradeTypes.${grade.gradeType}`, grade.gradeType))}
                           </span>
                         </td>
                         <td className="p-4 text-gray-700 dark:text-gray-200 font-medium">
@@ -259,8 +261,8 @@ export const StudentGrades = () => {
                   <tr>
                     <td colSpan={7} className="p-12 text-center">
                       <Award size={48} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400 text-lg">No grades available yet</p>
-                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Your grades will appear here once teachers add them</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-lg">{t('studentLabels.noGradesYet', 'No grades available yet')}</p>
+                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">{t('studentLabels.gradesWillAppear', 'Your grades will appear here once teachers add them')}</p>
                     </td>
                   </tr>
                 )}

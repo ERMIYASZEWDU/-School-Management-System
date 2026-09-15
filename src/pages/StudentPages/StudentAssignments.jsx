@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { FileText, Clock, CheckCircle, AlertTriangle, Calendar, User } from 'lucide-react'
 import { getStudentAssignments, submitAssignment } from '../../services/studentApi'
@@ -6,6 +7,7 @@ import { Modal } from '../../components/Modal'
 import { Button } from '../../components/Button'
 
 export const StudentAssignments = () => {
+  const { t } = useTranslation()
   const [assignments, setAssignments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -30,7 +32,7 @@ export const StudentAssignments = () => {
       setError('')
     } catch (err) {
       console.error('Error fetching assignments:', err)
-      setError('Failed to load assignments')
+      setError(t('studentLabels.failedToLoadAssignments', 'Failed to load assignments'))
     } finally {
       setLoading(false)
     }
@@ -38,7 +40,7 @@ export const StudentAssignments = () => {
 
   const handleSubmit = async () => {
     if (!submissionContent.trim()) {
-      alert('Please enter your submission content')
+      alert(t('studentLabels.enterSubmission', 'Please enter your submission content'))
       return
     }
 
@@ -48,13 +50,13 @@ export const StudentAssignments = () => {
         content: submissionContent,
         attachments: []
       })
-      alert('✅ Assignment submitted successfully!')
+      alert(t('studentLabels.submittedSuccessfully', '✅ Assignment submitted successfully!'))
       setShowSubmitModal(false)
       setSubmissionContent('')
       await fetchAssignments()
     } catch (err) {
       console.error('Error submitting assignment:', err)
-      alert('Failed to submit assignment')
+      alert(t('studentLabels.failedToSubmit', 'Failed to submit assignment'))
     } finally {
       setSubmitting(false)
     }
@@ -72,14 +74,14 @@ export const StudentAssignments = () => {
         return (
           <span className="px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold border-2 border-green-300 flex items-center gap-1">
             <CheckCircle size={14} />
-            Graded: {assignment.submission.grade}
+            {t('studentLabels.graded', 'Graded')}: {assignment.submission.grade}
           </span>
         )
       }
       return (
         <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold border-2 border-blue-300 flex items-center gap-1">
           <CheckCircle size={14} />
-          Submitted
+          {t('studentLabels.submitted', 'Submitted')}
         </span>
       )
     }
@@ -87,14 +89,14 @@ export const StudentAssignments = () => {
       return (
         <span className="px-3 py-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-full text-xs font-semibold border-2 border-red-300 flex items-center gap-1">
           <AlertTriangle size={14} />
-          Overdue
+          {t('studentLabels.overdue', 'Overdue')}
         </span>
       )
     }
     return (
       <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 rounded-full text-xs font-semibold border-2 border-yellow-300 flex items-center gap-1">
         <Clock size={14} />
-        Pending
+        {t('dashboards.pending', 'Pending')}
       </span>
     )
   }
@@ -105,10 +107,10 @@ export const StudentAssignments = () => {
     const diffTime = due.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     
-    if (diffDays < 0) return `${Math.abs(diffDays)} days overdue`
-    if (diffDays === 0) return 'Due today'
-    if (diffDays === 1) return 'Due tomorrow'
-    return `${diffDays} days remaining`
+    if (diffDays < 0) return t('studentLabels.daysOverdue', '{{count}} days overdue', { count: Math.abs(diffDays) })
+    if (diffDays === 0) return t('studentLabels.dueToday', 'Due today')
+    if (diffDays === 1) return t('studentLabels.dueTomorrow', 'Due tomorrow')
+    return t('studentLabels.daysRemaining', '{{count}} days remaining', { count: diffDays })
   }
 
   const pendingCount = assignments.filter(a => !a.isSubmitted && !a.isOverdue).length
@@ -120,7 +122,7 @@ export const StudentAssignments = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading assignments...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingAssignments', 'Loading assignments...')}</p>
         </div>
       </div>
     )
@@ -138,10 +140,10 @@ export const StudentAssignments = () => {
           <div className="flex items-center gap-3 mb-2">
             <FileText size={36} className="text-purple-600 dark:text-purple-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              My Assignments
+              {t('studentLabels.myAssignments', 'My Assignments')}
             </h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-300">View and submit your assignments</p>
+          <p className="text-gray-600 dark:text-gray-300">{t('studentLabels.viewSubmitAssignments', 'View and submit your assignments')}</p>
         </div>
 
         {error && (
@@ -155,7 +157,7 @@ export const StudentAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('teacher.total', 'Total')}</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{assignments.length}</p>
               </div>
               <FileText size={28} className="text-purple-600 dark:text-purple-400" />
@@ -165,7 +167,7 @@ export const StudentAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Pending</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.pending', 'Pending')}</p>
                 <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{pendingCount}</p>
               </div>
               <Clock size={28} className="text-yellow-600 dark:text-yellow-400" />
@@ -175,7 +177,7 @@ export const StudentAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Submitted</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.submitted', 'Submitted')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{submittedCount}</p>
               </div>
               <CheckCircle size={28} className="text-green-600 dark:text-green-400" />
@@ -185,7 +187,7 @@ export const StudentAssignments = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Overdue</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.overdue', 'Overdue')}</p>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">{overdueCount}</p>
               </div>
               <AlertTriangle size={28} className="text-red-600 dark:text-red-400" />
@@ -202,9 +204,9 @@ export const StudentAssignments = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800"
             >
-              <option value="all">All Assignments</option>
-              <option value="pending">Pending Only</option>
-              <option value="overdue">Overdue Only</option>
+              <option value="all">{t('studentLabels.allAssignments', 'All Assignments')}</option>
+              <option value="pending">{t('studentLabels.pendingOnly', 'Pending Only')}</option>
+              <option value="overdue">{t('studentLabels.overdueOnly', 'Overdue Only')}</option>
             </select>
           </div>
         </div>
@@ -237,7 +239,7 @@ export const StudentAssignments = () => {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <User size={16} className="text-blue-500" />
-                    <span>{assignment.teacherId?.name || 'Unknown'}</span>
+                    <span>                    {assignment.teacherId?.name || t('studentLabels.unknown', 'Unknown')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <Calendar size={16} className="text-purple-500" />
@@ -256,7 +258,7 @@ export const StudentAssignments = () => {
                     onClick={() => openSubmitModal(assignment)}
                     className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
                   >
-                    View Submission
+                    {t('studentLabels.viewSubmission', 'View Submission')}
                   </button>
                 ) : (
                   <button
@@ -268,7 +270,7 @@ export const StudentAssignments = () => {
                         : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:shadow-lg'
                     }`}
                   >
-                    {assignment.isOverdue ? 'Overdue' : 'Submit Assignment'}
+                    {assignment.isOverdue ? t('studentLabels.overdue', 'Overdue') : t('studentLabels.submitAssignment', 'Submit Assignment')}
                   </button>
                 )}
               </motion.div>
@@ -276,7 +278,7 @@ export const StudentAssignments = () => {
           ) : (
             <div className="col-span-full text-center py-12">
               <FileText size={48} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 text-lg">No assignments found</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">{t('teacher.noAssignmentsYet', 'No assignments yet')}</p>
             </div>
           )}
         </div>
@@ -287,7 +289,7 @@ export const StudentAssignments = () => {
         <Modal
           isOpen={showSubmitModal}
           onClose={() => setShowSubmitModal(false)}
-          title={selectedAssignment.isSubmitted ? 'View Submission' : 'Submit Assignment'}
+          title={selectedAssignment.isSubmitted ? t('studentLabels.viewSubmission', 'View Submission') : t('studentLabels.submitAssignment', 'Submit Assignment')}
         >
           <div className="space-y-4">
             <div>
@@ -297,21 +299,21 @@ export const StudentAssignments = () => {
 
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                <strong>Due Date:</strong> {new Date(selectedAssignment.dueDate).toLocaleDateString()}
+                <strong>{t('teacher.dueDate', 'Due Date')}:</strong> {new Date(selectedAssignment.dueDate).toLocaleDateString()}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                <strong>Status:</strong> {getDaysRemaining(selectedAssignment.dueDate)}
+                <strong>{t('teacher.status', 'Status')}:</strong> {getDaysRemaining(selectedAssignment.dueDate)}
               </p>
             </div>
 
             {selectedAssignment.submission?.grade && (
               <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-900/50 rounded-lg p-4">
                 <p className="text-green-700 dark:text-green-300 font-semibold">
-                  Grade: {selectedAssignment.submission.grade}
+                  {t('dashboards.grade', 'Grade')}: {selectedAssignment.submission.grade}
                 </p>
                 {selectedAssignment.submission.feedback && (
                   <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                    <strong>Feedback:</strong> {selectedAssignment.submission.feedback}
+                    <strong>{t('studentLabels.feedback', 'Feedback')}:</strong> {selectedAssignment.submission.feedback}
                   </p>
                 )}
               </div>
@@ -319,13 +321,13 @@ export const StudentAssignments = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                {selectedAssignment.isSubmitted ? 'Your Submission' : 'Your Answer'}
+                {selectedAssignment.isSubmitted ? t('studentLabels.yourSubmission', 'Your Submission') : t('studentLabels.yourAnswer', 'Your Answer')}
               </label>
               <textarea
                 value={submissionContent}
                 onChange={(e) => setSubmissionContent(e.target.value)}
                 disabled={selectedAssignment.isSubmitted}
-                placeholder="Enter your submission here..."
+                placeholder={t('studentLabels.submissionPlaceholder', 'Enter your submission here...')}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none disabled:bg-gray-100"
                 rows={8}
               />
@@ -334,13 +336,13 @@ export const StudentAssignments = () => {
             {!selectedAssignment.isSubmitted && (
               <div className="flex gap-3 pt-4">
                 <Button onClick={handleSubmit} disabled={submitting} className="flex-1">
-                  {submitting ? 'Submitting...' : 'Submit Assignment'}
+                  {submitting ? t('studentLabels.submitting', 'Submitting...') : t('studentLabels.submitAssignment', 'Submit Assignment')}
                 </Button>
                 <Button
                   onClick={() => setShowSubmitModal(false)}
                   className="flex-1 bg-gray-500 hover:bg-gray-600"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </Button>
               </div>
             )}

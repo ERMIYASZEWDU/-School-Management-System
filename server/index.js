@@ -36,6 +36,7 @@ app.use(helmet({
 // CORS configuration - Allow multiple origins
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5175', // Smart SMS dev port (kept off 5173 to avoid SW collisions with the portfolio)
   'http://localhost:3000',
   'https://school-management-system-smoky-one.vercel.app',
   'https://school-management-ebon-five.vercel.app',

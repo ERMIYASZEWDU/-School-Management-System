@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Calendar, CheckCircle, XCircle, Clock, AlertCircle, TrendingUp } from 'lucide-react'
 import { getStudentAttendance } from '../../services/studentApi'
 
 export const StudentAttendance = () => {
+  const { t } = useTranslation()
   const [attendanceData, setAttendanceData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -37,7 +39,7 @@ export const StudentAttendance = () => {
       setError('')
     } catch (err) {
       console.error('Error fetching attendance:', err)
-      setError('Failed to load attendance')
+      setError(t('studentLabels.failedToLoadAttendance', 'Failed to load attendance'))
     } finally {
       setLoading(false)
     }
@@ -78,7 +80,7 @@ export const StudentAttendance = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading attendance...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('studentLabels.loadingAttendance', 'Loading attendance...')}</p>
         </div>
       </div>
     )
@@ -99,10 +101,10 @@ export const StudentAttendance = () => {
           <div className="flex items-center gap-3 mb-2">
             <Calendar size={36} className="text-green-600 dark:text-green-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              My Attendance
+              {t('studentLabels.myAttendance', 'My Attendance')}
             </h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-300">Track your attendance record</p>
+          <p className="text-gray-600 dark:text-gray-300">{t('studentLabels.trackAttendanceRecord', 'Track your attendance record')}</p>
         </div>
 
         {error && (
@@ -121,7 +123,7 @@ export const StudentAttendance = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Attendance Rate</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('teacher.attendanceRate', 'Attendance Rate')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.percentage}%</p>
               </div>
               <div className="p-3 bg-green-50 dark:bg-green-900/30 rounded-xl">
@@ -138,7 +140,7 @@ export const StudentAttendance = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Present</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.present', 'Present')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.present || 0}</p>
               </div>
               <CheckCircle size={24} className="text-green-600 dark:text-green-400" />
@@ -153,7 +155,7 @@ export const StudentAttendance = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Absent</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.absent', 'Absent')}</p>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.absent || 0}</p>
               </div>
               <XCircle size={24} className="text-red-600 dark:text-red-400" />
@@ -168,7 +170,7 @@ export const StudentAttendance = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Late</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.late', 'Late')}</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.late || 0}</p>
               </div>
               <Clock size={24} className="text-orange-600 dark:text-orange-400" />
@@ -183,7 +185,7 @@ export const StudentAttendance = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Excused</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.excused', 'Excused')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.excused || 0}</p>
               </div>
               <AlertCircle size={24} className="text-blue-600 dark:text-blue-400" />
@@ -205,12 +207,12 @@ export const StudentAttendance = () => {
               onChange={(e) => setDateRange(e.target.value)}
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-800"
             >
-              <option value="all">All Time</option>
-              <option value="7days">Last 7 Days</option>
-              <option value="30days">Last 30 Days</option>
+              <option value="all">{t('studentLabels.allTime', 'All Time')}</option>
+              <option value="7days">{t('studentLabels.last7Days', 'Last 7 Days')}</option>
+              <option value="30days">{t('studentLabels.last30Days', 'Last 30 Days')}</option>
             </select>
             <span className="text-sm text-gray-600 dark:text-gray-300">
-              Total Records: {stats.total || 0}
+              {t('studentLabels.totalRecords', 'Total Records')}: {stats.total || 0}
             </span>
           </div>
         </motion.div>
@@ -226,11 +228,11 @@ export const StudentAttendance = () => {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-green-50 dark:from-green-900/40 to-blue-50 dark:to-blue-900/40">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Date</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Subject</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Status</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Remarks</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Marked By</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.date', 'Date')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.subjectLabel', 'Subject')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.status', 'Status')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.remarks', 'Remarks')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.markedBy', 'Marked By')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -251,12 +253,12 @@ export const StudentAttendance = () => {
                           day: 'numeric'
                         })}
                       </td>
-                      <td className="p-4 text-gray-700 dark:text-gray-200">{record.subject || 'General'}</td>
+                      <td className="p-4 text-gray-700 dark:text-gray-200">{record.subject || t('studentLabels.general', 'General')}</td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
                           {getStatusIcon(record.status)}
-                          <span className={`px-3 py-1 rounded-full text-sm font-semibold border-2 capitalize ${getStatusColor(record.status)}`}>
-                            {record.status}
+                          <span className={`px-3 py-1 rounded-full text-sm font-semibold border-2 ${getStatusColor(record.status)}`}>
+                            {String(t(`statusLabels.${record.status}`, record.status))}
                           </span>
                         </div>
                       </td>
@@ -272,8 +274,8 @@ export const StudentAttendance = () => {
                   <tr>
                     <td colSpan={5} className="p-12 text-center">
                       <Calendar size={48} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400 text-lg">No attendance records found</p>
-                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Your attendance will be recorded by teachers</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-lg">{t('studentLabels.noAttendanceRecords', 'No attendance records found')}</p>
+                      <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">{t('studentLabels.attendanceRecordedByTeachers', 'Your attendance will be recorded by teachers')}</p>
                     </td>
                   </tr>
                 )}

@@ -5,8 +5,10 @@ import { getStudents, createStudent, updateStudent, deleteStudent } from '../../
 import { getClasses } from '../../services/adminApi'
 import api, { resolvePhotoUrl } from '../../utils/api'
 import { processPhoto, fileToDataUrl } from '../../utils/image'
+import { useTranslation } from 'react-i18next'
 
 export const Students = () => {
+  const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterClass, setFilterClass] = useState('all')
@@ -74,7 +76,7 @@ export const Students = () => {
       } else {
         console.error('Unexpected data format:', data)
         setStudents([])
-        setError('Received invalid data format from server')
+        setError(t('admin.students.invalidData', 'Received invalid data format from server'))
         return
       }
 
@@ -116,7 +118,7 @@ export const Students = () => {
       setStudents(studentsWithEnrollment)
     } catch (err) {
       console.error('Error fetching students:', err)
-      setError('Failed to load students. Please try again.')
+      setError(t('admin.students.loadFailed', 'Failed to load students. Please try again.'))
       setStudents([]) // Set empty array on error
     } finally {
       setLoading(false)
@@ -199,7 +201,7 @@ export const Students = () => {
       setFormData(prev => ({ ...prev, photo: photoDataUrl }))
       setPhotoPreview(URL.createObjectURL(processed))
     } catch (err) {
-      setPhotoError(err.message || 'Invalid photo. Please choose a JPG, PNG, or WEBP image.')
+      setPhotoError(err.message || t('admin.students.invalidPhoto', 'Invalid photo. Please choose a JPG, PNG, or WEBP image.'))
       setPhotoPreview(null)
       setFormData(prev => ({ ...prev, photo: null }))
     }
@@ -215,11 +217,11 @@ export const Students = () => {
       
       if (editingId) {
         await updateStudent(editingId, formData)
-        alert('Student updated successfully!')
+        alert(t('admin.students.updated', 'Student updated successfully!'))
       } else {
         const result = await createStudent(formData)
         console.log('✅ Student created:', result)
-        alert('Student created successfully!')
+        alert(t('admin.students.created', 'Student created successfully!'))
       }
       
       // Refresh student list
@@ -256,22 +258,22 @@ export const Students = () => {
       })
       
       const errorMessage = err.response?.data?.message || err.message || 'Unknown error'
-      alert(`Failed to ${editingId ? 'update' : 'create'} student: ${errorMessage}`)
+      alert(`${t(editingId ? 'admin.students.updateFailed' : 'admin.students.createFailed', 'Failed to save student')}: ${errorMessage}`)
     }
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
+    if (!confirm(t('admin.students.deleteConfirm', 'Are you sure you want to delete this student? This action cannot be undone.'))) {
       return
     }
 
     try {
       await deleteStudent(id)
-      alert('Student deleted successfully!')
+      alert(t('admin.students.deleted', 'Student deleted successfully!'))
       await fetchStudents()
     } catch (err) {
       console.error('Error deleting student:', err)
-      alert('Failed to delete student: ' + err.message)
+      alert(t('admin.students.deleteFailed', 'Failed to delete student') + ': ' + err.message)
     }
   }
 
@@ -279,11 +281,11 @@ export const Students = () => {
     try {
       const newStatus = student.status === 'active' ? 'inactive' : 'active'
       await updateStudent(student._id, { ...student, status: newStatus })
-      alert(`Student ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`)
+      alert(t(newStatus === 'active' ? 'admin.students.activated' : 'admin.students.deactivated', 'Student status updated successfully!'))
       await fetchStudents()
     } catch (err) {
       console.error('Error toggling status:', err)
-      alert('Failed to update student status: ' + err.message)
+      alert(t('admin.students.statusUpdateFailed', 'Failed to update student status') + ': ' + err.message)
     }
   }
 
@@ -319,7 +321,7 @@ export const Students = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading students...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('admin.students.loading', 'Loading students...')}</p>
         </div>
       </div>
     )
@@ -335,8 +337,8 @@ export const Students = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Students Management</h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage all students in the school</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{t('admin.students.title', 'Students Management')}</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">{t('admin.students.subtitle', 'Manage all students in the school')}</p>
           </div>
           <motion.button
             initial={{ opacity: 0, x: 20 }}
@@ -347,7 +349,7 @@ export const Students = () => {
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold"
           >
             <Plus size={20} />
-            Add New Student
+            {t('admin.students.addNew', 'Add New Student')}
           </motion.button>
         </div>
 
@@ -375,7 +377,7 @@ export const Students = () => {
               <Search className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" size={18} />
               <input
                 type="text"
-                placeholder="Search by name, email, or enrollment number..."
+                placeholder={t('admin.students.searchPlaceholder', 'Search by name, email, or enrollment number...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -391,7 +393,7 @@ export const Students = () => {
                   onChange={(e) => setFilterClass(e.target.value)}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                 >
-                  <option value="all">All Classes</option>
+                  <option value="all">{t('admin.students.allClasses', 'All Classes')}</option>
                   {classFilters.slice(1).map(cls => (
                     <option key={cls} value={cls}>{cls}</option>
                   ))}
@@ -405,10 +407,10 @@ export const Students = () => {
                   onChange={(e) => setFilterAcademicYear(e.target.value)}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                 >
-                  <option value="all">All Academic Years</option>
+                  <option value="all">{t('admin.students.allAcademicYears', 'All Academic Years')}</option>
                   {academicYears.map(year => (
                     <option key={year._id} value={year._id}>
-                      {year.name} {year.isActive ? '(Active)' : ''}
+                      {year.name} {year.isActive ? t('admin.students.activeYear', '(Active)') : ''}
                     </option>
                   ))}
                 </select>
@@ -421,14 +423,14 @@ export const Students = () => {
                   onChange={(e) => setFilterEnrollmentStatus(e.target.value)}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                 >
-                  <option value="all">All Enrollment Status</option>
-                  <option value="active">Active</option>
-                  <option value="promoted">Promoted</option>
-                  <option value="transferred">Transferred</option>
-                  <option value="graduated">Graduated</option>
-                  <option value="withdrawn">Withdrawn</option>
-                  <option value="suspended">Suspended</option>
-                  <option value="not-enrolled">Not Enrolled</option>
+                  <option value="all">{t('admin.students.allEnrollmentStatus', 'All Enrollment Status')}</option>
+                  <option value="active">{t('enrollmentStatus.active', 'Active')}</option>
+                  <option value="promoted">{t('enrollmentStatus.promoted', 'Promoted')}</option>
+                  <option value="transferred">{t('enrollmentStatus.transferred', 'Transferred')}</option>
+                  <option value="graduated">{t('enrollmentStatus.graduated', 'Graduated')}</option>
+                  <option value="withdrawn">{t('enrollmentStatus.withdrawn', 'Withdrawn')}</option>
+                  <option value="suspended">{t('enrollmentStatus.suspended', 'Suspended')}</option>
+                  <option value="not-enrolled">{t('enrollmentStatus.notEnrolled', 'Not Enrolled')}</option>
                 </select>
               </div>
             </div>
@@ -446,14 +448,14 @@ export const Students = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Name</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Enrollment No</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Grade</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Section</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Academic Year</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Enrollment Status</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Student Status</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.name', 'Name')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.enrollmentNo', 'Enrollment No')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.grade', 'Grade')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.section', 'Section')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.academicYear', 'Academic Year')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.enrollmentStatus', 'Enrollment Status')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('admin.students.studentStatus', 'Student Status')}</th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">{t('teacher.actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -514,11 +516,11 @@ export const Students = () => {
                               ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300'
                               : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'
                           }`}>
-                            {student.currentEnrollment.status.charAt(0).toUpperCase() + student.currentEnrollment.status.slice(1)}
+                            {String(t(`enrollmentStatus.${student.currentEnrollment.status}`, student.currentEnrollment.status))}
                           </span>
                         ) : (
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300">
-                            Not Enrolled
+                            {t('enrollmentStatus.notEnrolled', 'Not Enrolled')}
                           </span>
                         )}
                       </td>
@@ -528,7 +530,7 @@ export const Students = () => {
                             ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300' 
                             : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'
                         }`}>
-                          {student.status ? student.status.charAt(0).toUpperCase() + student.status.slice(1) : 'Active'}
+                          {String(t(`statusLabels.${student.status || 'active'}`, student.status || 'Active'))}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -538,7 +540,7 @@ export const Students = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleOpenModal(student)}
                             className="p-2 hover:bg-blue-100 text-blue-600 dark:text-blue-400 rounded-lg transition"
-                            title="Edit student"
+                            title={t('admin.students.editStudent', 'Edit student')}
                           >
                             <Edit2 size={16} />
                           </motion.button>
@@ -551,7 +553,7 @@ export const Students = () => {
                                 ? 'hover:bg-yellow-100 text-yellow-600 dark:text-yellow-400' 
                                 : 'hover:bg-green-100 text-green-600 dark:text-green-400'
                             }`}
-                            title={student.status === 'active' ? 'Deactivate' : 'Activate'}
+                            title={student.status === 'active' ? t('admin.students.deactivate', 'Deactivate') : t('admin.students.activate', 'Activate')}
                           >
                             <Power size={16} />
                           </motion.button>
@@ -560,7 +562,7 @@ export const Students = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleDelete(student._id)}
                             className="p-2 hover:bg-red-100 text-red-600 dark:text-red-400 rounded-lg transition"
-                            title="Delete student"
+                            title={t('admin.students.deleteStudent', 'Delete student')}
                           >
                             <Trash2 size={16} />
                           </motion.button>
@@ -571,8 +573,8 @@ export const Students = () => {
                 ) : (
                   <tr>
                     <td colSpan={8} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                      <p className="text-lg">No students found</p>
-                      <p className="text-sm mt-1">Try adjusting your search or filter criteria, or add a new student</p>
+                      <p className="text-lg">{t('admin.students.noStudents', 'No students found')}</p>
+                      <p className="text-sm mt-1">{t('admin.students.noStudentsHint', 'Try adjusting your search or filter criteria, or add a new student')}</p>
                     </td>
                   </tr>
                 )}
@@ -589,23 +591,23 @@ export const Students = () => {
           className="mt-6 grid md:grid-cols-5 gap-4"
         >
           <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4">
-            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Total Students</p>
+            <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{t('admin.students.totalStudents', 'Total Students')}</p>
             <p className="text-2xl font-bold text-blue-700 dark:text-blue-300 mt-1">{Array.isArray(students) ? students.length : 0}</p>
           </div>
           <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-900/50 rounded-lg p-4">
-            <p className="text-sm text-green-600 dark:text-green-400 font-medium">Active Students</p>
+            <p className="text-sm text-green-600 dark:text-green-400 font-medium">{t('admin.students.activeStudents', 'Active Students')}</p>
             <p className="text-2xl font-bold text-green-700 dark:text-green-300 mt-1">{Array.isArray(students) ? students.filter(s => s.status === 'active').length : 0}</p>
           </div>
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-            <p className="text-sm text-emerald-600 font-medium">Enrolled (Active)</p>
+            <p className="text-sm text-emerald-600 font-medium">{t('admin.students.enrolledActive', 'Enrolled (Active)')}</p>
             <p className="text-2xl font-bold text-emerald-700 mt-1">{Array.isArray(students) ? students.filter(s => s.currentEnrollment?.status === 'active').length : 0}</p>
           </div>
           <div className="bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-900/50 rounded-lg p-4">
-            <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">Not Enrolled</p>
+            <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">{t('enrollmentStatus.notEnrolled', 'Not Enrolled')}</p>
             <p className="text-2xl font-bold text-orange-700 dark:text-orange-300 mt-1">{Array.isArray(students) ? students.filter(s => !s.currentEnrollment).length : 0}</p>
           </div>
           <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-900/50 rounded-lg p-4">
-            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">Filtered Results</p>
+            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">{t('admin.students.filteredResults', 'Filtered Results')}</p>
             <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 mt-1">{filteredStudents.length}</p>
           </div>
         </motion.div>
@@ -632,7 +634,7 @@ export const Students = () => {
             {/* Header */}
             <div className="px-5 py-3 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
               <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                {editingId ? 'Edit Student' : 'Add New Student'}
+                {t(editingId ? 'admin.students.editTitle' : 'admin.students.addTitle', editingId ? 'Edit Student' : 'Add New Student')}
               </h2>
             </div>
 
@@ -641,7 +643,7 @@ export const Students = () => {
               <form id="student-form" onSubmit={handleSubmit} className="space-y-3">
                 {/* Student Photo */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Student Photo</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.photo', 'Student Photo')}</label>
                   <div className="flex items-center gap-4">
                     {photoPreview ? (
                       <img
@@ -656,7 +658,7 @@ export const Students = () => {
                     )}
                     <div className="flex-1">
                       <label className="cursor-pointer inline-block px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-900/60 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/60 transition">
-                        {photoPreview ? 'Change Photo' : 'Upload Photo'}
+                        {photoPreview ? t('admin.students.changePhoto', 'Change Photo') : t('admin.students.uploadPhoto', 'Upload Photo')}
                         <input
                           type="file"
                           accept="image/jpeg,image/png,image/webp"
@@ -665,7 +667,7 @@ export const Students = () => {
                         />
                       </label>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        JPG, PNG or WEBP — large photos are resized automatically
+                        {t('admin.students.photoHint', 'JPG, PNG or WEBP — large photos are resized automatically')}
                       </p>
                       {photoError && (
                         <p className="text-xs text-red-600 dark:text-red-400 mt-1">{photoError}</p>
@@ -675,19 +677,19 @@ export const Students = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Student Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.studentName', 'Student Name')} *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Enter student name"
+                    placeholder={t('admin.students.enterStudentName', 'Enter student name')}
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('profile.email', 'Email')} *</label>
                   <input
                     type="email"
                     value={formData.email}
@@ -699,19 +701,19 @@ export const Students = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Password {!editingId && '*'}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.password', 'Password')} {!editingId && '*'}</label>
                   <input
                     type="password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder={editingId ? "Leave blank to keep current" : "Enter password"}
+                    placeholder={editingId ? t('admin.students.keepCurrentPassword', 'Leave blank to keep current') : t('admin.students.enterPassword', 'Enter password')}
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required={!editingId}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Enrollment Number *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.enrollmentNumber', 'Enrollment Number')} *</label>
                   <input
                     type="text"
                     value={formData.enrollmentNumber}
@@ -724,7 +726,7 @@ export const Students = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Grade *</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.grade', 'Grade')} *</label>
                     <select
                       value={formData.grade}
                       onChange={(e) => {
@@ -739,7 +741,7 @@ export const Students = () => {
                       className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                       required
                     >
-                      <option value="">Select Grade</option>
+                      <option value="">{t('admin.students.selectGrade', 'Select Grade')}</option>
                       <option value="Grade 1">Grade 1</option>
                       <option value="Grade 2">Grade 2</option>
                       <option value="Grade 3">Grade 3</option>
@@ -756,14 +758,14 @@ export const Students = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Section *</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.section', 'Section')} *</label>
                     <select
                       value={formData.section}
                       onChange={(e) => setFormData({ ...formData, section: e.target.value })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                       required
                     >
-                      <option value="">Select Section</option>
+                      <option value="">{t('admin.students.selectSection', 'Select Section')}</option>
                       {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].map(section => (
                         <option key={section} value={section}>{section}</option>
                       ))}
@@ -774,22 +776,22 @@ export const Students = () => {
                 {/* Stream field - Only for Grade 11 and 12 */}
                 {(formData.grade === 'Grade 11' || formData.grade === 'Grade 12') && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Stream *</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.stream', 'Stream')} *</label>
                     <select
                       value={formData.stream}
                       onChange={(e) => setFormData({ ...formData, stream: e.target.value })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
                       required
                     >
-                      <option value="">Select Stream</option>
-                      <option value="Natural Science">Natural Science</option>
-                      <option value="Social Science">Social Science</option>
+                      <option value="">{t('admin.students.selectStream', 'Select Stream')}</option>
+                      <option value="Natural Science">{t('admin.students.naturalScience', 'Natural Science')}</option>
+                      <option value="Social Science">{t('admin.students.socialScience', 'Social Science')}</option>
                     </select>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Roll Number *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.rollNumber', 'Roll Number')} *</label>
                   <input
                     type="number"
                     min="1"
@@ -802,7 +804,7 @@ export const Students = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Date of Birth *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.dateOfBirth', 'Date of Birth')} *</label>
                   <input
                     type="date"
                     value={formData.dateOfBirth}
@@ -814,11 +816,11 @@ export const Students = () => {
 
                 {/* Guardian Information Section */}
                 <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">Guardian Information</h3>
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">{t('admin.students.guardianInfo', 'Guardian Information')}</h3>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Guardian Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.guardianName', 'Guardian Name')} *</label>
                   <input
                     type="text"
                     value={formData.guardianName}
@@ -830,7 +832,7 @@ export const Students = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Guardian Phone *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.guardianPhone', 'Guardian Phone')} *</label>
                   <input
                     type="tel"
                     value={formData.guardianPhone}
@@ -842,7 +844,7 @@ export const Students = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Address *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('admin.students.address', 'Address')} *</label>
                   <input
                     type="text"
                     value={formData.address}
@@ -863,14 +865,14 @@ export const Students = () => {
                   form="student-form"
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-sm"
                 >
-                  {editingId ? 'Update Student' : 'Add Student'}
+                  {t(editingId ? 'admin.students.updateStudent' : 'admin.students.addStudent', editingId ? 'Update Student' : 'Add Student')}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold text-sm"
                 >
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
               </div>
             </div>

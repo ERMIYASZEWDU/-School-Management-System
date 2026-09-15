@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Award, ArrowLeft, TrendingUp, BookOpen, BarChart3 } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getChildGrades, getChildDetails } from '../../services/parentApi'
 
 export const ParentChildGrades = () => {
+  const { t } = useTranslation()
   const { studentId } = useParams()
   const navigate = useNavigate()
   const [grades, setGrades] = useState([])
@@ -28,7 +30,7 @@ export const ParentChildGrades = () => {
       setError('')
     } catch (err) {
       console.error('Error fetching data:', err)
-      setError('Failed to load grades')
+      setError(t('studentLabels.failedToLoadGrades', 'Failed to load grades'))
     } finally {
       setLoading(false)
     }
@@ -76,7 +78,7 @@ export const ParentChildGrades = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 pt-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading grades...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingGrades', 'Loading grades...')}</p>
         </div>
       </div>
     )
@@ -90,14 +92,14 @@ export const ParentChildGrades = () => {
           className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 mb-6"
         >
           <ArrowLeft size={20} />
-          Back to Children
+          {t('parent.backToChildren', 'Back to Children')}
         </button>
 
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Award size={36} className="text-blue-600 dark:text-blue-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {child?.name}'s Grades
+              {t('dashboards.childRecentGrades', "{{name}}'s Grades", { name: child?.name || '' })}
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-300">{child?.grade} {child?.section} • {child?.enrollmentNumber}</p>
@@ -113,7 +115,7 @@ export const ParentChildGrades = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">GPA</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.gpa', 'GPA')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{calculateGPA()}</p>
               </div>
               <TrendingUp size={28} className="text-blue-600 dark:text-blue-400" />
@@ -123,7 +125,7 @@ export const ParentChildGrades = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Average</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('dashboards.average', 'Average')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{calculateAverage()}%</p>
               </div>
               <BarChart3 size={28} className="text-green-600 dark:text-green-400" />
@@ -133,7 +135,7 @@ export const ParentChildGrades = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Grades</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('studentLabels.totalGrades', 'Total Grades')}</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{grades.length}</p>
               </div>
               <BookOpen size={28} className="text-purple-600 dark:text-purple-400" />
@@ -146,13 +148,13 @@ export const ParentChildGrades = () => {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-blue-50 dark:from-blue-900/40 to-purple-50 dark:to-purple-900/40">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Subject</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Type</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Marks</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Percentage</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Grade</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Teacher</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Date</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.subjectLabel', 'Subject')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.type', 'Type')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.marks', 'Marks')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.percentage', 'Percentage')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('dashboards.grade', 'Grade')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.studentsPageTitle', 'Teacher')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('studentLabels.date', 'Date')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -166,7 +168,7 @@ export const ParentChildGrades = () => {
                         <td className="p-4 font-semibold text-gray-800 dark:text-gray-100">{grade.subject}</td>
                         <td className="p-4">
                           <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium">
-                            {grade.gradeType}
+                            {String(t(`gradeTypes.${grade.gradeType}`, grade.gradeType))}
                           </span>
                         </td>
                         <td className="p-4 text-gray-700 dark:text-gray-200 font-medium">
@@ -189,7 +191,7 @@ export const ParentChildGrades = () => {
                   <tr>
                     <td colSpan={7} className="p-12 text-center">
                       <Award size={48} className="text-gray-300 dark:text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400 text-lg">No grades available yet</p>
+                      <p className="text-gray-500 dark:text-gray-400 text-lg">{t('studentLabels.noGradesYet', 'No grades available yet')}</p>
                     </td>
                   </tr>
                 )}

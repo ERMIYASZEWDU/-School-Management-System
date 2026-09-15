@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { FileText, Plus, Edit, Trash2, X } from 'lucide-react'
 import { getAssignments, createAssignment, updateAssignment, deleteAssignment } from '../../services/teacherApi'
 import apiClient from '../../utils/api'
 
 export const TeacherAssignments = () => {
+  const { t } = useTranslation()
   const [assignments, setAssignments] = useState([])
   const [classes, setClasses] = useState([])
   const [loading, setLoading] = useState(true)
@@ -76,7 +78,7 @@ export const TeacherAssignments = () => {
       setEditingAssignment(null)
       await fetchAll()
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to save assignment')
+      alert(error.response?.data?.message || t('teacher.failedToSaveAssignment', 'Failed to save assignment'))
     }
   }
 
@@ -94,12 +96,12 @@ export const TeacherAssignments = () => {
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete this assignment?')) return
+    if (!confirm(t('teacher.deleteAssignmentConfirm', 'Delete this assignment?'))) return
     try {
       await deleteAssignment(id)
       await fetchAll()
     } catch (error) {
-      alert('Failed to delete assignment')
+      alert(t('teacher.failedToDeleteAssignment', 'Failed to delete assignment'))
     }
   }
 
@@ -113,34 +115,34 @@ export const TeacherAssignments = () => {
           <div>
             <div className="flex items-center gap-3">
               <FileText size={36} className="text-purple-600 dark:text-purple-400" />
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Assignments</h1>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{t('dashboards.assignments', 'Assignments')}</h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Create and manage assignments for your classes</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">{t('teacher.createManageAssignments', 'Create and manage assignments for your classes')}</p>
           </div>
           <button
             onClick={openCreateModal}
             className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-semibold"
           >
-            <Plus size={20} /> Create Assignment
+            <Plus size={20} /> {t('dashboards.createAssignment', 'Create Assignment')}
           </button>
         </div>
 
         {/* No classes warning */}
         {!loading && classes.length === 0 && (
           <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 rounded-lg p-5 mb-6 text-yellow-800 text-sm">
-            You have no assigned classes. Ask your admin to assign you to a class before creating assignments.
+            {t('teacher.noAssignedClassesWarning', 'You have no assigned classes. Ask your admin to assign you to a class before creating assignments.')}
           </div>
         )}
 
         {loading ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Loading assignments...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">{t('teacher.loadingAssignments', 'Loading assignments...')}</p>
           </div>
         ) : assignments.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-12 text-center">
             <FileText size={48} className="mx-auto text-gray-300 dark:text-gray-400 mb-4" />
-            <p className="text-gray-600 dark:text-gray-300">No assignments yet. Create your first assignment.</p>
+            <p className="text-gray-600 dark:text-gray-300">{t('teacher.noAssignmentsYet', 'No assignments yet. Create your first assignment.')}</p>
           </div>
         ) : (
           <div className="grid gap-4">
@@ -158,7 +160,7 @@ export const TeacherAssignments = () => {
                     <div className="flex flex-wrap gap-2 text-sm">
                       <span className="px-2.5 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-full font-medium">{a.subject}</span>
                       <span className="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full font-medium">{a.grade}</span>
-                      <span className="text-gray-500 dark:text-gray-400">Due: {formatDate(a.dueDate)}</span>
+                      <span className="text-gray-500 dark:text-gray-400">{t('dashboards.due', 'Due')}: {formatDate(a.dueDate)}</span>
                     </div>
                   </div>
                   <div className="flex gap-2 ml-4">
@@ -181,24 +183,24 @@ export const TeacherAssignments = () => {
             className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{editingAssignment ? 'Edit Assignment' : 'Create Assignment'}</h3>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{editingAssignment ? t('teacher.editAssignment', 'Edit Assignment') : t('dashboards.createAssignment', 'Create Assignment')}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"><X size={20} /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Title *</label>
-                <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required placeholder="Assignment title" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.titleLabel', 'Title')} *</label>
+                <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required placeholder={t('teacher.assignmentTitlePlaceholder', 'Assignment title')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description</label>
-                <textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} rows={3} placeholder="Instructions for students..." className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.description', 'Description')}</label>
+                <textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} rows={3} placeholder={t('teacher.instructionsPlaceholder', 'Instructions for students...')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Subject *</label>
-                <input type="text" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} required placeholder="e.g., Mathematics" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.subjectLabel', 'Subject')} *</label>
+                <input type="text" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} required placeholder={t('teacher.subjectPlaceholder', 'e.g., Mathematics')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Class *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('dashboards.class', 'Class')} *</label>
                 {classes.length > 0 ? (
                   <select
                     value={formData.classId}
@@ -206,25 +208,25 @@ export const TeacherAssignments = () => {
                     required
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-sm"
                   >
-                    <option value="">Select a class</option>
+                    <option value="">{t('teacher.selectClass', 'Select a class')}</option>
                     {classes.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                   </select>
                 ) : (
                   <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-900/50 rounded-lg px-3 py-2">
-                    No classes assigned. Ask admin to assign you to a class first.
+                    {t('teacher.noClassesAssignedModal', 'No classes assigned. Ask admin to assign you to a class first.')}
                   </p>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Due Date *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.dueDate', 'Due Date')} *</label>
                 <input type="date" value={formData.dueDate} onChange={e => setFormData({...formData, dueDate: e.target.value})} required className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm" />
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" disabled={classes.length === 0} className="flex-1 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-semibold text-sm disabled:opacity-50">
-                  {editingAssignment ? 'Update' : 'Create'} Assignment
+                  {editingAssignment ? t('common.update', 'Update') : t('common.create', 'Create')} {t('dashboards.assignments', 'Assignments')}
                 </button>
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold text-sm">
-                  Cancel
+                  {t('common.cancel', 'Cancel')}
                 </button>
               </div>
             </form>

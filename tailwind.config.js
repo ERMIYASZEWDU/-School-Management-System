@@ -6,7 +6,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        // Noto Sans Ethiopic sits right after Inter: Latin text uses Inter,
+        // and any Ethiopic glyphs (Amharic UI) render in matching weight/style
+        // instead of falling through to inconsistent system fonts.
+        sans: ['Inter', 'Noto Sans Ethiopic', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       colors: {
         primary: "#2563EB",

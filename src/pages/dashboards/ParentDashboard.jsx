@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Users, BookOpen, CheckCircle, Clock, TrendingUp } from 'lucide-react'
 import { getParentDashboard, getChildGrades, getChildAttendance } from '../../services/parentApi'
@@ -6,6 +7,7 @@ import { useAuthStore } from '../../store/authStore'
 import { resolvePhotoUrl } from '../../utils/api'
 
 export const ParentDashboard = () => {
+  const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
   const [dashboardData, setDashboardData] = useState({
     parent: null,
@@ -66,31 +68,31 @@ export const ParentDashboard = () => {
   const stats = [
     { 
       icon: Users, 
-      label: 'Children', 
+      label: t('dashboards.children', 'Children'), 
       value: loading ? '...' : dashboardData.totalChildren,
-      subtitle: 'Total enrolled',
+      subtitle: t('dashboards.totalEnrolled', 'Total enrolled'),
       bgColor: 'bg-blue-50 dark:bg-blue-900/30',
       iconColor: 'text-blue-600 dark:text-blue-400'
     },
     { 
       icon: TrendingUp, 
-      label: 'Score', 
+      label: t('dashboards.score', 'Score'), 
       value: loading || !selectedChild ? '...' : selectedChild.gpa ? `${Math.round(selectedChild.gpa * 25)}%` : '0%',
-      subtitle: selectedChild?.name || 'Select child',
+      subtitle: selectedChild?.name || t('dashboards.selectChildOption', 'Select child'),
       bgColor: 'bg-purple-50 dark:bg-purple-900/30',
       iconColor: 'text-purple-600 dark:text-purple-400'
     },
     { 
       icon: CheckCircle, 
-      label: 'Attendance', 
+      label: t('dashboards.attendance', 'Attendance'), 
       value: loading || !selectedChild ? '...' : `${selectedChild.attendance || 0}%`,
-      subtitle: selectedChild?.name || 'Select child',
+      subtitle: selectedChild?.name || t('dashboards.selectChildOption', 'Select child'),
       bgColor: 'bg-green-50 dark:bg-green-900/30',
       iconColor: 'text-green-600 dark:text-green-400'
     },
     { 
       icon: BookOpen, 
-      label: 'Class', 
+      label: t('dashboards.class', 'Class'), 
       value: loading || !selectedChild ? '...' : selectedChild.grade || 'N/A',
       subtitle: selectedChild?.section || '',
       bgColor: 'bg-orange-50 dark:bg-orange-900/30',
@@ -115,10 +117,10 @@ export const ParentDashboard = () => {
           </div>
           <div className="min-w-0">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-              Parent Dashboard
+              {t('dashboards.parentDashboard', 'Parent Dashboard')}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Welcome back, {loading ? '...' : dashboardData.parent?.name || 'Parent'}! 👋
+              {t('dashboards.welcomeBack', 'Welcome back')}, {loading ? '...' : dashboardData.parent?.name || 'Parent'}! 👋
             </p>
           </div>
         </div>
@@ -127,7 +129,7 @@ export const ParentDashboard = () => {
       {/* Child Selector */}
       {dashboardData.children && dashboardData.children.length > 0 && (
         <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Select Child</label>
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">{t('dashboards.selectChild', 'Select Child')}</label>
           <select
             value={selectedChild?._id || ''}
             onChange={(e) => {
@@ -182,12 +184,12 @@ export const ParentDashboard = () => {
               className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800"
             >
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                {selectedChild.name}'s Recent Grades
+                {t('dashboards.childRecentGrades', "{{name}}'s Recent Grades", { name: selectedChild.name })}
               </h2>
               {loadingChild ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.loading', 'Loading...')}</div>
               ) : childDetails.grades?.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">No grades yet</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.noGradesYet', 'No grades yet')}</div>
               ) : (
                 <div className="space-y-3">
                   {childDetails.grades?.slice(0, 5).map((grade, idx) => (
@@ -215,40 +217,40 @@ export const ParentDashboard = () => {
               className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800"
             >
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                {selectedChild.name}'s Attendance
+                {t('dashboards.childAttendance', "{{name}}'s Attendance", { name: selectedChild.name })}
               </h2>
               {loadingChild ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.loading', 'Loading...')}</div>
               ) : (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Present</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('dashboards.present', 'Present')}</p>
                       <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                         {childDetails.attendance?.statistics?.present || 0}
                       </p>
                     </div>
                     <div className="p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Absent</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('dashboards.absent', 'Absent')}</p>
                       <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                         {childDetails.attendance?.statistics?.absent || 0}
                       </p>
                     </div>
                     <div className="p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Late</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('dashboards.late', 'Late')}</p>
                       <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                         {childDetails.attendance?.statistics?.late || 0}
                       </p>
                     </div>
                     <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Excused</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('dashboards.excused', 'Excused')}</p>
                       <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                         {childDetails.attendance?.statistics?.excused || 0}
                       </p>
                     </div>
                   </div>
                   <div className="p-4 bg-gradient-to-r from-blue-50 dark:from-blue-900/40 to-purple-50 dark:to-purple-900/40 rounded-lg border border-blue-200 dark:border-blue-900/50">
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Overall Percentage</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{t('dashboards.overallPercentage', 'Overall Percentage')}</p>
                     <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                       {childDetails.attendance?.statistics?.percentage || 0}%
                     </p>
@@ -266,11 +268,11 @@ export const ParentDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800"
       >
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Announcements</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('dashboards.announcements', 'Announcements')}</h2>
         {loading ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.loading', 'Loading...')}</div>
         ) : dashboardData.announcements?.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">No announcements</div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">{t('dashboards.noAnnouncements', 'No announcements')}</div>
         ) : (
           <div className="space-y-4">
             {dashboardData.announcements?.map((announcement, idx) => (

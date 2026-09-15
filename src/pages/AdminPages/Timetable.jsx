@@ -4,6 +4,7 @@ import { Calendar, Plus, Download, RefreshCw, Edit, Trash2, Save, X, Settings } 
 import { Modal } from '../../components/Modal'
 import { Button } from '../../components/Button'
 import { Input } from '../../components/Input'
+import { useTranslation } from 'react-i18next'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
@@ -12,6 +13,7 @@ const teachers = ['Mr. John Smith', 'Ms. Sarah Johnson', 'Dr. Michael Brown', 'M
 const classes = ['Class 9-A', 'Class 9-B', 'Class 10-A', 'Class 10-B', 'Class 11-Science', 'Class 11-Arts', 'Class 12-Science', 'Class 12-Arts']
 
 export const Timetable = () => {
+  const { t } = useTranslation()
   const [selectedClass, setSelectedClass] = useState('Class 9-A')
   const [timetableData, setTimetableData] = useState({})
   const [isGenerating, setIsGenerating] = useState(false)
@@ -62,7 +64,7 @@ export const Timetable = () => {
       slots.push({
         id: slotId++,
         time: `${currentTime} - ${endTime}`,
-        period: `Period ${i}`,
+        period: t('admin.timetable.period', 'Period {{n}}', { n: i }),
         isBreak: false
       })
       
@@ -75,7 +77,7 @@ export const Timetable = () => {
         slots.push({
           id: slotId++,
           time: `${breakStart} - ${breakEnd}`,
-          period: 'Break',
+          period: t('admin.timetable.break', 'Break'),
           isBreak: true
         })
         currentTime = breakEnd
@@ -88,7 +90,7 @@ export const Timetable = () => {
         slots.push({
           id: slotId++,
           time: `${lunchStart} - ${lunchEnd}`,
-          period: 'Lunch',
+          period: t('admin.timetable.lunch', 'Lunch'),
           isBreak: true
         })
         currentTime = lunchEnd
@@ -188,7 +190,7 @@ export const Timetable = () => {
       window.URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Error exporting CSV:', error)
-      alert('Failed to export timetable. Please try again.')
+      alert(t('admin.timetable.exportFailed', 'Failed to export timetable. Please try again.'))
     }
   }
 
@@ -234,9 +236,9 @@ export const Timetable = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
               <Calendar className="text-blue-600 dark:text-blue-400" />
-              Class Timetable
+              {t('admin.timetable.title', 'Class Timetable')}
             </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-1">Manage and generate class schedules</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-1">{t('admin.timetable.subtitle', 'Manage and generate class schedules')}</p>
           </div>
 
           <div className="flex gap-2 flex-wrap">
@@ -246,7 +248,7 @@ export const Timetable = () => {
               className="flex items-center gap-2"
             >
               <Settings className="w-4 h-4" />
-              Settings
+              {t('admin.timetable.settings', 'Settings')}
             </Button>
 
             <Button
@@ -255,7 +257,7 @@ export const Timetable = () => {
               className="flex items-center gap-2"
             >
               <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
-              {isGenerating ? 'Generating...' : 'Auto Generate'}
+              {isGenerating ? t('admin.timetable.generating', 'Generating...') : t('admin.timetable.autoGenerate', 'Auto Generate')}
             </Button>
             
             <Button
@@ -264,7 +266,7 @@ export const Timetable = () => {
               className="flex items-center gap-2"
             >
               <Edit className="w-4 h-4" />
-              {editMode ? 'Done Editing' : 'Edit Mode'}
+              {editMode ? t('admin.timetable.doneEditing', 'Done Editing') : t('admin.timetable.editMode', 'Edit Mode')}
             </Button>
 
             <Button
@@ -274,7 +276,7 @@ export const Timetable = () => {
               disabled={Object.keys(timetableData).length === 0}
             >
               <Download className="w-4 h-4" />
-              Export CSV
+              {t('admin.timetable.exportCsv', 'Export CSV')}
             </Button>
           </div>
         </div>
@@ -282,7 +284,7 @@ export const Timetable = () => {
         {/* Class Selector */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-6 shadow-sm">
           <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-            Select Class
+            {t('admin.timetable.selectClass', 'Select Class')}
           </label>
           <select
             value={selectedClass}
@@ -302,11 +304,11 @@ export const Timetable = () => {
               <thead className="bg-gradient-to-r from-blue-600 to-blue-700">
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-white border-r border-blue-500">
-                    Time / Day
+                    {t('admin.timetable.timeDay', 'Time / Day')}
                   </th>
                   {daysOfWeek.map(day => (
                     <th key={day} className="px-4 py-3 text-center text-sm font-semibold text-white border-r border-blue-500 last:border-r-0">
-                      {day}
+                      {t(`days.${day}`, day)}
                     </th>
                   ))}
                 </tr>
@@ -362,7 +364,7 @@ export const Timetable = () => {
                             editMode && (
                               <div className="text-center text-gray-400 dark:text-gray-500 text-sm">
                                 <Plus className="w-5 h-5 mx-auto" />
-                                <span className="text-xs">Add</span>
+                                <span className="text-xs">{t('admin.timetable.add', 'Add')}</span>
                               </div>
                             )
                           )}
@@ -385,10 +387,10 @@ export const Timetable = () => {
           >
             <Calendar className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              No Timetable Generated Yet
+              {t('admin.timetable.noTimetableYet', 'No Timetable Generated Yet')}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Click "Auto Generate" to create a timetable automatically or enable "Edit Mode" to create manually
+              {t('admin.timetable.noTimetableHint', 'Click "Auto Generate" to create a timetable automatically or enable "Edit Mode" to create manually')}
             </p>
           </motion.div>
         )}
@@ -401,17 +403,17 @@ export const Timetable = () => {
           setShowAddModal(false)
           setFormData({ subject: '', teacher: '', room: '' })
         }}
-        title="Add/Edit Period"
+        title={t('admin.timetable.addEditPeriod', 'Add/Edit Period')}
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Subject</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.subjectLabel', 'Subject')}</label>
             <select
               value={formData.subject}
               onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
             >
-              <option value="">Select Subject</option>
+              <option value="">{t('admin.teachers.selectSubject', 'Select Subject')}</option>
               {subjects.map(subject => (
                 <option key={subject} value={subject}>{subject}</option>
               ))}
@@ -419,13 +421,13 @@ export const Timetable = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Teacher</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('roles.teacher', 'Teacher')}</label>
             <select
               value={formData.teacher}
               onChange={(e) => setFormData({ ...formData, teacher: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
             >
-              <option value="">Select Teacher</option>
+              <option value="">{t('admin.classes.selectTeacher', 'Select Teacher')}</option>
               {teachers.map(teacher => (
                 <option key={teacher} value={teacher}>{teacher}</option>
               ))}
@@ -433,7 +435,7 @@ export const Timetable = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Room</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('teacher.room', 'Room')}</label>
             <Input
               value={formData.room}
               onChange={(e) => setFormData({ ...formData, room: e.target.value })}
@@ -449,14 +451,14 @@ export const Timetable = () => {
                 setFormData({ subject: '', teacher: '', room: '' })
               }}
             >
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </Button>
             <Button
               onClick={handleSaveCell}
               disabled={!formData.subject || !formData.teacher}
             >
               <Save className="w-4 h-4 mr-2" />
-              Save
+              {t('common.save', 'Save')}
             </Button>
           </div>
         </div>
@@ -466,16 +468,16 @@ export const Timetable = () => {
       <Modal
         isOpen={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
-        title="Timetable Settings"
+        title={t('admin.timetable.settingsTitle', 'Timetable Settings')}
         size="lg"
         footer={
           <div className="flex gap-3 justify-end">
             <Button variant="secondary" onClick={() => setShowSettingsModal(false)}>
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </Button>
             <Button onClick={handleSaveSettings}>
               <Save className="w-4 h-4 mr-2" />
-              Save Settings
+              {t('admin.timetable.saveSettings', 'Save Settings')}
             </Button>
           </div>
         }
@@ -484,22 +486,22 @@ export const Timetable = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                Number of Periods (6 or 7)
+                {t('admin.timetable.numberOfPeriods', 'Number of Periods (6 or 7)')}
               </label>
               <select
                 value={timetableSettings.numberOfPeriods}
                 onChange={(e) => setTimetableSettings({ ...timetableSettings, numberOfPeriods: parseInt(e.target.value) })}
                 className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
               >
-                <option value={6}>6 Periods</option>
-                <option value={7}>7 Periods</option>
-                <option value={8}>8 Periods</option>
+                <option value={6}>{t('admin.timetable.periods', 'Periods {{n}}', { n: 6 })}</option>
+                <option value={7}>{t('admin.timetable.periods', 'Periods {{n}}', { n: 7 })}</option>
+                <option value={8}>{t('admin.timetable.periods', 'Periods {{n}}', { n: 8 })}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                Period Duration (minutes)
+                {t('admin.timetable.periodDuration', 'Period Duration (minutes)')}
               </label>
               <Input
                 type="number"
@@ -513,7 +515,7 @@ export const Timetable = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                School Start Time
+                {t('admin.timetable.startTime', 'School Start Time')}
               </label>
               <Input
                 type="time"
@@ -527,7 +529,7 @@ export const Timetable = () => {
 
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">Break Settings</h3>
+              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">{t('admin.timetable.breakSettings', 'Break Settings')}</h3>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -535,13 +537,13 @@ export const Timetable = () => {
                   onChange={(e) => setTimetableSettings({ ...timetableSettings, enableBreak: e.target.checked })}
                   className="w-4 h-4 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                 />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Enable Break</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{t('admin.timetable.enableBreak', 'Enable Break')}</span>
               </label>
             </div>
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${!timetableSettings.enableBreak ? 'opacity-50 pointer-events-none' : ''}`}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                  Break After Period
+                  {t('admin.timetable.breakAfterPeriod', 'Break After Period')}
                 </label>
                 <select
                   value={timetableSettings.breakAfterPeriod}
@@ -550,14 +552,14 @@ export const Timetable = () => {
                   disabled={!timetableSettings.enableBreak}
                 >
                   {Array.from({ length: timetableSettings.numberOfPeriods }, (_, i) => (
-                    <option key={i + 1} value={i + 1}>After Period {i + 1}</option>
+                    <option key={i + 1} value={i + 1}>{t('admin.timetable.afterPeriod', 'After Period {{n}}', { n: i + 1 })}</option>
                   ))}
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                  Break Duration (minutes)
+                  {t('admin.timetable.breakDuration', 'Break Duration (minutes)')}
                 </label>
                 <Input
                   type="number"
@@ -576,7 +578,7 @@ export const Timetable = () => {
 
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">Lunch Settings</h3>
+              <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">{t('admin.timetable.lunchSettings', 'Lunch Settings')}</h3>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -584,13 +586,13 @@ export const Timetable = () => {
                   onChange={(e) => setTimetableSettings({ ...timetableSettings, enableLunch: e.target.checked })}
                   className="w-4 h-4 text-blue-600 dark:text-blue-400 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                 />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Enable Lunch</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{t('admin.timetable.enableLunch', 'Enable Lunch')}</span>
               </label>
             </div>
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${!timetableSettings.enableLunch ? 'opacity-50 pointer-events-none' : ''}`}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                  Lunch After Period
+                  {t('admin.timetable.lunchAfterPeriod', 'Lunch After Period')}
                 </label>
                 <select
                   value={timetableSettings.lunchAfterPeriod}
@@ -599,14 +601,14 @@ export const Timetable = () => {
                   disabled={!timetableSettings.enableLunch}
                 >
                   {Array.from({ length: timetableSettings.numberOfPeriods }, (_, i) => (
-                    <option key={i + 1} value={i + 1}>After Period {i + 1}</option>
+                    <option key={i + 1} value={i + 1}>{t('admin.timetable.afterPeriod', 'After Period {{n}}', { n: i + 1 })}</option>
                   ))}
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                  Lunch Duration (minutes)
+                  {t('admin.timetable.lunchDuration', 'Lunch Duration (minutes)')}
                 </label>
                 <Input
                   type="number"
@@ -623,8 +625,7 @@ export const Timetable = () => {
 
           <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4 mt-4">
             <p className="text-sm text-blue-800">
-              <strong>Note:</strong> Changing these settings will regenerate the timetable if one exists. 
-              Make sure to save any important changes before updating settings.
+              {t('admin.timetable.settingsNote', 'Note: Changing these settings will regenerate the timetable if one exists. Make sure to save any important changes before updating settings.')}
             </p>
           </div>
         </div>

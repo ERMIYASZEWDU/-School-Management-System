@@ -132,19 +132,19 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
   }
 
   const quickActions = [
-    { icon: UserPlus, label: 'Add Student', onClick: () => setShowAddStudent(true) },
-    { icon: GraduationCap, label: 'Add Teacher', onClick: () => setShowAddTeacher(true) },
-    { icon: BookOpen, label: 'Add Class', onClick: () => navigate('/admin/classes') },
-    { icon: ClipboardCheck, label: 'Mark Attendance', onClick: () => setShowMarkAttendance(true) },
-    { icon: BarChart3, label: 'View Reports', onClick: () => navigate('/admin/reports') }
+    { icon: UserPlus, label: t('dashboards.addStudent', 'Add Student'), onClick: () => setShowAddStudent(true) },
+    { icon: GraduationCap, label: t('dashboards.addTeacher', 'Add Teacher'), onClick: () => setShowAddTeacher(true) },
+    { icon: BookOpen, label: t('dashboards.addClass', 'Add Class'), onClick: () => navigate('/admin/classes') },
+    { icon: ClipboardCheck, label: t('dashboards.markAttendance', 'Mark Attendance'), onClick: () => setShowMarkAttendance(true) },
+    { icon: BarChart3, label: t('dashboards.viewReports', 'View Reports'), onClick: () => navigate('/admin/reports') }
   ]
 
   const stats = [
     { 
       icon: Users, 
-      label: 'Total Students', 
+      label: t('dashboards.totalStudents', 'Total Students'), 
       value: loading ? '...' : dashboardData.totalStudents.toLocaleString(), 
-      subtitle: 'Active students', 
+      subtitle: t('dashboards.activeStudents', 'Active students'), 
       bgColor: 'bg-[#EFF6FF]', 
       numberColor: 'text-[#1D4ED8]',
       titleColor: 'text-[#1E3A8A]',
@@ -156,9 +156,9 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
     },
     { 
       icon: Users, 
-      label: 'Total Teachers', 
+      label: t('dashboards.totalTeachers', 'Total Teachers'), 
       value: loading ? '...' : dashboardData.totalTeachers.toLocaleString(), 
-      subtitle: 'Teaching staff', 
+      subtitle: t('dashboards.teachingStaff', 'Teaching staff'), 
       bgColor: 'bg-[#F5F3FF]', 
       numberColor: 'text-[#6D28D9]',
       titleColor: 'text-[#4C1D95]',
@@ -170,9 +170,9 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
     },
     { 
       icon: AlertTriangle, 
-      label: "Today's Attendance", 
+      label: t('dashboards.todaysAttendance', "Today's Attendance"), 
       value: loading ? '...' : `${dashboardData.avgAttendance}%`, 
-      subtitle: 'Average attendance rate', 
+      subtitle: t('dashboards.avgAttendanceRate', 'Average attendance rate'), 
       bgColor: 'bg-[#F0FDF4]', 
       numberColor: 'text-[#15803D]',
       titleColor: 'text-[#166534]',
@@ -184,9 +184,9 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
     },
     { 
       icon: BookOpen, 
-      label: 'Total Classes', 
+      label: t('dashboards.totalClasses', 'Total Classes'), 
       value: loading ? '...' : dashboardData.totalClasses.toLocaleString(), 
-      subtitle: 'Active classes', 
+      subtitle: t('dashboards.activeClasses', 'Active classes'), 
       bgColor: 'bg-[#FFF7ED]', 
       numberColor: 'text-[#C2410C]',
       titleColor: 'text-[#9A3412]',
@@ -216,9 +216,9 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
           </div>
           <div className="min-w-0">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1 md:mb-2">
-              Admin Dashboard
+              {t('dashboards.adminDashboard', 'Admin Dashboard')}
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300">Welcome back, {user?.name || 'Admin'}! Here's what's happening today.</p>
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-300">{t('dashboards.welcomeBack', 'Welcome back')}, {user?.name || 'Admin'}! {t('dashboards.heresWhatsHappening', "Here's what's happening today.")}</p>
           </div>
         </div>
       </motion.div>
@@ -276,7 +276,7 @@ ${attendanceData.map(item => `${item.class},${item.total},${item.present},${item
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           <Download size={18} />
-          Download Report
+          {t('dashboards.downloadReport', 'Download Report')}
         </button>
       </div>
 

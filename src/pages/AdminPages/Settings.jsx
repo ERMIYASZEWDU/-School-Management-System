@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Save, Settings as SettingsIcon, Lock, Bell, Mail, Globe, Database } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export const Settings = () => {
+  const { t, i18n } = useTranslation()
   const [settings, setSettings] = useState({
     schoolName: 'ABC School',
     schoolEmail: 'admin@school.com',
@@ -26,7 +28,7 @@ export const Settings = () => {
   }
 
   const handleSave = () => {
-    setSavedMessage('Settings saved successfully!')
+    setSavedMessage(t('admin.settings.saved', 'Settings saved successfully!'))
     setTimeout(() => setSavedMessage(''), 3000)
   }
 
@@ -42,8 +44,8 @@ export const Settings = () => {
           <div className="flex items-center gap-3">
             <SettingsIcon className="text-blue-600 dark:text-blue-400" size={32} />
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Settings</h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">Configure your school management system</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{t('admin.settings.title', 'Settings')}</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">{t('admin.settings.subtitle', 'Configure your school management system')}</p>
             </div>
           </div>
         </div>
@@ -74,12 +76,12 @@ export const Settings = () => {
           >
             <div className="flex items-center gap-2 mb-6">
               <Globe className="text-blue-600 dark:text-blue-400" size={24} />
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">School Information</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('admin.settings.schoolInfo', 'School Information')}</h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">School Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.settings.schoolName', 'School Name')}</label>
                 <input
                   type="text"
                   value={settings.schoolName}
@@ -89,7 +91,7 @@ export const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Email</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('profile.email', 'Email')}</label>
                 <input
                   type="email"
                   value={settings.schoolEmail}
@@ -99,7 +101,7 @@ export const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Phone</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.teachers.phone', 'Phone')}</label>
                 <input
                   type="tel"
                   value={settings.schoolPhone}
@@ -109,7 +111,7 @@ export const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Address</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.students.address', 'Address')}</label>
                 <input
                   type="text"
                   value={settings.schoolAddress}
@@ -127,22 +129,22 @@ export const Settings = () => {
             transition={{ delay: 0.2 }}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
           >
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">Academic Settings</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">{t('admin.settings.academicSettings', 'Academic Settings')}</h2>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Academic Year</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.students.academicYear', 'Academic Year')}</label>
                 <input
                   type="text"
                   value={settings.academicYear}
                   onChange={(e) => handleChange('academicYear', e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., 2024-2025"
+                  placeholder={t('admin.settings.academicYearPlaceholder', 'e.g., 2024-2025')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Session Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.settings.sessionStart', 'Session Start Date')}</label>
                 <input
                   type="date"
                   value={settings.sessionStartDate}
@@ -152,7 +154,7 @@ export const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Session End Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.settings.sessionEnd', 'Session End Date')}</label>
                 <input
                   type="date"
                   value={settings.sessionEndDate}
@@ -162,7 +164,7 @@ export const Settings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Timezone</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.settings.timezone', 'Timezone')}</label>
                 <select
                   value={settings.timezone}
                   onChange={(e) => handleChange('timezone', e.target.value)}
@@ -186,7 +188,7 @@ export const Settings = () => {
           >
             <div className="flex items-center gap-2 mb-6">
               <Bell className="text-blue-600 dark:text-blue-400" size={24} />
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Notifications</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('admin.settings.notifications', 'Notifications')}</h2>
             </div>
 
             <div className="space-y-4">
@@ -197,7 +199,7 @@ export const Settings = () => {
                   onChange={(e) => handleChange('emailNotifications', e.target.checked)}
                   className="w-5 h-5 border border-gray-300 dark:border-gray-600 rounded accent-blue-600"
                 />
-                <span className="text-gray-700 dark:text-gray-200 font-medium">Enable Email Notifications</span>
+                <span className="text-gray-700 dark:text-gray-200 font-medium">{t('admin.settings.enableEmail', 'Enable Email Notifications')}</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -207,7 +209,7 @@ export const Settings = () => {
                   onChange={(e) => handleChange('smsNotifications', e.target.checked)}
                   className="w-5 h-5 border border-gray-300 dark:border-gray-600 rounded accent-blue-600"
                 />
-                <span className="text-gray-700 dark:text-gray-200 font-medium">Enable SMS Notifications</span>
+                <span className="text-gray-700 dark:text-gray-200 font-medium">{t('admin.settings.enableSms', 'Enable SMS Notifications')}</span>
               </label>
             </div>
           </motion.div>
@@ -221,34 +223,35 @@ export const Settings = () => {
           >
             <div className="flex items-center gap-2 mb-6">
               <Database className="text-blue-600 dark:text-blue-400" size={24} />
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">System Settings</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('admin.settings.systemSettings', 'System Settings')}</h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Language</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.settings.language', 'Language')}</label>
                 <select
-                  value={settings.language}
-                  onChange={(e) => handleChange('language', e.target.value)}
+                  value={i18n.language.startsWith('am') ? 'Amharic' : 'English'}
+                  onChange={(e) => {
+                    handleChange('language', e.target.value)
+                    i18n.changeLanguage(e.target.value === 'Amharic' ? 'am' : 'en')
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option>English</option>
-                  <option>Amharic</option>
-                  <option>Spanish</option>
-                  <option>French</option>
+                  <option>{t('admin.settings.english', 'English')}</option>
+                  <option>{t('admin.settings.amharic', 'Amharic')}</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Backup Frequency</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('admin.settings.backupFrequency', 'Backup Frequency')}</label>
                 <select
                   value={settings.backupFrequency}
                   onChange={(e) => handleChange('backupFrequency', e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option>Daily</option>
-                  <option>Weekly</option>
-                  <option>Monthly</option>
+                  <option>{t('admin.settings.daily', 'Daily')}</option>
+                  <option>{t('admin.settings.weekly', 'Weekly')}</option>
+                  <option>{t('admin.settings.monthly', 'Monthly')}</option>
                 </select>
               </div>
             </div>
@@ -261,7 +264,7 @@ export const Settings = () => {
                   onChange={(e) => handleChange('maintenanceMode', e.target.checked)}
                   className="w-5 h-5 border border-gray-300 dark:border-gray-600 rounded accent-blue-600"
                 />
-                <span className="text-gray-700 dark:text-gray-200 font-medium">Maintenance Mode (System will be unavailable to users)</span>
+                <span className="text-gray-700 dark:text-gray-200 font-medium">{t('admin.settings.maintenanceMode', 'Maintenance Mode (System will be unavailable to users)')}</span>
               </label>
             </div>
           </motion.div>
@@ -280,7 +283,7 @@ export const Settings = () => {
               className="flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold shadow-md"
             >
               <Save size={20} />
-              Save Settings
+              {t('admin.timetable.saveSettings', 'Save Settings')}
             </motion.button>
           </motion.div>
         </div>

@@ -3,8 +3,10 @@ import { motion } from 'framer-motion'
 import { Calendar, CheckCircle, XCircle, Clock, Download, Filter, FileCheck } from 'lucide-react'
 import { Button } from '../../components/Button'
 import { getAttendance, getClasses } from '../../services/adminApi'
+import { useTranslation } from 'react-i18next'
 
 export const Attendance = () => {
+  const { t, i18n } = useTranslation()
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [selectedClass, setSelectedClass] = useState('all')
   const [classes, setClasses] = useState([])
@@ -71,32 +73,32 @@ export const Attendance = () => {
 
   const handleDownloadReport = () => {
     if (filteredData.length === 0) {
-      alert('No attendance data to download')
+      alert(t('admin.attendance.noDataToDownload', 'No attendance data to download'))
       return
     }
 
     const classFilter = selectedClass === 'all' ? 'All_Classes' : 
       classes.find(c => c._id === selectedClass)?.name.replace(/\s+/g, '_') || 'Unknown'
 
-    const csv = `Attendance Report - ${selectedDate}
-Class,Roll No,Student Name,Status,Date
+    const csv = `${t('admin.attendance.reportTitle', 'Attendance Report')} - ${selectedDate}
+${t('admin.classes.classLabel', 'Class')},${t('teacher.rollNo', 'Roll No')},${t('teacher.student', 'Student Name')},${t('admin.classes.statusColumn', 'Status')},${t('studentLabels.date', 'Date')}
 
 ${filteredData.map(r => `${r.studentId?.grade || ''} ${r.studentId?.section || ''},${r.studentId?.enrollmentNumber || ''},${r.studentId?.name || ''},${r.status},${new Date(r.date).toLocaleString()}`).join('\n')}
 
-SUMMARY
-Total Students,${stats.total}
-Present,${stats.present}
-Absent,${stats.absent}
-Late,${stats.late}
-Excused,${stats.excused}
-Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixed(1) : 0}%
+${t('admin.attendance.summary', 'SUMMARY')}
+${t('admin.students.totalStudents', 'Total Students')},${stats.total}
+${t('statusLabels.present', 'Present')},${stats.present}
+${t('statusLabels.absent', 'Absent')},${stats.absent}
+${t('statusLabels.late', 'Late')},${stats.late}
+${t('statusLabels.excused', 'Excused')},${stats.excused}
+${t('teacher.attendanceRate', 'Attendance Rate')},${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixed(1) : 0}%
 `
     const blob = new Blob([csv], { type: 'text/csv' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
     link.download = `Attendance_${selectedDate}_${classFilter}.csv`
     link.click()
-    alert('✅ Attendance report downloaded!')
+    alert(t('admin.attendance.downloaded', '✅ Attendance report downloaded!'))
   }
 
   return (
@@ -112,10 +114,10 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
             <div className="flex items-center gap-3">
               <Calendar size={36} className="text-orange-600 dark:text-orange-400" />
               <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                Attendance Management
+                {t('admin.attendance.title', 'Attendance Management')}
               </h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">Track and manage student attendance</p>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">{t('admin.attendance.subtitle', 'Track and manage student attendance')}</p>
           </div>
           
           <div className="flex flex-wrap gap-3">
@@ -130,14 +132,14 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
               onChange={(e) => setSelectedClass(e.target.value)}
               className="px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition"
             >
-              <option value="all">All Classes</option>
+              <option value="all">{t('admin.students.allClasses', 'All Classes')}</option>
               {classes.map(cls => (
                 <option key={cls._id} value={cls._id}>{cls.name}</option>
               ))}
             </select>
             <Button onClick={handleDownloadReport} className="flex items-center gap-2">
               <Download size={18} />
-              Download Report
+              {t('admin.attendance.downloadReport', 'Download Report')}
             </Button>
           </div>
         </div>
@@ -152,7 +154,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Students</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.students.totalStudents', 'Total Students')}</p>
                 <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.total}</p>
               </div>
               <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
@@ -169,7 +171,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Present</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('statusLabels.present', 'Present')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.present}</p>
                 <p className="text-xs text-green-600 dark:text-green-400 font-semibold mt-1">
                   {stats.total > 0 ? ((stats.present / stats.total) * 100).toFixed(1) : '0.0'}%
@@ -189,7 +191,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Absent</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('statusLabels.absent', 'Absent')}</p>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats.absent}</p>
                 <p className="text-xs text-red-600 dark:text-red-400 font-semibold mt-1">
                   {stats.total > 0 ? ((stats.absent / stats.total) * 100).toFixed(1) : '0.0'}%
@@ -209,7 +211,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Late</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('statusLabels.late', 'Late')}</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.late}</p>
                 <p className="text-xs text-orange-600 dark:text-orange-400 font-semibold mt-1">
                   {stats.total > 0 ? ((stats.late / stats.total) * 100).toFixed(1) : '0.0'}%
@@ -229,7 +231,7 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Excused</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('statusLabels.excused', 'Excused')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.excused}</p>
                 <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-1">
                   {stats.total > 0 ? ((stats.excused / stats.total) * 100).toFixed(1) : '0.0'}%
@@ -251,20 +253,20 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
         >
           <div className="p-6 bg-gradient-to-r from-orange-50 dark:from-orange-900/40 to-red-50 dark:to-red-900/40 border-b border-gray-100 dark:border-gray-800">
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-              Attendance Records - {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              {t('admin.attendance.records', 'Attendance Records')} - {new Date(selectedDate).toLocaleDateString(i18n.language === 'am' ? 'am-ET' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Select status from dropdown to mark attendance</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{t('admin.attendance.selectStatusHint', 'Select status from dropdown to mark attendance')}</p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Class</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Roll No</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Student Name</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Status</th>
-                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">Check-in Time</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.classes.classLabel', 'Class')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.rollNo', 'Roll No')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('teacher.student', 'Student Name')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.classes.statusColumn', 'Status')}</th>
+                  <th className="text-left p-4 font-bold text-gray-700 dark:text-gray-200">{t('admin.attendance.checkInTime', 'Check-in Time')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -272,13 +274,13 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
                   <tr>
                     <td colSpan={5} className="p-8 text-center text-gray-600 dark:text-gray-300">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-2"></div>
-                      Loading attendance...
+                      {t('studentLabels.loadingAttendance', 'Loading attendance...')}
                     </td>
                   </tr>
                 ) : filteredData.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-8 text-center text-gray-600 dark:text-gray-300">
-                      No attendance records found for the selected date and class.
+                      {t('admin.attendance.noRecordsForDate', 'No attendance records found for the selected date and class.')}
                     </td>
                   </tr>
                 ) : (
@@ -297,15 +299,15 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
                         {record.studentId?.enrollmentNumber || 'N/A'}
                       </td>
                       <td className="p-4 font-semibold text-gray-800 dark:text-gray-100">
-                        {record.studentId?.name || 'Unknown'}
+                        {record.studentId?.name || t('admin.classes.unknown', 'Unknown')}
                       </td>
                       <td className="p-4">
                         <span className={`px-4 py-2 rounded-lg text-sm font-semibold border-2 ${getStatusColor(record.status)}`}>
-                          {record.status.toUpperCase()}
+                          {String(t(`statusLabels.${record.status}`, record.status))}
                         </span>
                       </td>
                       <td className="p-4 text-gray-600 dark:text-gray-300">
-                        {new Date(record.date).toLocaleTimeString('en-US', { 
+                        {new Date(record.date).toLocaleTimeString(i18n.language === 'am' ? 'am-ET' : 'en-US', { 
                           hour: '2-digit', 
                           minute: '2-digit' 
                         })}
@@ -320,8 +322,8 @@ Attendance Rate,${stats.total > 0 ? ((stats.present / stats.total) * 100).toFixe
           {!loading && filteredData.length === 0 && (
             <div className="p-12 text-center">
               <Calendar size={64} className="mx-auto text-gray-300 dark:text-gray-400 mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">No attendance records found</p>
-              <p className="text-gray-400 dark:text-gray-500 text-sm">Try selecting a different class or date</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">{t('studentLabels.noAttendanceRecords', 'No attendance records found')}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">{t('admin.attendance.tryDifferentFilter', 'Try selecting a different class or date')}</p>
             </div>
           )}
         </motion.div>

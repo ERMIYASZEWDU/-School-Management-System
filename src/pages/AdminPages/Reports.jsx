@@ -4,8 +4,10 @@ import {
   BarChart3, BookOpen, Award, Clock,
   Printer, Mail, FileSpreadsheet
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export const Reports = () => {
+  const { t } = useTranslation()
   console.log('Reports component loaded')
   const [loading, setLoading] = useState(true)
   const [students, setStudents] = useState([])
@@ -69,8 +71,8 @@ export const Reports = () => {
   const reportTypes = [
     {
       id: 'student-performance',
-      title: 'Student Performance Report',
-      description: 'Detailed academic performance analysis by student, class, or subject',
+      title: t('admin.reports.studentPerformance', 'Student Performance Report'),
+      description: t('admin.reports.studentPerformanceDesc', 'Detailed academic performance analysis by student, class, or subject'),
       icon: Award,
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50 dark:bg-blue-900/30',
@@ -79,8 +81,8 @@ export const Reports = () => {
     },
     {
       id: 'attendance',
-      title: 'Attendance Report',
-      description: 'Student and teacher attendance statistics and trends',
+      title: t('admin.reports.attendance', 'Attendance Report'),
+      description: t('admin.reports.attendanceDesc', 'Student and teacher attendance statistics and trends'),
       icon: Calendar,
       color: 'from-green-500 to-green-600',
       bgColor: 'bg-green-50 dark:bg-green-900/30',
@@ -89,8 +91,8 @@ export const Reports = () => {
     },
     {
       id: 'exam-results',
-      title: 'Examination Results Report',
-      description: 'Comprehensive exam results with grade distribution and analysis',
+      title: t('admin.reports.examResults', 'Examination Results Report'),
+      description: t('admin.reports.examResultsDesc', 'Comprehensive exam results with grade distribution and analysis'),
       icon: FileText,
       color: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-50 dark:bg-purple-900/30',
@@ -99,8 +101,8 @@ export const Reports = () => {
     },
     {
       id: 'teacher-performance',
-      title: 'Teacher Performance Report',
-      description: 'Teaching effectiveness metrics and student outcomes by teacher',
+      title: t('admin.reports.teacherPerformance', 'Teacher Performance Report'),
+      description: t('admin.reports.teacherPerformanceDesc', 'Teaching effectiveness metrics and student outcomes by teacher'),
       icon: Users,
       color: 'from-orange-500 to-orange-600',
       bgColor: 'bg-orange-50 dark:bg-orange-900/30',
@@ -109,8 +111,8 @@ export const Reports = () => {
     },
     {
       id: 'class-overview',
-      title: 'Class Overview Report',
-      description: 'Complete class statistics including students, subjects, and performance',
+      title: t('admin.reports.classOverview', 'Class Overview Report'),
+      description: t('admin.reports.classOverviewDesc', 'Complete class statistics including students, subjects, and performance'),
       icon: BookOpen,
       color: 'from-indigo-500 to-indigo-600',
       bgColor: 'bg-indigo-50 dark:bg-indigo-900/30',
@@ -119,8 +121,8 @@ export const Reports = () => {
     },
     {
       id: 'progress-tracking',
-      title: 'Progress Tracking Report',
-      description: 'Student progress over time with trends and improvement areas',
+      title: t('admin.reports.progressTracking', 'Progress Tracking Report'),
+      description: t('admin.reports.progressTrackingDesc', 'Student progress over time with trends and improvement areas'),
       icon: TrendingUp,
       color: 'from-pink-500 to-pink-600',
       bgColor: 'bg-pink-50 dark:bg-pink-900/30',
@@ -129,8 +131,8 @@ export const Reports = () => {
     },
     {
       id: 'subject-analysis',
-      title: 'Subject-wise Analysis',
-      description: 'Subject performance metrics, difficulty analysis, and comparisons',
+      title: t('admin.reports.subjectAnalysis', 'Subject-wise Analysis'),
+      description: t('admin.reports.subjectAnalysisDesc', 'Subject performance metrics, difficulty analysis, and comparisons'),
       icon: BarChart3,
       color: 'from-teal-500 to-teal-600',
       bgColor: 'bg-teal-50 dark:bg-teal-900/30',
@@ -139,8 +141,8 @@ export const Reports = () => {
     },
     {
       id: 'time-table',
-      title: 'Timetable Report',
-      description: 'Complete schedule overview for classes and teachers',
+      title: t('admin.reports.timetable', 'Timetable Report'),
+      description: t('admin.reports.timetableDesc', 'Complete schedule overview for classes and teachers'),
       icon: Clock,
       color: 'from-cyan-500 to-cyan-600',
       bgColor: 'bg-cyan-50 dark:bg-cyan-900/30',
@@ -169,7 +171,7 @@ export const Reports = () => {
   }
 
   const handleExportReport = (format) => {
-    alert(`Exporting ${selectedReportType?.title || 'report'} as ${format.toUpperCase()}...`)
+    alert(`${t('admin.reports.exporting', 'Exporting {{report}} as {{format}}...', { report: selectedReportType?.title || t('admin.reports.report', 'report'), format: format.toUpperCase() })}`)
     // In production, this would trigger actual export functionality
   }
 
@@ -178,7 +180,7 @@ export const Reports = () => {
   }
 
   const handleEmailReport = () => {
-    alert('Email report functionality would be implemented here')
+    alert(t('admin.reports.emailPlaceholder', 'Email report functionality would be implemented here'))
   }
 
   // Get unique classes
@@ -199,11 +201,11 @@ export const Reports = () => {
           <div className="flex items-center gap-3 mb-2">
             <FileText size={36} className="text-indigo-600 dark:text-indigo-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Reports & Analytics
+              {t('admin.reports.title', 'Reports & Analytics')}
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Generate comprehensive reports and insights for your school
+            {t('admin.reports.subtitle', 'Generate comprehensive reports and insights for your school')}
           </p>
         </div>
 
@@ -212,7 +214,7 @@ export const Reports = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Students</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.students.totalStudents', 'Total Students')}</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.totalStudents}</p>
               </div>
               <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
@@ -224,7 +226,7 @@ export const Reports = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Teachers</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.teachers.totalTeachers', 'Total Teachers')}</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats.totalTeachers}</p>
               </div>
               <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-xl">
@@ -236,7 +238,7 @@ export const Reports = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Total Classes</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.classes.totalClasses', 'Total Classes')}</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.totalClasses}</p>
               </div>
               <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
@@ -248,7 +250,7 @@ export const Reports = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Avg Attendance</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.reports.avgAttendance', 'Avg Attendance')}</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.avgAttendance}%</p>
               </div>
               <div className="p-4 bg-orange-50 dark:bg-orange-900/30 rounded-xl">
@@ -260,7 +262,7 @@ export const Reports = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">Pass Rate</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">{t('admin.reports.passRate', 'Pass Rate')}</p>
                 <p className="text-3xl font-bold text-teal-600 dark:text-teal-400">{stats.passRate}%</p>
               </div>
               <div className="p-4 bg-teal-50 dark:bg-teal-900/30 rounded-xl">
@@ -272,7 +274,7 @@ export const Reports = () => {
 
         {/* Report Types Grid */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Select Report Type</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">{t('admin.reports.selectType', 'Select Report Type')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {reportTypes.map((report, index) => {
               const IconComponent = report.icon
@@ -315,14 +317,14 @@ export const Reports = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     <BookOpen size={16} className="inline mr-2" />
-                    Select Class
+                    {t('admin.timetable.selectClass', 'Select Class')}
                   </label>
                   <select
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
                     className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800"
                   >
-                    <option value="all">All Classes</option>
+                    <option value="all">{t('admin.students.allClasses', 'All Classes')}</option>
                     {classes.map(cls => (
                       <option key={cls} value={cls}>{cls}</option>
                     ))}
@@ -334,14 +336,14 @@ export const Reports = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     <FileText size={16} className="inline mr-2" />
-                    Select Subject
+                    {t('admin.reports.selectSubject', 'Select Subject')}
                   </label>
                   <select
                     value={selectedSubject}
                     onChange={(e) => setSelectedSubject(e.target.value)}
                     className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800"
                   >
-                    <option value="all">All Subjects</option>
+                    <option value="all">{t('admin.teachers.allSubjects', 'All Subjects')}</option>
                     {subjects.map(subject => (
                       <option key={subject} value={subject}>{subject}</option>
                     ))}
@@ -354,7 +356,7 @@ export const Reports = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       <Calendar size={16} className="inline mr-2" />
-                      From Date
+                      {t('admin.reports.fromDate', 'From Date')}
                     </label>
                     <input
                       type="date"
@@ -366,7 +368,7 @@ export const Reports = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       <Calendar size={16} className="inline mr-2" />
-                      To Date
+                      {t('admin.reports.toDate', 'To Date')}
                     </label>
                     <input
                       type="date"
@@ -386,39 +388,39 @@ export const Reports = () => {
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
               >
                 <Download size={18} />
-                Export as PDF
+                {t('admin.reports.exportPdf', 'Export as PDF')}
               </button>
               <button
                 onClick={() => handleExportReport('excel')}
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
               >
                 <FileSpreadsheet size={18} />
-                Export as Excel
+                {t('admin.reports.exportExcel', 'Export as Excel')}
               </button>
               <button
                 onClick={handlePrintReport}
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
               >
                 <Printer size={18} />
-                Print Report
+                {t('admin.reports.print', 'Print Report')}
               </button>
               <button
                 onClick={handleEmailReport}
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg"
               >
                 <Mail size={18} />
-                Email Report
+                {t('admin.reports.email', 'Email Report')}
               </button>
             </div>
 
             {/* Report Preview */}
             <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Report Preview</h3>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">{t('admin.reports.preview', 'Report Preview')}</h3>
               <div className="bg-gradient-to-br from-gray-50 dark:from-gray-900 to-blue-50 dark:to-blue-900/40 rounded-xl p-8 border-2 border-gray-200 dark:border-gray-700">
                 <div className="text-center mb-6">
                   <h4 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{selectedReportType.title}</h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Generated on {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
+                    {t('admin.reports.generatedOn', 'Generated on {{date}} at {{time}}', { date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString() })}
                   </p>
                 </div>
 
@@ -427,15 +429,15 @@ export const Reports = () => {
                   <table className="w-full">
                     <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
                       <tr>
-                        <th className="text-left p-4 font-semibold">Parameter</th>
-                        <th className="text-left p-4 font-semibold">Value</th>
-                        <th className="text-left p-4 font-semibold">Status</th>
+                        <th className="text-left p-4 font-semibold">{t('admin.reports.parameter', 'Parameter')}</th>
+                        <th className="text-left p-4 font-semibold">{t('admin.reports.value', 'Value')}</th>
+                        <th className="text-left p-4 font-semibold">{t('admin.classes.statusColumn', 'Status')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="border-b border-gray-100 dark:border-gray-800">
-                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">Selected Class</td>
-                        <td className="p-4 text-gray-600 dark:text-gray-300">{selectedClass === 'all' ? 'All Classes' : selectedClass}</td>
+                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">{t('admin.reports.selectedClass', 'Selected Class')}</td>
+                        <td className="p-4 text-gray-600 dark:text-gray-300">{selectedClass === 'all' ? t('admin.students.allClasses', 'All Classes') : selectedClass}</td>
                         <td className="p-4">
                           <span className="px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold">
                             Active
@@ -443,8 +445,8 @@ export const Reports = () => {
                         </td>
                       </tr>
                       <tr className="border-b border-gray-100 dark:border-gray-800">
-                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">Selected Subject</td>
-                        <td className="p-4 text-gray-600 dark:text-gray-300">{selectedSubject === 'all' ? 'All Subjects' : selectedSubject}</td>
+                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">{t('admin.reports.selectedSubject', 'Selected Subject')}</td>
+                        <td className="p-4 text-gray-600 dark:text-gray-300">{selectedSubject === 'all' ? t('admin.teachers.allSubjects', 'All Subjects') : selectedSubject}</td>
                         <td className="p-4">
                           <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold">
                             Active
@@ -452,11 +454,11 @@ export const Reports = () => {
                         </td>
                       </tr>
                       <tr className="border-b border-gray-100 dark:border-gray-800">
-                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">Date Range</td>
+                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">{t('admin.reports.dateRange', 'Date Range')}</td>
                         <td className="p-4 text-gray-600 dark:text-gray-300">
                           {dateRange.from && dateRange.to 
                             ? `${new Date(dateRange.from).toLocaleDateString()} - ${new Date(dateRange.to).toLocaleDateString()}`
-                            : 'All Time'}
+                            : t('studentLabels.allTime', 'All Time')}
                         </td>
                         <td className="p-4">
                           <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold">
@@ -465,7 +467,7 @@ export const Reports = () => {
                         </td>
                       </tr>
                       <tr>
-                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">Total Records</td>
+                        <td className="p-4 font-medium text-gray-700 dark:text-gray-200">{t('studentLabels.totalRecords', 'Total Records')}</td>
                         <td className="p-4 text-gray-600 dark:text-gray-300 font-bold">{stats.totalStudents}</td>
                         <td className="p-4">
                           <span className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded-full text-xs font-semibold">
@@ -479,7 +481,7 @@ export const Reports = () => {
 
                 <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border-2 border-blue-200 dark:border-blue-900/50">
                   <p className="text-sm text-blue-800">
-                    <strong>Note:</strong> This is a preview. Click "Export as PDF" or "Export as Excel" to generate the full detailed report with charts, graphs, and comprehensive data analysis.
+                    <strong>{t('admin.reports.note', 'Note')}:</strong> {t('admin.reports.previewNote', 'This is a preview. Click "Export as PDF" or "Export as Excel" to generate the full detailed report with charts, graphs, and comprehensive data analysis.')}
                   </p>
                 </div>
               </div>
@@ -491,9 +493,9 @@ export const Reports = () => {
         {!selectedReportType && (
           <div className="bg-gradient-to-br from-indigo-50 dark:from-indigo-900/40 to-purple-50 dark:to-purple-900/40 rounded-2xl p-12 text-center border-2 border-indigo-200">
             <FileText size={64} className="mx-auto text-indigo-400 mb-4" />
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Select a Report Type</h3>
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t('admin.reports.selectType', 'Select a Report Type')}</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Choose a report type from above to generate comprehensive insights and analytics
+              {t('admin.reports.selectTypeHint', 'Choose a report type from above to generate comprehensive insights and analytics')}
             </p>
           </div>
         )}
