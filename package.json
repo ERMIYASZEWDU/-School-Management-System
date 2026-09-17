@@ -11,7 +11,13 @@
     "typecheck": "tsc --noEmit",
     "smoke": "playwright test",
     "smoke:headed": "playwright test --headed",
-    "check:parents": "node server/scripts/check-parent-integrity.mjs"
+    "check:parents": "node server/scripts/check-integrity.mjs",
+    "smoke:full": "playwright test",
+    "test:interactive": "playwright test e2e/interactive.spec.js",
+    "check:integrity": "node server/scripts/check-integrity.mjs",
+    "verify": "npm run seed && npm run check:integrity && npm run smoke:full",
+    "seed": "npm run seed --prefix server",
+    "verify:keep": "npm run check:integrity && npm run smoke:full"
   },
   "dependencies": {
     "axios": "^1.6.2",

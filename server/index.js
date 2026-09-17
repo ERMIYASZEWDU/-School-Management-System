@@ -72,8 +72,13 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
-// Rate limiting
-app.use('/api/', apiLimiter)
+// Rate limiting — health/status probes are exempt so uptime checks and
+// tooling never trip the limiter (and can't be used to exhaust it either).
+const apiRateLimit = (req, res, next) => {
+  if (req.path === '/health' || req.path === '/db-status') return next()
+  apiLimiter(req, res, next)
+}
+app.use('/api/', apiRateLimit)
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/school-management')

@@ -13,8 +13,10 @@ import { sendOTPEmail, sendPasswordResetConfirmation } from '../utils/emailServi
 
 const router = express.Router()
 
-// Apply rate limiting to auth routes
-router.use(authLimiter)
+// Rate limiting is applied per-route to the credential endpoints (login,
+// OTP flows) — NOT via router.use, because authenticated calls like /me fire
+// on every page boot and would exhaust the shared auth budget, eventually
+// 429-ing even legitimate logins.
 
 /**
  * Find a user by phone number, tolerating any common formatting.
@@ -44,7 +46,7 @@ router.use(logAuthEvent)
 // NOTE: Self-registration has been removed. User accounts (student, teacher,
 // parent, admin) are created exclusively by admins via POST /api/admin/user.
 
-router.post('/login', validateLogin, asyncHandler(async (req, res) => {
+router.post('/login', authLimiter, validateLogin, asyncHandler(async (req, res) => {
   const startTime = Date.now()
   const { email, password } = req.body
 

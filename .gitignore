@@ -21,3 +21,4 @@ out/
 *.pem
 *.pck
 .freebuff/
+test-results/

@@ -83,7 +83,9 @@ export const authLimiter = createRateLimiter(
 
 export const apiLimiter = createRateLimiter(
   15 * 60 * 1000, // 15 minutes
-  200, // 200 requests
+  2000, // 2000 requests per IP per window — sized for real dashboard use
+        // (each portal view fires several API calls; all preview/dev traffic
+        // shares one IP). 200 made heavy normal use 429 mid-session.
   'Too many requests. Please slow down.'
 )
 
