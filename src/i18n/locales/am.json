@@ -1413,7 +1413,9 @@
     "yourAnswer": "መልስዎ",
     "submissionPlaceholder": "ማስገቢያዎን እዚህ ያስገቡ...",
     "submitting": "በማስገባት ላይ...",
-    "submissionStatus": "የማስገቢያ ሁኔታ"
+    "submissionStatus": "የማስገቢያ ሁኔታ",
+    "gradeTrendTitle": "የውጤት አዝማሚያ",
+    "gradeTrendScore": "ውጤት %"
   },
   "admin": {
     "students": {

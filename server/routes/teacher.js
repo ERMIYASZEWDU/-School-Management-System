@@ -175,32 +175,34 @@ router.get('/dashboard', verifyToken, checkRole(['teacher']), async (req, res) =
     
     const attendanceData = Object.values(monthlyAttendance).slice(-6)
 
-    // Get class performance (grades grouped by subject/class)
+    // Get class performance (grades grouped by subject — one row per subject)
     const classPerformance = []
     if (teacherProfile && teacherProfile.assignedSubjectIds && teacherProfile.assignedSubjectIds.length > 0) {
-      for (const subjectId of teacherProfile.assignedSubjectIds.slice(0, 3)) {
-        const subjectGrades = await Grade.find({ 
-          teacherId,
-          // You can add subjectId filter if you link subjects properly
-        }).lean()
-        
-        if (subjectGrades.length > 0) {
-          const avgGrade = subjectGrades.reduce((sum, g) => sum + ((g.score / (g.maxScore || 100)) * 100), 0) / subjectGrades.length
-          const excellent = subjectGrades.filter(g => (g.score / (g.maxScore || 100)) >= 0.9).length
-          const good = subjectGrades.filter(g => {
-            const pct = g.score / (g.maxScore || 100)
-            return pct >= 0.75 && pct < 0.9
-          }).length
-          const average_grade = subjectGrades.filter(g => (g.score / (g.maxScore || 100)) < 0.75).length
-          
-          classPerformance.push({
-            class: subjectGrades[0]?.subject || 'Subject',
-            average: avgGrade.toFixed(1),
-            excellent,
-            good,
-            average_grade
-          })
-        }
+      const subjectGrades = await Grade.find({ teacherId }).lean()
+
+      const gradesBySubject = new Map()
+      for (const g of subjectGrades) {
+        const key = g.subject || 'Unspecified'
+        if (!gradesBySubject.has(key)) gradesBySubject.set(key, [])
+        gradesBySubject.get(key).push(g)
+      }
+
+      for (const [subject, grades] of gradesBySubject) {
+        const avgGrade = grades.reduce((sum, g) => sum + ((g.score / (g.maxScore || 100)) * 100), 0) / grades.length
+        const excellent = grades.filter(g => (g.score / (g.maxScore || 100)) >= 0.9).length
+        const good = grades.filter(g => {
+          const pct = g.score / (g.maxScore || 100)
+          return pct >= 0.75 && pct < 0.9
+        }).length
+        const average_grade = grades.filter(g => (g.score / (g.maxScore || 100)) < 0.75).length
+
+        classPerformance.push({
+          class: subject,
+          average: avgGrade.toFixed(1),
+          excellent,
+          good,
+          average_grade
+        })
       }
     }
 

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Award, TrendingUp, BookOpen, Filter, BarChart3 } from 'lucide-react'
 import { getStudentGrades } from '../../services/studentApi'
+import { GradeTrendChart } from '../../components/GradeTrendChart'
 
 export const StudentGrades = () => {
   const { t } = useTranslation()
@@ -198,6 +199,9 @@ export const StudentGrades = () => {
             </select>
           </div>
         </motion.div>
+
+        {/* Grade Trend Chart */}
+        <GradeTrendChart grades={grades} />
 
         {/* Grades Table */}
         <motion.div

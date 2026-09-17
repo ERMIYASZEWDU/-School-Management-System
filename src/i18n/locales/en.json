@@ -1309,7 +1309,9 @@
     "yourAnswer": "Your Answer",
     "submissionPlaceholder": "Enter your submission here...",
     "submitting": "Submitting...",
-    "submissionStatus": "Submission Status"
+    "submissionStatus": "Submission Status",
+    "gradeTrendTitle": "Grade Trend",
+    "gradeTrendScore": "Score %"
   },
   "admin": {
     "students": {

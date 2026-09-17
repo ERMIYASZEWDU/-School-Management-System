@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Award, ArrowLeft, TrendingUp, BookOpen, BarChart3 } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getChildGrades, getChildDetails } from '../../services/parentApi'
+import { GradeTrendChart } from '../../components/GradeTrendChart'
 
 export const ParentChildGrades = () => {
   const { t } = useTranslation()
@@ -142,6 +143,9 @@ export const ParentChildGrades = () => {
             </div>
           </div>
         </div>
+
+        {/* Grade Trend Chart */}
+        <GradeTrendChart grades={grades} />
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
           <div className="overflow-x-auto">
