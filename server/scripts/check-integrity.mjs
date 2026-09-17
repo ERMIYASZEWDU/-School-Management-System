@@ -70,7 +70,7 @@ const ROLE_CONFIG = {
   student: {
     model: Student,
     label: 'Student',
-    requiredFields: ['name', 'enrollmentNumber', 'grade', 'section', 'guardianName', 'guardianPhone', 'address'],
+    requiredFields: ['name', 'enrollmentNumber', 'grade', 'section', 'rollNumber', 'dateOfBirth', 'guardianName', 'guardianPhone', 'address'],
     userFillable: ['name'],
     refChecks: [
       { field: 'classId', ref: 'Class', label: 'class', many: false }
