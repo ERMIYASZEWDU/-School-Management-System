@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { User, Camera, Lock, Save, X, Upload, Trash2 } from 'lucide-react'
+import { User, Camera, Crop, Lock, Save, X, Upload, Trash2 } from 'lucide-react'
 import { getProfile, updateProfile, uploadProfilePhoto, deleteProfilePhoto, changePassword } from '../services/profileApi'
 import { resolvePhotoUrl } from '../utils/api'
 import { useAuthStore } from '../store/authStore'
 import { processPhoto } from '../utils/image'
+import { PhotoCropEditor } from '../components/PhotoCropEditor'
+import { CameraCapture } from '../components/CameraCapture'
 
 export const Profile = () => {
   const { t } = useTranslation()
@@ -26,6 +28,13 @@ export const Profile = () => {
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [cropImage, setCropImage] = useState(null) // object URL of the freshly picked photo, shown in the crop editor
+  const [showCamera, setShowCamera] = useState(false) // live camera capture overlay
+
+  // Mirrors the latest staged-photo object URLs so the unmount cleanup can
+  // revoke them (a plain closure would capture the first-render nulls)
+  const photoUrlsRef = useRef({ preview: null, crop: null })
+  photoUrlsRef.current = { preview: photoPreview, crop: cropImage }
   
   // Password change
   const [showPasswordModal, setShowPasswordModal] = useState(false)
@@ -38,6 +47,12 @@ export const Profile = () => {
 
   useEffect(() => {
     fetchProfile()
+    // Revoke any staged photo object URLs when leaving the page
+    return () => {
+      const { preview, crop } = photoUrlsRef.current
+      if (preview) URL.revokeObjectURL(preview)
+      if (crop) URL.revokeObjectURL(crop)
+    }
   }, [])
 
   const fetchProfile = async () => {
@@ -91,14 +106,51 @@ export const Profile = () => {
     setPhotoPreview(null)
 
     try {
-      // Validate type and downscale large photos in the browser before upload
+      // Validate type and downscale large photos in the browser, then open
+      // the crop editor so the user can frame their face before upload
       const resized = await processPhoto(file)
-      setPhotoFile(resized)
-      setPhotoPreview(URL.createObjectURL(resized))
+      // Drop any editor URL from a previous pick (or re-edit) so re-picking
+      // can't leak object URLs or show a stale image
+      if (cropImage) URL.revokeObjectURL(cropImage)
+      setCropImage(URL.createObjectURL(resized))
       setError('')
     } catch (err) {
       setError(err.message || t('profile.badImage', 'Could not read this image. Please choose another photo (JPG, PNG, or WEBP).'))
     }
+  }
+
+  const handleCropCancel = () => {
+    if (cropImage) URL.revokeObjectURL(cropImage)
+    setCropImage(null)
+  }
+
+  const handleCropApply = (croppedFile) => {
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    setPhotoFile(croppedFile)
+    setPhotoPreview(URL.createObjectURL(croppedFile))
+    if (cropImage) URL.revokeObjectURL(cropImage)
+    setCropImage(null)
+  }
+
+  // A camera capture is just another photo source: run it through the same
+  // validation/downscale and open the crop editor, so everything downstream
+  // (crop → stage → upload) behaves identically to a picked file.
+  const handleCameraCapture = async (file) => {
+    setShowCamera(false)
+    try {
+      const resized = await processPhoto(file)
+      if (cropImage) URL.revokeObjectURL(cropImage)
+      setCropImage(URL.createObjectURL(resized))
+      setError('')
+    } catch (err) {
+      setError(err.message || t('profile.badImage', 'Could not read this image. Please choose another photo (JPG, PNG, or WEBP).'))
+    }
+  }
+
+  const handleReEdit = () => {
+    if (!photoFile) return
+    if (cropImage) URL.revokeObjectURL(cropImage)
+    setCropImage(URL.createObjectURL(photoFile))
   }
 
   const handlePhotoUpload = async () => {
@@ -118,6 +170,7 @@ export const Profile = () => {
       }
       
       setSuccess(t('profile.photoUpdated', 'Profile photo updated!'))
+      if (photoPreview) URL.revokeObjectURL(photoPreview)
       setPhotoFile(null)
       setPhotoPreview(null)
       setTimeout(() => setSuccess(''), 3000)
@@ -281,11 +334,26 @@ export const Profile = () => {
                     onChange={handlePhotoSelect}
                     className="hidden dark:bg-gray-800"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowCamera(true)}
+                    className="absolute bottom-0 right-12 bg-gray-700 text-white p-2 rounded-full cursor-pointer hover:bg-gray-800 transition shadow-lg"
+                    aria-label={t('profile.cameraTitle', 'Camera')}
+                  >
+                    <Camera size={20} />
+                  </button>
                 </div>
 
                 {/* Photo Actions */}
                 {photoPreview && (
-                  <div className="flex gap-2 mb-4">
+                  <div className="flex gap-2 mb-4 flex-wrap justify-center">
+                    <button
+                      onClick={handleReEdit}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                    >
+                      <Crop size={16} />
+                      {t('profile.editPhoto', 'Edit')}
+                    </button>
                     <button
                       onClick={handlePhotoUpload}
                       disabled={uploadingPhoto}
@@ -296,6 +364,7 @@ export const Profile = () => {
                     </button>
                     <button
                       onClick={() => {
+                        if (photoPreview) URL.revokeObjectURL(photoPreview)
                         setPhotoFile(null)
                         setPhotoPreview(null)
                       }}
@@ -318,7 +387,7 @@ export const Profile = () => {
                 )}
 
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
-                  {t('profile.photoRequirements', 'JPG, PNG or WEBP. Max 5MB.')}
+                  {t('profile.photoRequirements', 'JPG, PNG or WEBP. Max 5MB. You can crop and position your face after selecting a photo.')}
                 </p>
               </div>
             </div>
@@ -575,6 +644,20 @@ export const Profile = () => {
           </motion.div>
         </div>
       )}
+
+      {showCamera && (
+        <CameraCapture
+          onCapture={handleCameraCapture}
+          onCancel={() => setShowCamera(false)}
+        />
+      )}
+
+      <PhotoCropEditor
+        isOpen={!!cropImage}
+        imageSrc={cropImage}
+        onCancel={handleCropCancel}
+        onApply={handleCropApply}
+      />
     </div>
   )
 }

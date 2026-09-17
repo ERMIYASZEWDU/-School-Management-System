@@ -1,6 +1,9 @@
 // Shared client-side photo helpers: validate an image file and downscale
-// large photos before upload so phone camera photos never hit the 5MB
+// large photos before upload so phone camera photos don't hit the 5MB
 // upload limit. Downscaled photos are capped at 1024px on the longest edge.
+//
+// cropToFile: bake a user-framed crop (from the profile photo editor) into a
+// square JPEG File, so the avatar shows the user's face the way they framed it.
 
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024 // 5MB
 export const MAX_PHOTO_EDGE = 1024
@@ -33,6 +36,49 @@ export const processPhoto = async (file) => {
     throw err
   }
   return downscaleImage(file)
+}
+
+// Bake a user-framed square crop of `file` into a 512x512 JPEG File.
+// rect is in normalized [0..1] coordinates: { x, y, size } where x/y is the
+// top-left corner of the square and size its edge length, relative to the
+// image's shorter dimension. Used by the profile photo crop editor so the
+// uploaded avatar shows exactly the face framing the user chose.
+export const cropToFile = (file, rect, OUT = 512) => {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file)
+    const img = new Image()
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = OUT
+        canvas.height = OUT
+        const ctx = canvas.getContext('2d')
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, OUT, OUT)
+        const sx = Math.round(rect.x * img.naturalWidth)
+        const sy = Math.round(rect.y * img.naturalHeight)
+        const sSize = Math.max(1, Math.round(rect.size * Math.min(img.naturalWidth, img.naturalHeight)))
+        ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, OUT, OUT)
+        canvas.toBlob(
+          (blob) => {
+            URL.revokeObjectURL(url)
+            if (!blob) return reject(new Error('Image encoding failed'))
+            resolve(new File([blob], 'profile-photo.jpg', { type: 'image/jpeg' }))
+          },
+          'image/jpeg',
+          0.9
+        )
+      } catch (err) {
+        URL.revokeObjectURL(url)
+        reject(err)
+      }
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      reject(new Error('Could not read this image. Please choose another photo (JPG, PNG, or WEBP).'))
+    }
+    img.src = url
+  })
 }
 
 export const downscaleImage = (file, MAX = MAX_PHOTO_EDGE) => {

@@ -825,7 +825,16 @@
     "security": "Security",
     "confirmNewPassword": "Confirm New Password",
     "atLeast6": "At least 6 characters",
-    "changing": "Changing..."
+    "changing": "Changing...",
+    "editPhoto": "Edit Photo",
+    "cropHint": "Drag to position your face in the circle, scroll or use the slider to zoom.",
+    "applyPhoto": "Apply",
+    "cameraTitle": "Camera",
+    "cameraStarting": "Starting camera…",
+    "cameraDenied": "Camera access was denied. Allow camera permission and try again.",
+    "cameraUnavailable": "No camera found, or your browser does not support camera capture.",
+    "capture": "Capture",
+    "captureStop": "Stop"
   },
   "enrollment": {
     "title": "Enrollment Management",

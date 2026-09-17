@@ -739,7 +739,16 @@
     "security": "ደህንነት",
     "confirmNewPassword": "አዲሱን የይለፍ ቃል አረጋግጥ",
     "atLeast6": "ቢያንስ 6 ቁምፊዎች",
-    "changing": "በመቀየር ላይ..."
+    "changing": "በመቀየር ላይ...",
+    "editPhoto": "ፎቶ አርትዕ",
+    "cropHint": "ፊትዎን በክቡ ውስጥ ለማስቀመጥ ፎቶውን ይጎትቱ፣ ለማጉለል ወደ ላይ ወይም ወደ ታች ይስኩሉ ወይም ስላይደሩን ይጠቀሙ።",
+    "applyPhoto": "ተግብር",
+    "cameraTitle": "ካሜራ",
+    "cameraStarting": "ካሜራ በመክፈት ላይ…",
+    "cameraDenied": "የካሜራ ፈቃድ አልተሰጠም። እባክዎ ፈቃዱን ይፍቀዱ እና እንደገና ይሞክሩ።",
+    "cameraUnavailable": "ካሜራ አልተገኘም ወይም አሳሽዎ ካሜራን አይደግፍም።",
+    "capture": "አንሳ",
+    "captureStop": "ቆም"
   },
   "enrollment": {
     "title": "የምዝገባ አስተዳደር",
