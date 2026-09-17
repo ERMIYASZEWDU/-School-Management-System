@@ -99,12 +99,37 @@ router.put('/', verifyToken, asyncHandler(async (req, res) => {
   res.json(user)
 }))
 
+// Sniff the file's magic bytes so we never trust the client-declared MIME
+// type alone — a malicious `.jpg` payload with HTML/script content is rejected
+// even if multer's fileFilter (which only sees the declared type) passes it.
+const detectImageType = (buffer) => {
+  if (!buffer || buffer.length < 12) return null
+  // JPEG: FF D8 FF
+  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'image/jpeg'
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (
+    buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47 &&
+    buffer[4] === 0x0d && buffer[5] === 0x0a && buffer[6] === 0x1a && buffer[7] === 0x0a
+  ) return 'image/png'
+  // WEBP: 'RIFF' .... 'WEBP'
+  if (
+    buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP'
+  ) return 'image/webp'
+  return null
+}
+
 // Upload/Update profile photo
 router.post('/photo', verifyToken, upload.single('photo'), asyncHandler(async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' })
   }
-  
+
+  // Validate the actual bytes, not the declared content type
+  const sniffedType = detectImageType(req.file.buffer)
+  if (!sniffedType) {
+    return res.status(400).json({ message: 'Invalid image file. Only JPG, PNG, and WEBP images are allowed.' })
+  }
+
   const userId = req.user.id
   
   const user = await User.findById(userId)
@@ -113,8 +138,9 @@ router.post('/photo', verifyToken, upload.single('photo'), asyncHandler(async (r
   }
   
   // Store the photo inline as a base64 data URL — works on any host and
-  // survives redeploys (no reliance on the server's filesystem)
-  const photoUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`
+  // survives redeploys (no reliance on the server's filesystem). The MIME
+  // type comes from our own byte sniffing, never from the client.
+  const photoUrl = `data:${sniffedType};base64,${req.file.buffer.toString('base64')}`
   
   user.profilePhoto = photoUrl
   user.updatedAt = Date.now()

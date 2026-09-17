@@ -305,6 +305,41 @@ export const seedUsers = async () => {
 
     console.log('✅ Created: W/ro Worknesh Tadesse (linked to Marta)')
 
+    // Step 7: Create Assignments so teacher/student/parent lists are populated.
+    // classId set → only that class sees it; classId null + grade set → every
+    // student with that grade string sees it (the student route matches either).
+    console.log('\n📝 Creating Assignments...')
+    const daysFromNow = (days) => new Date(Date.now() + days * 24 * 60 * 60 * 1000)
+
+    const assignmentsData = [
+      // teacher1 — Mathematics for their assigned classes (Grade 10-A, 10-B)
+      { teacher: teacher1User, title: 'Math Homework – Chapter 5: Algebraic Expressions', description: 'Solve exercises 5.1 to 5.15 from the textbook and show every step.', subject: 'Mathematics', grade: 'Grade 10', classId: createdClasses[0]._id, dueInDays: 7, maxScore: 20 },
+      { teacher: teacher1User, title: 'Math Homework – Chapter 6: Linear Equations', description: 'Complete the word problems on linear equations (pages 88–90).', subject: 'Mathematics', grade: 'Grade 10', classId: createdClasses[0]._id, dueInDays: 10, maxScore: 20 },
+      { teacher: teacher1User, title: 'Math Quiz 1 – Geometry Basics', description: 'Open-book quiz covering angles, triangles, and quadrilaterals.', subject: 'Mathematics', grade: 'Grade 10', classId: null, dueInDays: 5, maxScore: 15 },
+      { teacher: teacher1User, title: 'Worksheet: Fractions Review', description: 'Review worksheet on fractions — the due date has passed; submit late work.', subject: 'Mathematics', grade: 'Grade 10', classId: null, dueInDays: -3, maxScore: 10 },
+      { teacher: teacher1User, title: 'Math Project: Statistics in Daily Life', description: 'Collect data at home and present the mean, median, and mode with charts.', subject: 'Mathematics', grade: 'Grade 10', classId: createdClasses[0]._id, dueInDays: 21, maxScore: 30 },
+      // teacher2 — Physics, so their lists are populated too
+      { teacher: teacher2User, title: 'Physics Lab Report: Motion', description: 'Write the lab report for the motion experiment using the class template.', subject: 'Physics', grade: 'Grade 11', classId: createdClasses[2]._id, dueInDays: 9, maxScore: 25 },
+      { teacher: teacher2User, title: 'Physics Problem Set: Forces', description: 'Solve problems 1–12 on Newton\'s laws at the end of chapter 3.', subject: 'Physics', grade: 'Grade 11', classId: null, dueInDays: 4, maxScore: 20 }
+    ]
+
+    for (const a of assignmentsData) {
+      const assignment = new Assignment({
+        teacherId: a.teacher._id,
+        title: a.title,
+        description: a.description,
+        subject: a.subject,
+        grade: a.grade,
+        classId: a.classId,
+        academicYearId: academicYearDoc._id,
+        dueDate: daysFromNow(a.dueInDays),
+        maxScore: a.maxScore,
+        isPublished: true
+      })
+      await assignment.save()
+      console.log(`✅ Assignment: ${a.title} (${a.subject}, ${a.grade})`)
+    }
+
     console.log('\n' + '='.repeat(60))
     console.log('🎉 SEED COMPLETED SUCCESSFULLY!')
     console.log('='.repeat(60))

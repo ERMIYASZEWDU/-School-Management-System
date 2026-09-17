@@ -1680,6 +1680,10 @@ router.post('/user', verifyToken, checkRole(['admin']), async (req, res) => {
       return res.status(400).json({ message: 'Invalid role' })
     }
 
+    if (role === 'parent' && !phone) {
+      return res.status(400).json({ message: 'Phone is required for parent accounts' })
+    }
+
     const normalizedEmail = email.trim().toLowerCase()
 
     const existingUser = await User.findOne({
@@ -1701,6 +1705,24 @@ router.post('/user', verifyToken, checkRole(['admin']), async (req, res) => {
       role,
       status: status || 'active'
     })
+
+    // A parent needs a Parent profile — without it the account never appears
+    // in the admin Parents list and the parent portal can't resolve children.
+    if (role === 'parent') {
+      try {
+        await Parent.create({
+          userId: user._id,
+          name,
+          phone,
+          email: normalizedEmail,
+          relationship: 'guardian'
+        })
+      } catch (err) {
+        // Roll back the user account so a failed profile save doesn't leave an orphan login
+        await User.findByIdAndDelete(user._id).catch(() => {})
+        return res.status(400).json({ success: false, message: err.message })
+      }
+    }
 
     const { password: _pw, ...safeUser } = user.toObject()
     res.status(201).json(safeUser)
@@ -1736,6 +1758,27 @@ router.put('/user/:id', verifyToken, checkRole(['admin']), async (req, res) => {
 
     await user.save()
 
+    // Keep role profiles in sync with the user's role so /admin/parents and
+    // the parent portal always agree with the account list.
+    if (role === 'parent' && user.role === 'parent') {
+      const existingProfile = await Parent.findOne({ userId: user._id })
+      if (!existingProfile) {
+        const parentPhone = phone || user.phone
+        if (!parentPhone) {
+          return res.status(400).json({ message: 'Phone is required for parent accounts' })
+        }
+        await Parent.create({
+          userId: user._id,
+          name: name || user.name,
+          phone: parentPhone,
+          email: user.email,
+          relationship: 'guardian'
+        })
+      }
+    } else if (role && role !== 'parent' && user.role === role) {
+      await Parent.findOneAndDelete({ userId: user._id })
+    }
+
     const { password: _pw, ...safeUser } = user.toObject()
     res.json(safeUser)
   } catch (err) {
@@ -1762,6 +1805,10 @@ router.patch('/user/:id/status', verifyToken, checkRole(['admin']), async (req, 
 router.delete('/user/:id', verifyToken, checkRole(['admin']), async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id)
+    // Remove role profiles too, or orphaned Parent records keep showing in
+    // /admin/parents for a login that no longer exists.
+    await Teacher.findOneAndDelete({ userId: req.params.id })
+    await Parent.findOneAndDelete({ userId: req.params.id })
     res.json({ message: 'User deleted successfully' })
   } catch (err) {
     res.status(500).json({ message: 'Error deleting user', error: err.message })

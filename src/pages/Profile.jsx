@@ -30,6 +30,8 @@ export const Profile = () => {
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [cropImage, setCropImage] = useState(null) // object URL of the freshly picked photo, shown in the crop editor
   const [showCamera, setShowCamera] = useState(false) // live camera capture overlay
+  const [showPhotoMenu, setShowPhotoMenu] = useState(false) // avatar action menu (upload / take / remove)
+  const [uploadProgress, setUploadProgress] = useState(0) // 0-100 while a photo is uploading
 
   // Mirrors the latest staged-photo object URLs so the unmount cleanup can
   // revoke them (a plain closure would capture the first-render nulls)
@@ -135,16 +137,14 @@ export const Profile = () => {
   // A camera capture is just another photo source: run it through the same
   // validation/downscale and open the crop editor, so everything downstream
   // (crop → stage → upload) behaves identically to a picked file.
-  const handleCameraCapture = async (file) => {
+  // A camera capture is just another photo source: the camera overlay hands
+  // us its (already validated, mirrored, square) JPEG plus the transferred
+  // object URL, and we open the crop editor exactly like a picked file.
+  const handleCameraCapture = (file, url) => {
     setShowCamera(false)
-    try {
-      const resized = await processPhoto(file)
-      if (cropImage) URL.revokeObjectURL(cropImage)
-      setCropImage(URL.createObjectURL(resized))
-      setError('')
-    } catch (err) {
-      setError(err.message || t('profile.badImage', 'Could not read this image. Please choose another photo (JPG, PNG, or WEBP).'))
-    }
+    if (cropImage) URL.revokeObjectURL(cropImage)
+    setCropImage(url || URL.createObjectURL(file))
+    setError('')
   }
 
   const handleReEdit = () => {
@@ -158,8 +158,9 @@ export const Profile = () => {
 
     try {
       setUploadingPhoto(true)
+      setUploadProgress(0)
       setError('')
-      const result = await uploadProfilePhoto(photoFile)
+      const result = await uploadProfilePhoto(photoFile, (percent) => setUploadProgress(percent))
       
       // Update profile with new photo
       setProfile({ ...profile, profilePhoto: result.profilePhoto })
@@ -178,6 +179,7 @@ export const Profile = () => {
       setError(err.response?.data?.message || t('profile.failedToUploadPhoto', 'Failed to upload photo'))
     } finally {
       setUploadingPhoto(false)
+      setUploadProgress(0)
     }
   }
 
@@ -305,62 +307,110 @@ export const Profile = () => {
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('profile.profilePhoto', 'Profile Photo')}</h3>
               
               <div className="flex flex-col items-center">
-                {/* Avatar */}
-                <div className="relative mb-4">
+                {/* Avatar with edit overlay */}
+                <div className="relative mb-2">
                   {photoPreview || profile?.profilePhoto ? (
                     <img
                       src={photoPreview || resolvePhotoUrl(profile.profilePhoto)}
-                      alt="Profile"
+                      alt={t('profile.photoAlt', 'Profile photo')}
                       className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
                     />
                   ) : (
                     <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-4 border-gray-200 dark:border-gray-700">
-                      <span className="text-white text-3xl font-bold">
+                      <span className="text-white text-3xl font-bold" aria-hidden="true">
                         {getInitials(profile?.name)}
                       </span>
+                      <span className="sr-only">{profile?.name}</span>
                     </div>
                   )}
-                  
-                  <label
-                    htmlFor="photo-upload"
-                    className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer hover:bg-blue-700 transition shadow-lg"
-                  >
-                    <Camera size={20} />
-                  </label>
-                  <input
-                    id="photo-upload"
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handlePhotoSelect}
-                    className="hidden dark:bg-gray-800"
-                  />
+
                   <button
                     type="button"
-                    onClick={() => setShowCamera(true)}
-                    className="absolute bottom-0 right-12 bg-gray-700 text-white p-2 rounded-full cursor-pointer hover:bg-gray-800 transition shadow-lg"
-                    aria-label={t('profile.cameraTitle', 'Camera')}
+                    onClick={() => setShowPhotoMenu((v) => !v)}
+                    aria-expanded={showPhotoMenu}
+                    aria-haspopup="menu"
+                    aria-label={t('profile.changePhoto', 'Change Photo')}
+                    className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition shadow-lg focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                   >
-                    <Camera size={20} />
+                    <Camera size={18} aria-hidden="true" />
                   </button>
-                </div>
 
-                {/* Photo Actions */}
+                  {/* Action menu: upload / take / remove */}
+                  {showPhotoMenu && (
+                    <div
+                      role="menu"
+                      aria-label={t('profile.photoActions', 'Photo actions')}
+                      className="absolute z-20 bottom-12 right-0 w-44 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1"
+                    >
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setShowPhotoMenu(false); document.getElementById('photo-upload')?.click() }}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                      >
+                        <Upload size={14} aria-hidden="true" /> {t('profile.uploadPhoto', 'Upload Photo')}
+                      </button>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setShowPhotoMenu(false); setShowCamera(true) }}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+                      >
+                        <Camera size={14} aria-hidden="true" /> {t('profile.takePhoto', 'Take Photo')}
+                      </button>
+                      {profile?.profilePhoto && !photoPreview && (
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => { setShowPhotoMenu(false); handlePhotoDelete() }}
+                          className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none"
+                        >
+                          <Trash2 size={14} aria-hidden="true" /> {t('profile.removePhoto', 'Remove Photo')}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <input
+                  id="photo-upload"
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handlePhotoSelect}
+                  className="hidden dark:bg-gray-800"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                />
+
+                {/* Upload progress */}
+                {uploadingPhoto && (
+                  <div className="w-44 mb-3" role="status" aria-live="polite">
+                    <div className="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-blue-600 rounded-full transition-all duration-200"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
+                      {t('profile.uploadingPhoto', 'Uploading…')} {uploadProgress}%
+                    </p>
+                  </div>
+                )}                {/* Photo Actions: edit staged photo before upload */}
                 {photoPreview && (
                   <div className="flex gap-2 mb-4 flex-wrap justify-center">
                     <button
                       onClick={handleReEdit}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
-                      <Crop size={16} />
+                      <Crop size={16} aria-hidden="true" />
                       {t('profile.editPhoto', 'Edit')}
                     </button>
                     <button
                       onClick={handlePhotoUpload}
                       disabled={uploadingPhoto}
-                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
-                      <Upload size={16} />
-                      {uploadingPhoto ? t('profile.uploading', 'Uploading...') : t('profile.upload', 'Upload')}
+                      <Upload size={16} aria-hidden="true" />
+                      {uploadingPhoto ? t('profile.uploading', 'Uploading...') : t('profile.upload', 'Save Photo')}
                     </button>
                     <button
                       onClick={() => {
@@ -368,20 +418,21 @@ export const Profile = () => {
                         setPhotoFile(null)
                         setPhotoPreview(null)
                       }}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition text-sm font-medium"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition text-sm font-medium focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
                       {t('common.cancel', 'Cancel')}
                     </button>
                   </div>
                 )}
 
+                {/* Remove Photo (no staged photo) */}
                 {profile?.profilePhoto && !photoPreview && (
                   <button
                     onClick={handlePhotoDelete}
                     disabled={uploadingPhoto}
-                    className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-50 transition text-sm font-medium disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-50 transition text-sm font-medium disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:outline-none"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={16} aria-hidden="true" />
                     {t('profile.removePhoto', 'Remove Photo')}
                   </button>
                 )}
@@ -647,7 +698,7 @@ export const Profile = () => {
 
       {showCamera && (
         <CameraCapture
-          onCapture={handleCameraCapture}
+          onConfirm={handleCameraCapture}
           onCancel={() => setShowCamera(false)}
         />
       )}
