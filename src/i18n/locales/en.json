@@ -182,7 +182,8 @@
     "warning": "Warning",
     "info": "Information",
     "create": "Create",
-    "optional": "Optional"
+    "optional": "Optional",
+    "unknown": "Unknown student"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -1118,7 +1119,8 @@
     "late": "Late",
     "lastYear": "Last Year",
     "grades": "Grades",
-    "grade": "Grade"
+    "grade": "Grade",
+    "maxScore": "Max score"
   },
   "roles": {
     "admin": "Admin",
@@ -1208,7 +1210,18 @@
     "noActiveStudentsInClass": "No active students in the selected class.",
     "gradeSection": "Grade / Section",
     "status": "Status",
-    "studentsPageTitle": "Teacher"
+    "studentsPageTitle": "Teacher",
+    "invalidScore": "Score must be between 0 and {{max}}",
+    "failedToSaveGrade": "Failed to save grade",
+    "submittedCount": "{{count}} submitted",
+    "gradedWord": "graded",
+    "gradeSubmissions": "Grade submissions",
+    "viewSubmissions": "View submissions",
+    "submissionsFor": "Submissions",
+    "noSubmissionsYet": "No submissions yet.",
+    "scoreLabel": "Score",
+    "feedbackLabel": "Feedback",
+    "saveGrade": "Save Grade"
   },
   "parent": {
     "failedToLoadChildren": "Failed to load children",
@@ -1626,7 +1639,10 @@
       "editTitle": "Edit User",
       "addTitle": "Add New User",
       "updateUser": "Update User",
-      "createUser": "Create User"
+      "createUser": "Create User",
+      "linkChildren": "Link Children (Students)",
+      "noStudentsForLink": "No students available to link",
+      "linkHint": "You can also link children later from the Parents page."
     },
     "settings": {
       "saved": "Settings saved successfully!",

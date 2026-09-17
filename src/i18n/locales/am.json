@@ -181,7 +181,8 @@
     "warning": "ማስጠንቀቂያ",
     "info": "መረጃ",
     "create": "ፍጠር",
-    "optional": "አማራጭ"
+    "optional": "አማራጭ",
+    "unknown": "የማይታወቅ ተማሪ"
   },
   "nav": {
     "dashboard": "ዳሽቦርድ",
@@ -1222,7 +1223,8 @@
     "late": "ዘግይቷል",
     "lastYear": "ያለፈው ዓመት",
     "grades": "ውጤቶች",
-    "grade": "ደረጃ"
+    "grade": "ደረጃ",
+    "maxScore": "ከፍተኛ ውጤት"
   },
   "roles": {
     "admin": "አስተዳዳሪ",
@@ -1312,7 +1314,18 @@
     "noActiveStudentsInClass": "በተመረጠው ክፍል ውስጥ ንቁ ተማሪዎች የሉም።",
     "gradeSection": "ክፍል / ክፍለ ክፍል",
     "status": "ሁኔታ",
-    "studentsPageTitle": "መምህር"
+    "studentsPageTitle": "መምህር",
+    "invalidScore": "ውጤቱ በ0 እና {{max}} መካከል መሆን አለበት",
+    "failedToSaveGrade": "ውጤቱን ማስቀመጥ አልተቻለም",
+    "submittedCount": "{{count}} አስገብተዋል",
+    "gradedWord": "ደረጃ የተሰጠው",
+    "gradeSubmissions": "የሰጡትን ውጤት",
+    "viewSubmissions": "የገቡትን ተመልከት",
+    "submissionsFor": "የተገቡ ስራዎች",
+    "noSubmissionsYet": "እስካሁን ምንም ስራ አልገባም።",
+    "scoreLabel": "ውጤት",
+    "feedbackLabel": "አስተያየት",
+    "saveGrade": "ውጤት አስቀምጥ"
   },
   "parent": {
     "failedToLoadChildren": "ልጆችን መጫን አልተቻለም",
@@ -1730,7 +1743,10 @@
       "editTitle": "ተጠቃሚ አርትዕ",
       "addTitle": "አዲስ ተጠቃሚ ጨምር",
       "updateUser": "ተጠቃሚ ያዘምን",
-      "createUser": "ተጠቃሚ ፍጠር"
+      "createUser": "ተጠቃሚ ፍጠር",
+      "linkChildren": "ልጆችን አገናኝ (ተማሪዎች)",
+      "noStudentsForLink": "ለማገናኘት የሚቻሉ ተማሪዎች የሉም",
+      "linkHint": "ልጆችን በኋላ ከወላጆች ገጽ ማገናኘት ይችላሉ።"
     },
     "settings": {
       "saved": "ቅንብሮች በተሳካ ሁኔታ ተቀምጠዋል!",

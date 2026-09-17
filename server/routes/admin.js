@@ -1670,7 +1670,7 @@ router.get('/users', verifyToken, checkRole(['admin']), async (req, res) => {
 
 router.post('/user', verifyToken, checkRole(['admin']), async (req, res) => {
   try {
-    const { name, email, password, phone, role, status } = req.body
+    const { name, email, password, phone, role, status, studentIds } = req.body
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' })
@@ -1682,6 +1682,16 @@ router.post('/user', verifyToken, checkRole(['admin']), async (req, res) => {
 
     if (role === 'parent' && !phone) {
       return res.status(400).json({ message: 'Phone is required for parent accounts' })
+    }
+
+    // Validate child links up front so we never create an account/profile and
+    // then discover the payload was bad.
+    const requestedStudentIds = Array.isArray(studentIds) ? studentIds : []
+    if (role === 'parent' && requestedStudentIds.length > 0) {
+      const found = await Student.countDocuments({ _id: { $in: requestedStudentIds } })
+      if (found !== requestedStudentIds.length) {
+        return res.status(400).json({ message: 'One or more selected students do not exist' })
+      }
     }
 
     const normalizedEmail = email.trim().toLowerCase()
@@ -1709,18 +1719,35 @@ router.post('/user', verifyToken, checkRole(['admin']), async (req, res) => {
     // A parent needs a Parent profile — without it the account never appears
     // in the admin Parents list and the parent portal can't resolve children.
     if (role === 'parent') {
+      let parent
       try {
-        await Parent.create({
+        parent = await Parent.create({
           userId: user._id,
           name,
           phone,
           email: normalizedEmail,
-          relationship: 'guardian'
+          relationship: 'guardian',
+          studentIds: requestedStudentIds
         })
       } catch (err) {
         // Roll back the user account so a failed profile save doesn't leave an orphan login
         await User.findByIdAndDelete(user._id).catch(() => {})
         return res.status(400).json({ success: false, message: err.message })
+      }
+
+      // Mirror the link on the students (same convention as POST /parent)
+      if (requestedStudentIds.length > 0) {
+        try {
+          await Student.updateMany(
+            { _id: { $in: requestedStudentIds } },
+            { $addToSet: { parentIds: parent._id } }
+          )
+        } catch (err) {
+          // Roll back both sides — account and profile — on failure
+          await Parent.findByIdAndDelete(parent._id).catch(() => {})
+          await User.findByIdAndDelete(user._id).catch(() => {})
+          return res.status(500).json({ message: 'Error linking children to parent', error: err.message })
+        }
       }
     }
 
@@ -1806,9 +1833,16 @@ router.delete('/user/:id', verifyToken, checkRole(['admin']), async (req, res) =
   try {
     await User.findByIdAndDelete(req.params.id)
     // Remove role profiles too, or orphaned Parent records keep showing in
-    // /admin/parents for a login that no longer exists.
+    // /admin/parents for a login that no longer exists. Unlink the parent's
+    // students first, mirroring DELETE /parent.
+    const parentProfile = await Parent.findOneAndDelete({ userId: req.params.id })
+    if (parentProfile?.studentIds?.length > 0) {
+      await Student.updateMany(
+        { _id: { $in: parentProfile.studentIds } },
+        { $pull: { parentIds: parentProfile._id } }
+      )
+    }
     await Teacher.findOneAndDelete({ userId: req.params.id })
-    await Parent.findOneAndDelete({ userId: req.params.id })
     res.json({ message: 'User deleted successfully' })
   } catch (err) {
     res.status(500).json({ message: 'Error deleting user', error: err.message })

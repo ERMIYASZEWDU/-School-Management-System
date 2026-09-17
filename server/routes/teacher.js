@@ -2,6 +2,7 @@ import express from 'express'
 import { verifyToken, checkRole, verifyTeacherStudentAccess } from '../middleware/auth.js'
 import Grade from '../models/Grade.js'
 import Assignment from '../models/Assignment.js'
+import AssignmentSubmission from '../models/AssignmentSubmission.js'
 import Student from '../models/Student.js'
 import Attendance from '../models/Attendance.js'
 import Class from '../models/Class.js'
@@ -233,10 +234,77 @@ router.get('/assignments', verifyToken, checkRole(['teacher']), async (req, res)
     const assignments = await Assignment.find({ teacherId: req.user.id })
       .sort({ createdAt: -1 })
       .lean()
-    
-    res.json(assignments)
+
+    // Per-assignment submission stats so the grading view works on live data.
+    const ids = assignments.map(a => a._id)
+    const submissions = await AssignmentSubmission.find({ assignmentId: { $in: ids } }, 'assignmentId status score gradedAt').lean()
+    const byAssignment = new Map()
+    for (const s of submissions) {
+      const key = String(s.assignmentId)
+      if (!byAssignment.has(key)) byAssignment.set(key, [])
+      byAssignment.get(key).push(s)
+    }
+    const withStats = assignments.map(a => {
+      const subs = byAssignment.get(String(a._id)) || []
+      return {
+        ...a,
+        submissionCount: subs.length,
+        gradedCount: subs.filter(s => s.status === 'graded').length
+      }
+    })
+    res.json(withStats)
   } catch (err) {
     res.status(500).json({ message: 'Error fetching assignments', error: err.message })
+  }
+})
+
+// Submissions for one assignment (the teacher grading view).
+router.get('/assignment/:id/submissions', verifyToken, checkRole(['teacher']), async (req, res) => {
+  try {
+    const assignment = await Assignment.findOne({ _id: req.params.id, teacherId: req.user.id }).lean()
+    if (!assignment) {
+      return res.status(404).json({ message: 'Assignment not found' })
+    }
+    const submissions = await AssignmentSubmission.find({ assignmentId: assignment._id })
+      .populate('studentId', 'name rollNumber section grade')
+      .lean()
+    res.json({ assignment, submissions })
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching submissions', error: err.message })
+  }
+})
+
+// Grade a submission (score + feedback). Ownership enforced via teacherId match.
+router.put('/submission/:id/grade', verifyToken, checkRole(['teacher']), async (req, res) => {
+  try {
+    const { score, feedback } = req.body
+    const submission = await AssignmentSubmission.findById(req.params.id)
+    if (!submission) return res.status(404).json({ message: 'Submission not found' })
+    const assignment = await Assignment.findOne({ _id: submission.assignmentId, teacherId: req.user.id })
+    if (!assignment) return res.status(403).json({ message: 'Not your assignment' })
+    const max = assignment.maxScore || 100
+    if (score !== null && score !== undefined && (typeof score !== 'number' || score < 0 || score > max)) {
+      return res.status(400).json({ message: `Score must be between 0 and ${max}` })
+    }
+    if (score === null || score === undefined) {
+      // Clearing a grade: restore the ungraded state instead of leaving a
+      // ghost 'graded' status with no score.
+      submission.score = null
+      submission.feedback = feedback ?? null
+      submission.gradedBy = null
+      submission.gradedAt = null
+      submission.status = new Date(submission.submittedAt) > new Date(assignment.dueDate) ? 'late' : 'submitted'
+    } else {
+      submission.score = score
+      submission.feedback = feedback ?? null
+      submission.gradedBy = req.user.id
+      submission.gradedAt = new Date()
+      submission.status = 'graded'
+    }
+    await submission.save()
+    res.json(submission)
+  } catch (err) {
+    res.status(500).json({ message: 'Error grading submission', error: err.message })
   }
 })
 

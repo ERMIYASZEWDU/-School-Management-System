@@ -27,6 +27,17 @@ export const deleteAssignment = async (id) => {
   return response.data
 }
 
+// Submissions / grading
+export const getAssignmentSubmissions = async (assignmentId) => {
+  const response = await apiClient.get(`/api/teacher/assignment/${assignmentId}/submissions`)
+  return response.data
+}
+
+export const gradeSubmission = async (submissionId, payload) => {
+  const response = await apiClient.put(`/api/teacher/submission/${submissionId}/grade`, payload)
+  return response.data
+}
+
 // Grades
 export const getGrades = async (params = {}) => {
   const query = buildQuery(params)

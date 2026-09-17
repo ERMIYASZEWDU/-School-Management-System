@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { FileText, Plus, Edit, Trash2, X } from 'lucide-react'
-import { getAssignments, createAssignment, updateAssignment, deleteAssignment } from '../../services/teacherApi'
+import { FileText, Plus, Edit, Trash2, X, ClipboardList } from 'lucide-react'
+import { getAssignments, createAssignment, updateAssignment, deleteAssignment, getAssignmentSubmissions, gradeSubmission } from '../../services/teacherApi'
 import apiClient from '../../utils/api'
 
 export const TeacherAssignments = () => {
@@ -20,6 +20,12 @@ export const TeacherAssignments = () => {
     classId: '',
     dueDate: ''
   })
+  // Grading modal state
+  const [grading, setGrading] = useState(null) // assignment whose submissions are open
+  const [submissions, setSubmissions] = useState([])
+  const [submissionsLoading, setSubmissionsLoading] = useState(false)
+  const [gradeForm, setGradeForm] = useState({}) // submissionId -> { score, feedback }
+  const [savingId, setSavingId] = useState(null)
 
   useEffect(() => {
     fetchAll()
@@ -95,6 +101,45 @@ export const TeacherAssignments = () => {
     setShowModal(true)
   }
 
+  const openGrading = async (assignment) => {
+    setGrading(assignment)
+    setSubmissions([])
+    setGradeForm({})
+    setSubmissionsLoading(true)
+    try {
+      const data = await getAssignmentSubmissions(assignment._id)
+      setSubmissions(data.submissions || [])
+    } catch (error) {
+      console.error('Error fetching submissions:', error)
+    } finally {
+      setSubmissionsLoading(false)
+    }
+  }
+
+  const handleSaveGrade = async (submissionId) => {
+    const form = gradeForm[submissionId] || {}
+    const score = form.score === '' || form.score === undefined ? null : Number(form.score)
+    if (score !== null && (Number.isNaN(score) || score < 0 || score > (grading?.maxScore || 100))) {
+      alert(t('teacher.invalidScore', `Score must be between 0 and ${grading?.maxScore || 100}`))
+      return
+    }
+    setSavingId(submissionId)
+    try {
+      const updated = await gradeSubmission(submissionId, { score, feedback: form.feedback ?? null })
+      // Merge only the graded fields — the raw response's studentId is an
+      // ObjectId string and must not clobber the populated student object.
+      setSubmissions(prev => prev.map(s => (
+        s._id === submissionId
+          ? { ...s, score: updated.score, feedback: updated.feedback, status: updated.status, gradedBy: updated.gradedBy, gradedAt: updated.gradedAt }
+          : s
+      )))
+    } catch (error) {
+      alert(error.response?.data?.message || t('teacher.failedToSaveGrade', 'Failed to save grade'))
+    } finally {
+      setSavingId(null)
+    }
+  }
+
   const handleDelete = async (id) => {
     if (!confirm(t('teacher.deleteAssignmentConfirm', 'Delete this assignment?'))) return
     try {
@@ -161,9 +206,22 @@ export const TeacherAssignments = () => {
                       <span className="px-2.5 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-full font-medium">{a.subject}</span>
                       <span className="px-2.5 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full font-medium">{a.grade}</span>
                       <span className="text-gray-500 dark:text-gray-400">{t('dashboards.due', 'Due')}: {formatDate(a.dueDate)}</span>
+                      {(a.submissionCount > 0 || a.gradedCount > 0) && (
+                        <span className="px-2.5 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full font-medium">
+                          {t('teacher.submittedCount', `{{count}} submitted`, { count: a.submissionCount })}{a.gradedCount > 0 ? ` · ${a.gradedCount} ${t('teacher.gradedWord', 'graded')}` : ''}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="flex gap-2 ml-4">
+                    <button
+                      onClick={() => openGrading(a)}
+                      title={t('teacher.gradeSubmissions', 'Grade submissions')}
+                      className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/40 rounded-lg transition"
+                    >
+                      <ClipboardList size={16} />
+                      {a.submissionCount > 0 ? t('teacher.gradeSubmissions', 'Grade submissions') : t('teacher.viewSubmissions', 'View submissions')}
+                    </button>
                     <button onClick={() => handleEdit(a)} className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-lg transition"><Edit size={16} /></button>
                     <button onClick={() => handleDelete(a._id)} className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 rounded-lg transition"><Trash2 size={16} /></button>
                   </div>
@@ -173,6 +231,89 @@ export const TeacherAssignments = () => {
           </div>
         )}
       </motion.div>
+
+      {/* Grading modal */}
+      {grading && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{grading.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                  {t('teacher.submissionsFor', 'Submissions')} · {t('dashboards.due', 'Due')} {formatDate(grading.dueDate)} · {t('dashboards.maxScore', 'Max score')} {grading.maxScore || 100}
+                </p>
+              </div>
+              <button onClick={() => setGrading(null)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"><X size={20} /></button>
+            </div>
+            {submissionsLoading ? (
+              <div className="py-10 text-center text-gray-600 dark:text-gray-300">{t('common.loading', 'Loading...')}</div>
+            ) : submissions.length === 0 ? (
+              <div className="py-10 text-center text-gray-600 dark:text-gray-300">{t('teacher.noSubmissionsYet', 'No submissions yet.')}</div>
+            ) : (
+              <div className="space-y-4">
+                {submissions.map(s => {
+                  const student = s.studentId || {}
+                  const graded = s.status === 'graded'
+                  const form = gradeForm[s._id] || { score: s.score ?? '', feedback: s.feedback ?? '' }
+                  return (
+                    <div key={s._id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-semibold text-gray-800 dark:text-gray-100">{student.name || t('common.unknown', 'Unknown student')}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {student.grade ? `${student.grade}-${student.section}` : ''}{student.rollNumber ? ` · ${t('teacher.rollNo', 'Roll')} ${student.rollNumber}` : ''} · {new Date(s.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            {s.status === 'late' && <span className="ml-2 px-1.5 py-0.5 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 rounded text-xs font-semibold">{t('studentLabels.late', 'Late')}</span>}
+                          </p>
+                        </div>
+                        {graded && (
+                          <span className="px-2.5 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-xs font-semibold">
+                            {t('studentLabels.graded', 'Graded')}: {s.score} / {grading.maxScore || 100}
+                          </span>
+                        )}
+                      </div>
+                      {s.content && <p className="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/50 rounded p-2 mb-3 whitespace-pre-wrap">{s.content}</p>}
+                      {!graded && (
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <input
+                            type="number"
+                            min="0"
+                            max={grading.maxScore || 100}
+                            value={form.score}
+                            onChange={e => setGradeForm(prev => ({ ...prev, [s._id]: { ...form, score: e.target.value } }))}
+                            placeholder={`${t('teacher.scoreLabel', 'Score')} (0–${grading.maxScore || 100})`}
+                            className="w-full sm:w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500"
+                          />
+                          <input
+                            type="text"
+                            value={form.feedback}
+                            onChange={e => setGradeForm(prev => ({ ...prev, [s._id]: { ...form, feedback: e.target.value } }))}
+                            placeholder={t('teacher.feedbackLabel', 'Feedback')}
+                            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-green-500"
+                          />
+                          <button
+                            onClick={() => handleSaveGrade(s._id)}
+                            disabled={savingId === s._id}
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-sm disabled:opacity-50 whitespace-nowrap"
+                          >
+                            {savingId === s._id ? t('common.saving', 'Saving...') : t('teacher.saveGrade', 'Save Grade')}
+                          </button>
+                        </div>
+                      )}
+                      {graded && s.feedback && (
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-2"><span className="font-semibold">{t('teacher.feedbackLabel', 'Feedback')}:</span> {s.feedback}</p>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
 
       {/* Modal */}
       {showModal && (

@@ -49,7 +49,7 @@ export const Parents = () => {
   const fetchStudents = async () => {
     try {
       const data = await getStudents()
-      setStudents(data)
+      setStudents(Array.isArray(data) ? data : data.students || [])
     } catch (err) {
       console.error('Error fetching students:', err)
     }

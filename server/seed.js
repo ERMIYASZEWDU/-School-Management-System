@@ -323,6 +323,7 @@ export const seedUsers = async () => {
       { teacher: teacher2User, title: 'Physics Problem Set: Forces', description: 'Solve problems 1–12 on Newton\'s laws at the end of chapter 3.', subject: 'Physics', grade: 'Grade 11', classId: null, dueInDays: 4, maxScore: 20 }
     ]
 
+    const createdAssignments = []
     for (const a of assignmentsData) {
       const assignment = new Assignment({
         teacherId: a.teacher._id,
@@ -337,8 +338,183 @@ export const seedUsers = async () => {
         isPublished: true
       })
       await assignment.save()
+      createdAssignments.push(assignment)
       console.log(`✅ Assignment: ${a.title} (${a.subject}, ${a.grade})`)
     }
+
+    // Step 8: Create assignment submissions so Submitted counts, student/parent
+    // submission status, and the teacher grading view have realistic data.
+    // teacher1's 5 Mathematics assignments (createdAssignments[0..4]):
+    //   0: Ch5 Algebraic Expressions (10-A) — 2/3 submitted, 1 graded
+    //   1: Ch6 Linear Equations (10-A)      — 2/3 submitted
+    //   2: Math Quiz 1 (all Grade 10)       — 3/3 submitted, all graded
+    //   3: Fractions Review (all Grade 10)  — 2/3 late submissions, 1 graded
+    //   4: Statistics Project (10-A)        — none yet (future due date)
+    // teacher2's Physics assignments (createdAssignments[5..6]):
+    //   5: Physics Lab Report (11-A)        — 2/2 submitted, 1 graded
+    //   6: Physics Problem Set (all Grade 11) — 2/2 submitted
+    console.log('\n📥 Creating Assignment Submissions...')
+    const submissionsData = [
+      { assignment: createdAssignments[0], student: createdStudents[0], daysAgo: 3, content: 'Exercises 5.1–5.15 completed with step-by-step working.' },
+      { assignment: createdAssignments[0], student: createdStudents[1], daysAgo: 4, content: 'All exercises solved; included extra practice on factorisation.' },
+      { assignment: createdAssignments[1], student: createdStudents[0], daysAgo: 2, content: 'Word problems pages 88–90, both methods shown.' },
+      { assignment: createdAssignments[1], student: createdStudents[2], daysAgo: 1, content: 'Pages 88–90 done; question 7 needs checking.' },
+      { assignment: createdAssignments[2], student: createdStudents[0], daysAgo: 2, content: 'Quiz answers with angle diagrams.' },
+      { assignment: createdAssignments[2], student: createdStudents[1], daysAgo: 2, content: 'Quiz complete — quadrilaterals section strongest.' },
+      { assignment: createdAssignments[2], student: createdStudents[2], daysAgo: 1, content: 'Quiz answers attached.' },
+      { assignment: createdAssignments[3], student: createdStudents[0], daysAgo: 1, content: 'Late submission — worksheet finished.', status: 'late' },
+      { assignment: createdAssignments[3], student: createdStudents[1], daysAgo: 1, content: 'Fractions worksheet completed.', status: 'late' },
+      { assignment: createdAssignments[5], student: createdStudents[3], daysAgo: 4, content: 'Motion lab report using the class template.' },
+      { assignment: createdAssignments[5], student: createdStudents[4], daysAgo: 3, content: 'Lab report with graphs and error analysis.' },
+      { assignment: createdAssignments[6], student: createdStudents[3], daysAgo: 2, content: 'Problems 1–12 solved.' },
+      { assignment: createdAssignments[6], student: createdStudents[4], daysAgo: 2, content: 'Problems 1–12 done; used the textbook method.' }
+    ]
+
+    for (const s of submissionsData) {
+      const submission = new AssignmentSubmission({
+        assignmentId: s.assignment._id,
+        studentId: s.student._id,
+        submittedAt: daysFromNow(-s.daysAgo),
+        content: s.content,
+        status: s.status || 'submitted'
+      })
+      await submission.save()
+      console.log(`✅ Submission: ${s.student.name} → ${s.assignment.title}`)
+    }
+
+    // Pre-grade several submissions so the Graded status appears for the
+    // student, parent, and teacher without any manual action after seeding.
+    const gradedData = [
+      { assignment: createdAssignments[0], student: createdStudents[0], score: 18, feedback: 'Excellent working. Watch your signs in Q12.' },
+      { assignment: createdAssignments[2], student: createdStudents[0], score: 14, feedback: 'Strong quiz. Review triangle properties.' },
+      { assignment: createdAssignments[2], student: createdStudents[1], score: 15, feedback: 'Perfect score — great work!' },
+      { assignment: createdAssignments[2], student: createdStudents[2], score: 11, feedback: 'Good effort. Revise quadrilaterals.' },
+      { assignment: createdAssignments[3], student: createdStudents[1], score: 9, feedback: 'Late but complete and accurate.' },
+      { assignment: createdAssignments[5], student: createdStudents[3], score: 23, feedback: 'Well-structured lab report.' }
+    ]
+
+    for (const g of gradedData) {
+      const doc = await AssignmentSubmission.findOne({ assignmentId: g.assignment._id, studentId: g.student._id })
+      if (!doc) continue
+      doc.status = 'graded'
+      doc.score = g.score
+      doc.feedback = g.feedback
+      doc.gradedBy = g.assignment.teacherId
+      doc.gradedAt = daysFromNow(-1)
+      await doc.save()
+      console.log(`✅ Graded: ${g.student.name} scored ${g.score} on ${g.assignment.title}`)
+    }
+
+    // Step 9: Recent grades + attendance records so dashboards show real
+    // trends instead of zeros. Deterministic patterns (no randomness) so
+    // every re-seed produces the same demo story:
+    //   - teacher1: ~85% avg in Mathematics for the 3 Grade 10 students,
+    //     per-student arcs (Abebe strong, Dawit improving from weak)
+    //   - teacher2: Physics grades for the 2 Grade 11 students
+    //   - ~22 school days of attendance per student (~90% present),
+    //     marked by each class's teacher so the teacher dashboard's
+    //     monthly attendance chart has data
+    console.log('\n📊 Creating Recent Grades & Attendance...')
+    const daysAgoDate = (days) => new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+
+    const gradesData = [
+      // Abebe Kebede (Grade 10-A) — strong and improving
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'quiz', score: 12, max: 15, ago: 63, remarks: 'Good start; revise quadrilaterals.' },
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'classwork', score: 8, max: 10, ago: 56 },
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'assignment', score: 17, max: 20, ago: 49 },
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'quiz', score: 13, max: 15, ago: 42 },
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'classwork', score: 9, max: 10, ago: 35 },
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'midterm', score: 78, max: 100, ago: 28, remarks: 'Strong improvement this term.' },
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'quiz', score: 14, max: 15, ago: 14 },
+      { t: teacher1User, s: createdStudents[0], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'classwork', score: 10, max: 10, ago: 7 },
+      // Tigist Worku (Grade 10-A) — top of the class
+      { t: teacher1User, s: createdStudents[1], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'quiz', score: 14, max: 15, ago: 63 },
+      { t: teacher1User, s: createdStudents[1], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'classwork', score: 9, max: 10, ago: 49 },
+      { t: teacher1User, s: createdStudents[1], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'midterm', score: 88, max: 100, ago: 28, remarks: 'Excellent, consistent work.' },
+      { t: teacher1User, s: createdStudents[1], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'assignment', score: 19, max: 20, ago: 21 },
+      { t: teacher1User, s: createdStudents[1], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'quiz', score: 15, max: 15, ago: 14, remarks: 'Perfect score.' },
+      { t: teacher1User, s: createdStudents[1], subject: 'Mathematics', classId: createdClasses[0]._id, type: 'classwork', score: 10, max: 10, ago: 5 },
+      // Dawit Haile (Grade 10-B) — improving from a weak start
+      { t: teacher1User, s: createdStudents[2], subject: 'Mathematics', classId: createdClasses[1]._id, type: 'quiz', score: 10, max: 15, ago: 63 },
+      { t: teacher1User, s: createdStudents[2], subject: 'Mathematics', classId: createdClasses[1]._id, type: 'classwork', score: 6, max: 10, ago: 49 },
+      { t: teacher1User, s: createdStudents[2], subject: 'Mathematics', classId: createdClasses[1]._id, type: 'midterm', score: 65, max: 100, ago: 28, remarks: 'Show your working step by step.' },
+      { t: teacher1User, s: createdStudents[2], subject: 'Mathematics', classId: createdClasses[1]._id, type: 'quiz', score: 11, max: 15, ago: 14 },
+      { t: teacher1User, s: createdStudents[2], subject: 'Mathematics', classId: createdClasses[1]._id, type: 'classwork', score: 8, max: 10, ago: 7 },
+      { t: teacher1User, s: createdStudents[2], subject: 'Mathematics', classId: createdClasses[1]._id, type: 'assignment', score: 16, max: 20, ago: 3, remarks: 'Clear progress since the midterm.' },
+      // Marta Gebreyesus (Grade 11-A) — Physics, top student
+      { t: teacher2User, s: createdStudents[3], subject: 'Physics', classId: createdClasses[2]._id, type: 'quiz', score: 22, max: 25, ago: 58 },
+      { t: teacher2User, s: createdStudents[3], subject: 'Physics', classId: createdClasses[2]._id, type: 'classwork', score: 9, max: 10, ago: 44 },
+      { t: teacher2User, s: createdStudents[3], subject: 'Physics', classId: createdClasses[2]._id, type: 'midterm', score: 91, max: 100, ago: 30, remarks: 'Outstanding understanding of mechanics.' },
+      { t: teacher2User, s: createdStudents[3], subject: 'Physics', classId: createdClasses[2]._id, type: 'quiz', score: 24, max: 25, ago: 12 },
+      { t: teacher2User, s: createdStudents[3], subject: 'Physics', classId: createdClasses[2]._id, type: 'classwork', score: 10, max: 10, ago: 5 },
+      { t: teacher2User, s: createdStudents[3], subject: 'Physics', classId: createdClasses[2]._id, type: 'assignment', score: 28, max: 30, ago: 2 },
+      // Yohannes Tesfaye (Grade 11-A) — Physics, solid but careless
+      { t: teacher2User, s: createdStudents[4], subject: 'Physics', classId: createdClasses[2]._id, type: 'quiz', score: 18, max: 25, ago: 58 },
+      { t: teacher2User, s: createdStudents[4], subject: 'Physics', classId: createdClasses[2]._id, type: 'classwork', score: 7, max: 10, ago: 44 },
+      { t: teacher2User, s: createdStudents[4], subject: 'Physics', classId: createdClasses[2]._id, type: 'midterm', score: 72, max: 100, ago: 30, remarks: 'Understands concepts; avoid careless errors.' },
+      { t: teacher2User, s: createdStudents[4], subject: 'Physics', classId: createdClasses[2]._id, type: 'quiz', score: 20, max: 25, ago: 12 },
+      { t: teacher2User, s: createdStudents[4], subject: 'Physics', classId: createdClasses[2]._id, type: 'classwork', score: 8, max: 10, ago: 5 }
+    ]
+
+    for (const g of gradesData) {
+      const grade = new Grade({
+        studentId: g.s._id,
+        teacherId: g.t._id,
+        classId: g.classId,
+        subject: g.subject,
+        score: g.score,
+        maxScore: g.max,
+        gradeType: g.type,
+        academicYearId: academicYearDoc._id,
+        remarks: g.remarks || null,
+        date: daysAgoDate(g.ago)
+      })
+      await grade.save()
+    }
+    console.log(`✅ Grades: ${gradesData.length} records across Mathematics and Physics`)
+
+    // Attendance: the 22 most recent school days (Mon–Fri), one record per
+    // student per day, marked by the class's teacher. Deterministic misses:
+    // roughly 90% present with a few late/absent/excused per student.
+    const schoolDays = []
+    for (let d = 0; schoolDays.length < 22 && d < 40; d++) {
+      const dt = daysAgoDate(d)
+      const wd = dt.getDay()
+      if (wd !== 0 && wd !== 6) schoolDays.push(dt)
+    }
+
+    const attendanceGroups = [
+      { students: [createdStudents[0], createdStudents[1]], classId: createdClasses[0]._id, marker: teacher1User },
+      { students: [createdStudents[2]], classId: createdClasses[1]._id, marker: teacher1User },
+      { students: [createdStudents[3], createdStudents[4]], classId: createdClasses[2]._id, marker: teacher2User }
+    ]
+
+    const statusFor = (si, di) => {
+      if ((di * 7 + si * 3) % 29 === 0) return 'absent'
+      if ((di * 5 + si * 11) % 23 === 0) return 'late'
+      if ((di + si) % 31 === 0) return 'excused'
+      return 'present'
+    }
+
+    let attendanceCount = 0
+    for (const group of attendanceGroups) {
+      for (const student of group.students) {
+        const si = group.students.indexOf(student)
+        for (let di = 0; di < schoolDays.length; di++) {
+          const attendance = new Attendance({
+            studentId: student._id,
+            classId: group.classId,
+            date: schoolDays[di],
+            status: statusFor(si, di),
+            academicYearId: academicYearDoc._id,
+            markedBy: group.marker._id
+          })
+          await attendance.save()
+          attendanceCount++
+        }
+      }
+    }
+    console.log(`✅ Attendance: ${attendanceCount} records over the last 22 school days`)
 
     console.log('\n' + '='.repeat(60))
     console.log('🎉 SEED COMPLETED SUCCESSFULLY!')

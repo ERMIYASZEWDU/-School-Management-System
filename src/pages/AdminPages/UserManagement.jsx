@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, Trash2, Edit2, Search, Filter, MoreVertical, Power, Lock } from 'lucide-react'
-import { getUsers, createUser, updateUser, toggleUserStatus, deleteUser } from '../../services/adminApi'
+import { getUsers, createUser, updateUser, toggleUserStatus, deleteUser, getStudents } from '../../services/adminApi'
 import { useTranslation } from 'react-i18next'
 
 export const UserManagement = () => {
@@ -17,8 +17,10 @@ export const UserManagement = () => {
     email: '',
     password: '',
     phone: '',
-    role: 'student'
+    role: 'student',
+    studentIds: []
   })
+  const [students, setStudents] = useState([])
   const [editingId, setEditingId] = useState(null)
   const [actionMenu, setActionMenu] = useState(null)
 
@@ -40,12 +42,21 @@ export const UserManagement = () => {
     loadUsers()
   }, [])
 
+  // Load the student roster for the parent child-linking picker
+  useEffect(() => {
+    if (isModalOpen && students.length === 0) {
+      getStudents()
+        .then((data) => setStudents(Array.isArray(data) ? data : data.students || []))
+        .catch((err) => console.error('Error loading students:', err))
+    }
+  }, [isModalOpen])
+
   const handleOpenModal = (user = null) => {
     if (user) {
-      setFormData({ name: user.name, email: user.email, password: '', phone: user.phone || '', role: user.role })
+      setFormData({ name: user.name, email: user.email, password: '', phone: user.phone || '', role: user.role, studentIds: [] })
       setEditingId(user._id)
     } else {
-      setFormData({ name: '', email: '', password: '', phone: '', role: 'student' })
+      setFormData({ name: '', email: '', password: '', phone: '', role: 'student', studentIds: [] })
       setEditingId(null)
     }
     setIsModalOpen(true)
@@ -63,7 +74,7 @@ export const UserManagement = () => {
           role: formData.role
         })
       } else {
-        await createUser(formData)
+        await createUser({ ...formData, studentIds: formData.role === 'parent' ? formData.studentIds : [] })
       }
       await loadUsers()
     } catch (err) {
@@ -71,9 +82,18 @@ export const UserManagement = () => {
       return
     }
 
-    setFormData({ name: '', email: '', password: '', phone: '', role: 'student' })
+    setFormData({ name: '', email: '', password: '', phone: '', role: 'student', studentIds: [] })
     setEditingId(null)
     setIsModalOpen(false)
+  }
+
+  const toggleStudent = (studentId) => {
+    setFormData((f) => ({
+      ...f,
+      studentIds: f.studentIds.includes(studentId)
+        ? f.studentIds.filter((id) => id !== studentId)
+        : [...f.studentIds, studentId]
+    }))
   }
 
   const handleDelete = async (id) => {
@@ -402,6 +422,41 @@ export const UserManagement = () => {
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required={!editingId}
                   />
+                </div>
+              )}
+
+              {formData.role === 'parent' && !editingId && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                    {t('admin.users.linkChildren', 'Link Children (Students)')}
+                  </label>
+                  <div className="border border-gray-300 dark:border-gray-600 rounded-lg max-h-40 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+                    {students.length > 0 ? (
+                      students.map((student) => (
+                        <label
+                          key={student._id}
+                          className="flex items-center gap-2 py-2 px-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.studentIds.includes(student._id)}
+                            onChange={() => toggleStudent(student._id)}
+                            className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700 dark:text-gray-200">
+                            {student.name} — {student.grade} {student.section}
+                          </span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-3">
+                        {t('admin.users.noStudentsForLink', 'No students available to link')}
+                      </p>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {t('admin.users.linkHint', 'You can also link children later from the Parents page.')}
+                  </p>
                 </div>
               )}
 

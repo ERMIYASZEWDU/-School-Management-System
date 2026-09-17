@@ -10,7 +10,8 @@
     "i18n:audit": "node scripts/i18n-audit.mjs",
     "typecheck": "tsc --noEmit",
     "smoke": "playwright test",
-    "smoke:headed": "playwright test --headed"
+    "smoke:headed": "playwright test --headed",
+    "check:parents": "node server/scripts/check-parent-integrity.mjs"
   },
   "dependencies": {
     "axios": "^1.6.2",
